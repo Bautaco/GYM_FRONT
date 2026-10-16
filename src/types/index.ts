@@ -122,9 +122,14 @@ export interface BodyWeightRecord {
 }
 
 export interface AdherenceReport {
-  totalPrescribedRoutines: number;
+  totalPrescribedRoutines?: number;
   completedSessions: number;
   adherencePercentage: number;
+  plannedSessions?: number;
+  message?: string;
+  planName?: string;
+  hasActivePlan?: boolean;
+  athleteId?: string;
 }
 
 export type AdherenceMetrics = AdherenceReport;

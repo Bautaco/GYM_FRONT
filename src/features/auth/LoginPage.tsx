@@ -43,7 +43,7 @@ export const LoginPage: React.FC = () => {
         {/* Header */}
         <div className="login-header text-center">
           <div className="brand-badge-large">
-            <Dumbbell size={36} className="text-accent" />
+            <Dumbbell size={28} className="text-accent" />
           </div>
           <h1 className="login-title">APEX FIT</h1>
           <p className="login-subtitle">

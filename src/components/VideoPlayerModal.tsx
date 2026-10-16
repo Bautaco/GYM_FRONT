@@ -1,14 +1,17 @@
 import React, { useRef, useEffect } from 'react';
 import { X, Play, AlertCircle, Dumbbell, Activity, ExternalLink } from 'lucide-react';
 import { Exercise } from '../types/index.js';
+import { AnatomicalBodyFigure } from './AnatomicalBodyFigure.js';
 
-interface VideoPlayerModalProps {
+export interface ExerciseDetailModalProps {
   exercise: Exercise | null;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
+export type VideoPlayerModalProps = ExerciseDetailModalProps;
+
+export const ExerciseDetailModal: React.FC<ExerciseDetailModalProps> = ({
   exercise,
   isOpen,
   onClose,
@@ -95,6 +98,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
           </div>
         </div>
 
+        {/* Reproductor de Video */}
         <div className="video-player-wrapper">
           {hasValidVideo ? (
             <div className="video-responsive-box">
@@ -138,23 +142,43 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
 
         {/* Zonas trabajadas y descripción técnica */}
         <div className="modal-body-content">
-          <div className="detail-section">
-            <h4 className="section-label">
-              <Activity size={16} /> Zonas Musculares Trabajadas
-            </h4>
-            <div className="muscle-tags-wrap">
-              {exercise.zonasTrabajadas && exercise.zonasTrabajadas.length > 0 ? (
-                exercise.zonasTrabajadas.map((zone, idx) => (
-                  <span key={idx} className="muscle-tag">
-                    {zone}
-                  </span>
-                ))
-              ) : (
-                <span className="muscle-tag">{exercise.grupoMuscularPrincipal}</span>
-              )}
+          {/* Franja intermedia: Zonas Musculares Trabajadas + Muñeco Anatómico Miniatura a la derecha */}
+          <div className="detail-section zones-section-with-figure">
+            <div className="zones-left-column">
+              <h4 className="section-label">
+                <Activity size={16} /> Zonas Musculares Trabajadas
+              </h4>
+              <div className="muscle-tags-wrap">
+                {exercise.zonasTrabajadas && exercise.zonasTrabajadas.length > 0 ? (
+                  exercise.zonasTrabajadas.map((zone, idx) => (
+                    <span key={idx} className="muscle-tag">
+                      {zone}
+                    </span>
+                  ))
+                ) : (
+                  <span className="muscle-tag">{exercise.grupoMuscularPrincipal}</span>
+                )}
+              </div>
+              <p className="muscle-focus-hint">
+                Región principal: <span className="highlight-text">{exercise.grupoMuscularPrincipal}</span>
+              </p>
+            </div>
+
+            {/* Representación gráfica esquemática en miniatura del cuerpo humano (muñeco anatómico) */}
+            <div className="zones-right-column">
+              <div className="anatomic-card-preview">
+                <div className="anatomic-card-header">
+                  <span className="anatomic-tag-badge">Mapa Muscular</span>
+                </div>
+                <AnatomicalBodyFigure
+                  grupoMuscularPrincipal={exercise.grupoMuscularPrincipal}
+                  zonasTrabajadas={exercise.zonasTrabajadas}
+                />
+              </div>
             </div>
           </div>
 
+          {/* Sección Inferior: Instrucciones Técnicas */}
           <div className="detail-section">
             <h4 className="section-label">
               <Dumbbell size={16} /> Instrucciones Técnicas
@@ -173,3 +197,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
     </div>
   );
 };
+
+// Compatibilidad retroactiva total con VideoPlayerModal
+export const VideoPlayerModal = ExerciseDetailModal;
+export default ExerciseDetailModal;

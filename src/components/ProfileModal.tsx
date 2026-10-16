@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   X,
   User as UserIcon,
@@ -7,14 +7,12 @@ import {
   FileText,
   CheckCircle,
   AlertCircle,
-  Moon,
-  Sun,
   Save,
   Camera,
-  Sparkles,
+  Upload,
+  Trash2,
 } from 'lucide-react';
 import { useAuth } from '../features/auth/AuthContext.js';
-import { useTheme } from '../features/theme/ThemeContext.js';
 import { authService } from '../services/authService.js';
 import { UserRole } from '../types/index.js';
 
@@ -32,9 +30,71 @@ const AVATAR_PRESETS = [
   'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150',
 ];
 
+/**
+ * Redimensiona y comprime una imagen seleccionada desde PC/Teléfono a un cuadrado 1:1
+ * optimizado para avatar (~25-35KB), evitando problemas de peso y red.
+ */
+const compressAndResizeImage = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith('image/')) {
+      reject(new Error('El archivo seleccionado debe ser una imagen válida.'));
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          const MAX_SIZE = 300;
+          const width = img.width;
+          const height = img.height;
+
+          // Crop centrado a proporción cuadrada 1:1
+          const minDim = Math.min(width, height);
+          const startX = (width - minDim) / 2;
+          const startY = (height - minDim) / 2;
+
+          canvas.width = MAX_SIZE;
+          canvas.height = MAX_SIZE;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(e.target?.result as string);
+            return;
+          }
+
+          ctx.drawImage(
+            img,
+            startX,
+            startY,
+            minDim,
+            minDim,
+            0,
+            0,
+            MAX_SIZE,
+            MAX_SIZE,
+          );
+
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+          resolve(dataUrl);
+        } catch (err) {
+          reject(err);
+        }
+      };
+      img.onerror = () => reject(new Error('No se pudo procesar la imagen.'));
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = () => reject(new Error('Error al leer el archivo.'));
+    reader.readAsDataURL(file);
+  });
+};
+
 export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
   const { user } = useAuth();
-  const { theme, toggleTheme } = useTheme();
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isProcessingImg, setIsProcessingImg] = useState(false);
 
   const [fullName, setFullName] = useState(user?.fullName || '');
   const [phone, setPhone] = useState(user?.phone || '');
@@ -116,11 +176,27 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
     }
   };
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsProcessingImg(true);
+      setErrorMsg('');
+      const compressed = await compressAndResizeImage(file);
+      setAvatarUrl(compressed);
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Error al procesar la foto.');
+    } finally {
+      setIsProcessingImg(false);
+      if (e.target) e.target.value = '';
+    }
+  };
+
   const currentDisplayAvatar =
     avatarUrl ||
-    user.avatarUrl ||
     `https://ui-avatars.com/api/?name=${encodeURIComponent(
-      user.fullName,
+      fullName || user.fullName,
     )}&background=ff5722&color=fff&bold=true`;
 
   return (
@@ -172,65 +248,94 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
             </div>
 
             <div className="avatar-selection-box">
-              <img
-                src={currentDisplayAvatar}
-                alt={user.fullName}
-                className="profile-avatar-preview"
-              />
-              <div className="avatar-options-group">
-                <span className="avatar-help-text">Selecciona un preset rápido o ingresa una URL:</span>
-                <div className="avatar-presets-row">
-                  {AVATAR_PRESETS.map((preset, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => setAvatarUrl(preset)}
-                      className={`avatar-preset-btn ${avatarUrl === preset ? 'selected' : ''}`}
-                    >
-                      <img src={preset} alt={`Preset ${idx + 1}`} />
-                    </button>
-                  ))}
-                </div>
-                <input
-                  type="url"
-                  placeholder="https://ejemplo.com/mi-avatar.jpg"
-                  value={avatarUrl}
-                  onChange={(e) => setAvatarUrl(e.target.value)}
-                  className="form-input form-input-sm"
+              <div className="avatar-preview-container">
+                <img
+                  src={currentDisplayAvatar}
+                  alt={user.fullName}
+                  className="profile-avatar-preview"
                 />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="avatar-change-overlay-btn"
+                  title="Subir foto desde PC o teléfono"
+                  disabled={isProcessingImg}
+                >
+                  <Camera size={14} />
+                </button>
+              </div>
+
+              <div className="avatar-options-group">
+                {/* Botón de subir archivo desde dispositivo */}
+                <div className="avatar-actions-row">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    style={{ display: 'none' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="btn-upload-avatar"
+                    disabled={isProcessingImg}
+                  >
+                    <Upload size={14} />
+                    <span>{isProcessingImg ? 'Procesando...' : 'Subir foto (PC / Teléfono)'}</span>
+                  </button>
+
+                  {avatarUrl && (
+                    <button
+                      type="button"
+                      onClick={() => setAvatarUrl('')}
+                      className="btn-remove-avatar"
+                      title="Quitar foto y usar iniciales"
+                    >
+                      <Trash2 size={13} />
+                      <span>Quitar</span>
+                    </button>
+                  )}
+                </div>
+
+                {/* Presets rápidos */}
+                <div className="avatar-presets-wrapper">
+                  <span className="avatar-help-text">O selecciona un avatar:</span>
+                  <div className="avatar-presets-row">
+                    {AVATAR_PRESETS.map((preset, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setAvatarUrl(preset)}
+                        className={`avatar-preset-btn ${avatarUrl === preset ? 'selected' : ''}`}
+                        title={`Elegir avatar ${idx + 1}`}
+                      >
+                        <img src={preset} alt={`Preset ${idx + 1}`} />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* URL alternativa */}
+                <div className="avatar-url-wrapper">
+                  <span className="avatar-help-text">O ingresa URL de imagen:</span>
+                  <input
+                    type="url"
+                    placeholder="https://ejemplo.com/mi-avatar.jpg"
+                    value={avatarUrl.startsWith('data:') ? '' : avatarUrl}
+                    onChange={(e) => setAvatarUrl(e.target.value)}
+                    className="form-input form-input-sm"
+                  />
+                  {avatarUrl.startsWith('data:') && (
+                    <span className="avatar-loaded-tag">
+                      <CheckCircle size={12} /> Foto personalizada cargada
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* SECCIÓN 2: TEMA VISUAL */}
-            <div className="profile-section-label">
-              {theme === 'dark' ? <Moon size={15} /> : <Sun size={15} />}
-              <span>Tema de la Interfaz</span>
-            </div>
-
-            <div className="theme-toggle-row">
-              <div className="theme-toggle-info">
-                <span className="theme-toggle-desc">
-                  Tema actual: <strong>{theme === 'dark' ? 'Modo Oscuro' : 'Modo Claro'}</strong>
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={toggleTheme}
-                className="btn-theme-toggle"
-              >
-                {theme === 'dark' ? (
-                  <>
-                    <Sun size={16} /> Cambiar a Modo Claro
-                  </>
-                ) : (
-                  <>
-                    <Moon size={16} /> Cambiar a Modo Oscuro
-                  </>
-                )}
-              </button>
-            </div>
-
-            {/* SECCIÓN 3: DATOS PERSONALES */}
+            {/* SECCIÓN 2: DATOS PERSONALES */}
             <div className="profile-section-label">
               <UserIcon size={15} />
               <span>Datos Personales</span>
@@ -275,7 +380,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
               />
             </div>
 
-            {/* SECCIÓN 4: CAMBIO DE CONTRASEÑA */}
+            {/* SECCIÓN 3: CAMBIO DE CONTRASEÑA */}
             <div className="profile-section-label">
               <Lock size={15} />
               <span>Cambiar Contraseña</span>

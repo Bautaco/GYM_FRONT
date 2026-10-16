@@ -15,6 +15,29 @@ export const trainingService = {
     return response.data;
   },
 
+  async getMuscleGroups(): Promise<string[]> {
+    const response = await api.get<string[]>('/api/v1/exercises/muscle-groups');
+    return response.data;
+  },
+
+  async getTargetZones(): Promise<string[]> {
+    const response = await api.get<string[]>('/api/v1/exercises/target-zones');
+    return response.data;
+  },
+
+  async createMuscleGroup(name: string): Promise<{ name: string }> {
+    const response = await api.post<{ name: string }>('/api/v1/exercises/muscle-groups', { name });
+    return response.data;
+  },
+
+  async createTargetZone(name: string, muscleGroupName?: string): Promise<{ name: string }> {
+    const response = await api.post<{ name: string }>('/api/v1/exercises/target-zones', {
+      name,
+      muscleGroupName,
+    });
+    return response.data;
+  },
+
   async createExercise(exercise: Partial<Exercise>): Promise<Exercise> {
     const response = await api.post<Exercise>('/api/v1/exercises', exercise);
     return response.data;
