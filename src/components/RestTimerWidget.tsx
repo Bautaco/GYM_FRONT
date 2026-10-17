@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Timer, Play, Pause, RotateCcw, Plus, X, ChevronUp, ChevronDown, Bell } from 'lucide-react';
 
 export const RestTimerWidget: React.FC = () => {
+  const [isVisible, setIsVisible] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [totalSeconds, setTotalSeconds] = useState(90);
   const [remainingSeconds, setRemainingSeconds] = useState(90);
@@ -49,6 +50,7 @@ export const RestTimerWidget: React.FC = () => {
       setRemainingSeconds(seconds);
       setIsRunning(true);
       setIsOpen(true);
+      setIsVisible(true);
       setIsAlarmActive(false);
     };
 
@@ -91,6 +93,13 @@ export const RestTimerWidget: React.FC = () => {
     setIsAlarmActive(false);
   };
 
+  const handleClose = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setIsRunning(false);
+    setIsAlarmActive(false);
+    setIsVisible(false);
+  };
+
   const formatTime = (secs: number) => {
     const m = Math.floor(secs / 60);
     const s = secs % 60;
@@ -99,19 +108,35 @@ export const RestTimerWidget: React.FC = () => {
 
   const progressPercent = totalSeconds > 0 ? ((totalSeconds - remainingSeconds) / totalSeconds) * 100 : 0;
 
+  if (!isVisible) {
+    return null;
+  }
+
   return (
     <div className={`rest-timer-floating-root ${isOpen ? 'expanded' : 'collapsed'}`}>
       {/* Botón flotante colapsado */}
       {!isOpen ? (
-        <button
-          onClick={() => setIsOpen(true)}
-          className={`rest-timer-pill-btn ${isRunning ? 'running' : ''} ${isAlarmActive ? 'alarm-pulse' : ''}`}
-          title="Abrir Cronómetro de Descanso"
-        >
-          <Timer size={18} className="timer-pill-icon" />
-          <span className="timer-pill-text">{formatTime(remainingSeconds)}</span>
-          {isAlarmActive && <Bell size={14} className="bell-alert-icon" />}
-        </button>
+        <div className={`rest-timer-pill-wrapper ${isRunning ? 'running' : ''} ${isAlarmActive ? 'alarm-pulse' : ''}`}>
+          <button
+            type="button"
+            onClick={() => setIsOpen(true)}
+            className="rest-timer-pill-btn"
+            title="Abrir Cronómetro de Descanso"
+          >
+            <Timer size={18} className="timer-pill-icon" />
+            <span className="timer-pill-text">{formatTime(remainingSeconds)}</span>
+            {isAlarmActive && <Bell size={14} className="bell-alert-icon" />}
+          </button>
+          <button
+            type="button"
+            onClick={handleClose}
+            className="rest-timer-pill-close-btn"
+            title="Quitar cronómetro"
+            aria-label="Cerrar cronómetro"
+          >
+            <X size={15} />
+          </button>
+        </div>
       ) : (
         /* Widget expandido */
         <div className={`rest-timer-card card-glass ${isAlarmActive ? 'alarm-active' : ''}`}>
@@ -121,13 +146,26 @@ export const RestTimerWidget: React.FC = () => {
               <Timer size={16} className="timer-icon-lead" />
               <span>Cronómetro de Descanso (HU-11)</span>
             </div>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="btn-icon-timer"
-              title="Minimizar"
-            >
-              <ChevronDown size={16} />
-            </button>
+            <div className="rest-timer-header-actions">
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="btn-icon-timer"
+                title="Minimizar"
+                aria-label="Minimizar"
+              >
+                <ChevronDown size={16} />
+              </button>
+              <button
+                type="button"
+                onClick={handleClose}
+                className="btn-icon-timer btn-icon-timer-close"
+                title="Quitar cronómetro"
+                aria-label="Cerrar cronómetro"
+              >
+                <X size={16} />
+              </button>
+            </div>
           </div>
 
           {/* Barra de progreso visual */}

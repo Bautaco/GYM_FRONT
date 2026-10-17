@@ -3442,32 +3442,62 @@ textarea {
   z-index: 999;
 }
 
-.rest-timer-pill-btn {
+.rest-timer-pill-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid var(--brand-petrol);
+  background: var(--brand-petrol);
+  color: var(--brand-white);
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
+  overflow: hidden;
+}
+
+.rest-timer-pill-wrapper:hover {
+  background: var(--brand-burgundy);
+  border-color: var(--brand-beige);
+}
+
+.rest-timer-pill-wrapper.running {
+  border-color: var(--brand-beige);
+}
+
+.rest-timer-pill-wrapper .rest-timer-pill-btn {
   display: flex;
   align-items: center;
   gap: 8px;
-  border: 1.5px solid var(--border-subtle);
-  padding: 10px 16px;
+  border: none;
+  padding: 10px 14px 10px 16px;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  background: var(--brand-petrol);
-  color: var(--brand-white);
-  border-color: var(--brand-petrol);
+  background: transparent;
+  color: inherit;
   box-shadow: none;
-  border-radius: 999px;
+  border-radius: 0;
 }
 
-.rest-timer-pill-btn:hover {
-  transform: none;
-  background: var(--brand-burgundy);
-  color: var(--brand-white);
-  border-color: var(--brand-beige);
-  box-shadow: none;
+.rest-timer-pill-wrapper .rest-timer-pill-btn:hover {
+  background: transparent;
+  color: inherit;
+  border-color: transparent;
 }
 
-.rest-timer-pill-btn.running {
-  box-shadow: none;
-  border-color: var(--brand-beige);
+.rest-timer-pill-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--brand-beige);
+  padding: 10px 14px 10px 10px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.rest-timer-pill-close-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ff9d9d;
 }
 
 .timer-pill-icon {
@@ -3501,6 +3531,12 @@ textarea {
   align-items: center;
 }
 
+.rest-timer-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .timer-header-title {
   display: flex;
   align-items: center;
@@ -3523,11 +3559,17 @@ textarea {
   cursor: pointer;
   padding: 4px;
   border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
 }
 
 .btn-icon-timer:hover {
   background: var(--bg-card);
   color: var(--text-main);
+}
+
+.btn-icon-timer.btn-icon-timer-close:hover {
+  background: rgba(255, 80, 80, 0.15);
+  color: #ff6b6b;
 }
 
 .timer-progress-bar-bg {

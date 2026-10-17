@@ -84,8 +84,8 @@ export const AppRoutes: React.FC = () => {
         </Routes>
       </main>
 
-      {/* Widget Flotante de Cronómetro de Descanso (HU-11) */}
-      <RestTimerWidget />
+      {/* Widget Flotante de Cronómetro de Descanso (HU-11): Solo visible para Atletas */}
+      {role === UserRole.ATLETA && <RestTimerWidget />}
 
     </div>
   );
