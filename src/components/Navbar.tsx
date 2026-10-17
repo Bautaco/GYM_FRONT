@@ -1,15 +1,11 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  Dumbbell,
   Calendar,
   BarChart2,
   BookOpen,
   PlusCircle,
-  Scale,
   LogOut,
-  UserCheck,
-  Settings,
   Moon,
   Sun,
   Shield,
@@ -19,15 +15,12 @@ import { useTheme } from '../features/theme/ThemeContext.js';
 import { UserRole } from '../types/index.js';
 import { ProfileModal } from './ProfileModal.js';
 
-interface NavbarProps {
-  onOpenWeightModal?: () => void;
-}
-
-export const Navbar: React.FC<NavbarProps> = ({ onOpenWeightModal }) => {
+export const Navbar: React.FC = () => {
   const { user, role, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const closeProfile = useCallback(() => setIsProfileOpen(false), []);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -36,14 +29,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenWeightModal }) => {
       <header className="navbar-root">
         <div className="navbar-container">
           {/* Brand */}
-          <Link to="/" className="navbar-brand">
-            <div className="brand-icon-box">
-              <Dumbbell size={24} className="brand-icon" />
-            </div>
-            <div className="brand-text-group">
-              <span className="brand-title">APEX FIT</span>
-              <span className="brand-subtitle">Training Platform</span>
-            </div>
+          <Link to="/" className="navbar-brand" aria-label="Gym, inicio">
+            <span className="brand-title">Gym</span>
           </Link>
 
           {/* Navigation Links */}
@@ -55,7 +42,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenWeightModal }) => {
                 className={`nav-link ${isActive('/admin/users') ? 'active' : ''}`}
               >
                 <Shield size={18} />
-                <span>Gestión Usuarios</span>
+                <span>Gestión de usuarios</span>
               </Link>
             )}
 
@@ -69,16 +56,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenWeightModal }) => {
                   <Calendar size={18} />
                   <span>Mi Rutina</span>
                 </Link>
-                {onOpenWeightModal && (
-                  <button
-                    onClick={onOpenWeightModal}
-                    className="nav-link btn-link-action"
-                    title="Registrar Peso Corporal"
-                  >
-                    <Scale size={18} />
-                    <span>Registrar Peso</span>
-                  </button>
-                )}
               </>
             )}
 
@@ -127,19 +104,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenWeightModal }) => {
             <button
               className="user-profile-chip clickable"
               onClick={() => setIsProfileOpen(true)}
-              title="Configuración de perfil (HU-02)"
+              title="Configuración de perfil"
             >
-              {user?.avatarUrl ? (
-                <img
-                  src={user.avatarUrl}
-                  alt={user.fullName}
-                  className="user-avatar-img"
-                />
-              ) : (
-                <div className="user-avatar-circle">
-                  <UserCheck size={16} />
-                </div>
-              )}
               <div className="user-info-text">
                 <span className="user-name">{user?.fullName || 'Usuario'}</span>
                 <span className={`user-role-badge ${role?.toLowerCase()}`}>
@@ -150,7 +116,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenWeightModal }) => {
                     : 'Atleta'}
                 </span>
               </div>
-              <Settings size={14} className="profile-chip-settings-icon" />
             </button>
 
             {/* Logout */}
@@ -167,7 +132,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenWeightModal }) => {
       </header>
 
       {/* Profile / Settings Modal */}
-      <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
+      <ProfileModal isOpen={isProfileOpen} onClose={closeProfile} />
     </>
   );
 };

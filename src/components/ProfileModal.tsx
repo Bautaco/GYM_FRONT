@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import {
   X,
   User as UserIcon,
@@ -11,12 +12,12 @@ import {
   Sun,
   Save,
   Camera,
-  Sparkles,
 } from 'lucide-react';
 import { useAuth } from '../features/auth/AuthContext.js';
 import { useTheme } from '../features/theme/ThemeContext.js';
 import { authService } from '../services/authService.js';
 import { UserRole } from '../types/index.js';
+import { prepareProfilePhoto } from '../utils/profilePhoto.js';
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -40,6 +41,23 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
   const [phone, setPhone] = useState(user?.phone || '');
   const [notes, setNotes] = useState(user?.notes || '');
   const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || '');
+  const [isPreparingPhoto, setIsPreparingPhoto] = useState(false);
+  const [photoError, setPhotoError] = useState('');
+
+  const handlePhotoChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    setPhotoError('');
+    setIsPreparingPhoto(true);
+    try {
+      setAvatarUrl(await prepareProfilePhoto(file));
+    } catch (error) {
+      setPhotoError(error instanceof Error ? error.message : 'No se pudo cargar la foto.');
+    } finally {
+      setIsPreparingPhoto(false);
+    }
+  };
 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -49,10 +67,41 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!isOpen) return;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    dialogRef.current?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+      if (event.key !== 'Tab') return;
+      const controls = dialogRef.current?.querySelectorAll<HTMLElement>(
+        'button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), a[href]',
+      );
+      if (!controls?.length) return;
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (event.shiftKey && (document.activeElement === first || document.activeElement === dialogRef.current)) {
+        event.preventDefault(); last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault(); first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', onKeyDown);
+      previousFocus?.focus();
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen || !user) return null;
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isPreparingPhoto) return;
     setSuccessMsg('');
     setErrorMsg('');
 
@@ -121,17 +170,18 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
     user.avatarUrl ||
     `https://ui-avatars.com/api/?name=${encodeURIComponent(
       user.fullName,
-    )}&background=ff5722&color=fff&bold=true`;
+    )}&background=eed8c0&color=5a0505&bold=true`;
 
-  return (
+  // El portal evita que la barra superior limite o recorte la ventana.
+  return createPortal(
     <div className="modal-backdrop">
-      <div className="modal-container profile-modal-card">
+      <div ref={dialogRef} className="modal-container profile-modal-card" role="dialog" aria-modal="true" aria-labelledby="profile-title" tabIndex={-1}>
         {/* Modal Header */}
         <div className="modal-header">
           <div className="modal-title-box">
             <UserIcon size={20} className="modal-icon primary" />
             <div>
-              <h2>Configuración de Usuario</h2>
+              <h2 id="profile-title">Configuración de usuario</h2>
               <span className="modal-subheading">
                 {user.email} &bull;{' '}
                 <span className={`user-role-badge ${user.role.toLowerCase()}`}>
@@ -144,7 +194,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
               </span>
             </div>
           </div>
-          <button onClick={onClose} className="btn-close-modal" aria-label="Cerrar">
+          <button type="button" onClick={onClose} className="btn-close-modal" aria-label="Cerrar">
             <X size={20} />
           </button>
         </div>
@@ -168,7 +218,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
             {/* SECCIÓN 1: FOTO / AVATAR */}
             <div className="profile-section-label">
               <Camera size={15} />
-              <span>Foto de Perfil / Avatar (HU-02)</span>
+              <span>Foto de perfil</span>
             </div>
 
             <div className="avatar-selection-box">
@@ -178,12 +228,17 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
                 className="profile-avatar-preview"
               />
               <div className="avatar-options-group">
-                <span className="avatar-help-text">Selecciona un preset rápido o ingresa una URL:</span>
+                <label className="avatar-help-text" htmlFor="profile-photo">Elegí una foto de tu dispositivo:</label>
+                <input id="profile-photo" type="file" accept="image/jpeg,image/png,image/webp" onChange={handlePhotoChange} disabled={isPreparingPhoto || isSubmitting} className="profile-photo-input" />
+                <span className="avatar-help-text">JPG, PNG o WebP, hasta 10 MB. Se guarda con “Guardar cambios”.</span>
+                {isPreparingPhoto && <span role="status">Preparando foto...</span>}
+                {photoError && <span role="alert">{photoError}</span>}
                 <div className="avatar-presets-row">
                   {AVATAR_PRESETS.map((preset, idx) => (
                     <button
                       key={idx}
                       type="button"
+                      disabled={isPreparingPhoto || isSubmitting}
                       onClick={() => setAvatarUrl(preset)}
                       className={`avatar-preset-btn ${avatarUrl === preset ? 'selected' : ''}`}
                     >
@@ -191,13 +246,6 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
                     </button>
                   ))}
                 </div>
-                <input
-                  type="url"
-                  placeholder="https://ejemplo.com/mi-avatar.jpg"
-                  value={avatarUrl}
-                  onChange={(e) => setAvatarUrl(e.target.value)}
-                  className="form-input form-input-sm"
-                />
               </div>
             </div>
 
@@ -217,6 +265,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
                 type="button"
                 onClick={toggleTheme}
                 className="btn-theme-toggle"
+                aria-pressed={theme === 'light'}
               >
                 {theme === 'dark' ? (
                   <>
@@ -334,7 +383,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
             <button
               type="submit"
               className="btn-primary"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isPreparingPhoto}
             >
               <Save size={16} />
               <span>{isSubmitting ? 'Guardando...' : 'Guardar Cambios'}</span>
@@ -342,6 +391,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };

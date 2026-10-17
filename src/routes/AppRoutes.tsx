@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../features/auth/AuthContext.js';
 import { UserRole } from '../types/index.js';
@@ -9,12 +9,10 @@ import { ExerciseCatalogPage } from '../features/exercises/ExerciseCatalogPage.j
 import { ProgressPage } from '../features/progress/ProgressPage.js';
 import { AdminUserManagementPage } from '../features/admin/AdminUserManagementPage.js';
 import { Navbar } from '../components/Navbar.js';
-import { BodyWeightModal } from '../components/BodyWeightModal.js';
 import { RestTimerWidget } from '../components/RestTimerWidget.js';
 
 export const AppRoutes: React.FC = () => {
   const { isAuthenticated, isLoading, role } = useAuth();
-  const [isWeightModalOpen, setIsWeightModalOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -31,8 +29,8 @@ export const AppRoutes: React.FC = () => {
 
   return (
     <div className="app-shell">
-      {/* Barra de navegación superior con botón registrar peso para atleta */}
-      <Navbar onOpenWeightModal={() => setIsWeightModalOpen(true)} />
+      {/* El registro de peso está disponible dentro de Métricas. */}
+      <Navbar />
 
       {/* Contenido principal de la página */}
       <main className="main-content-container">
@@ -89,11 +87,6 @@ export const AppRoutes: React.FC = () => {
       {/* Widget Flotante de Cronómetro de Descanso (HU-11) */}
       <RestTimerWidget />
 
-      {/* Modal global de peso corporal (HU-06) */}
-      <BodyWeightModal
-        isOpen={isWeightModalOpen}
-        onClose={() => setIsWeightModalOpen(false)}
-      />
     </div>
   );
 };

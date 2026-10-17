@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   Users,
   UserPlus,
-  Shield,
   Dumbbell,
   Award,
   Search,
@@ -155,14 +154,7 @@ export const AdminUserManagementPage: React.FC = () => {
       {/* Header Banner */}
       <div className="admin-header-banner">
         <div>
-          <div className="admin-badge-pill">
-            <Shield size={14} />
-            <span>Panel de Administración Centralizado</span>
-          </div>
           <h1 className="admin-title">Gestión de Usuarios y Roles</h1>
-          <p className="admin-subtitle">
-            Alta centralizada de Entrenadores y Atletas con vinculación técnica directa.
-          </p>
         </div>
         <button
           onClick={handleOpenCreateModal}
@@ -176,9 +168,6 @@ export const AdminUserManagementPage: React.FC = () => {
       {/* KPI Stats Grid */}
       <div className="admin-kpi-grid">
         <div className="kpi-card card-glass">
-          <div className="kpi-icon-box primary">
-            <Users size={22} />
-          </div>
           <div className="kpi-info">
             <span className="kpi-label">Total de Usuarios</span>
             <span className="kpi-value">{totalUsers}</span>
@@ -186,19 +175,13 @@ export const AdminUserManagementPage: React.FC = () => {
         </div>
 
         <div className="kpi-card card-glass">
-          <div className="kpi-icon-box warning">
-            <Award size={22} />
-          </div>
           <div className="kpi-info">
-            <span className="kpi-label">Entrenadores</span>
+            <span className="kpi-label">Entrenadores registrados</span>
             <span className="kpi-value">{totalTrainers}</span>
           </div>
         </div>
 
         <div className="kpi-card card-glass">
-          <div className="kpi-icon-box success">
-            <Dumbbell size={22} />
-          </div>
           <div className="kpi-info">
             <span className="kpi-label">Atletas Registrados</span>
             <span className="kpi-value">{totalAthletes}</span>
@@ -279,7 +262,7 @@ export const AdminUserManagementPage: React.FC = () => {
                               u.avatarUrl ||
                               `https://ui-avatars.com/api/?name=${encodeURIComponent(
                                 u.fullName,
-                              )}&background=ff5722&color=fff&bold=true`
+                              )}&background=eed8c0&color=5a0505&bold=true`
                             }
                             alt={u.fullName}
                             className="user-cell-avatar"

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Scale, Check, AlertCircle } from 'lucide-react';
 import { trainingService } from '../services/trainingService.js';
 import { useAuth } from '../features/auth/AuthContext.js';
@@ -56,19 +57,21 @@ export const BodyWeightModal: React.FC<BodyWeightModalProps> = ({
     }
   };
 
-  return (
+  return createPortal(
     <div className="modal-backdrop" onClick={onClose}>
       <div
         className="modal-container weight-modal-card"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
+        aria-modal="true"
+        aria-labelledby="weight-modal-title"
       >
         <div className="modal-header">
           <div className="modal-title-group">
             <div className="icon-badge">
               <Scale size={20} />
             </div>
-            <h3 className="modal-title">Registrar Peso Corporal</h3>
+            <h3 id="weight-modal-title" className="modal-title">Registrar Peso Corporal</h3>
           </div>
           <button onClick={onClose} className="btn-icon-close" aria-label="Cerrar">
             <X size={20} />
@@ -76,6 +79,7 @@ export const BodyWeightModal: React.FC<BodyWeightModalProps> = ({
         </div>
 
         <form onSubmit={handleSubmit} className="weight-form">
+          <div className="modal-body weight-form-fields">
           <p className="form-helper-text">
             Ingresa tu peso en kilogramos para actualizar tu historial de evolución.
             La fecha se registrará automáticamente ({new Date().toLocaleDateString()}).
@@ -131,6 +135,7 @@ export const BodyWeightModal: React.FC<BodyWeightModalProps> = ({
             />
           </div>
 
+          </div>
           <div className="modal-footer">
             <button
               type="button"
@@ -150,6 +155,7 @@ export const BodyWeightModal: React.FC<BodyWeightModalProps> = ({
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };

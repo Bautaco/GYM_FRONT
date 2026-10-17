@@ -1,60 +1,120 @@
+/*
+   GUÍA DE INDEX.CSS
+   Este archivo se carga desde src/main.tsx y contiene estilos de toda la aplicación.
+
+   ÍNDICE
+   01. Fuentes externas
+   02. Variables globales y modo oscuro
+   03. Base de la página
+   04. TEXTO, TÍTULOS Y ENLACES
+   05. TARJETAS COMPARTIDAS
+   06. BOTONES COMPARTIDOS
+   07. ETIQUETAS DE ESTADO
+   08. ETIQUETAS DE GRUPOS MUSCULARES
+   09. FORMULARIOS Y CAMPOS
+   10. MENSAJES DE ÉXITO Y ERROR
+   11. ESTRUCTURA GENERAL DE LA APLICACIÓN
+   12. BARRA DE NAVEGACIÓN: ESTRUCTURA
+   13. VENTANAS EMERGENTES: BASE
+   14. REPRODUCTOR Y DETALLE DE EJERCICIOS
+   15. PANEL DEL ATLETA: ENCABEZADO
+   16. SELECTOR DE RUTINAS
+   17. EJECUCIÓN DEL ENTRENAMIENTO
+   18. TABLA DE SERIES
+   19. FINALIZACIÓN DE LA SESIÓN
+   20. TARJETAS DE INDICADORES
+   21. MÉTRICAS Y GRÁFICOS
+   22. CATÁLOGO DE EJERCICIOS
+   23. CONSTRUCTOR DE PLANES
+   24. INICIO DE SESIÓN
+   25. ANIMACIONES E INDICADORES DE CARGA
+   26. ADAPTACIÓN GENERAL A PANTALLAS PEQUEÑAS
+   27. MODO CLARO: VARIABLES Y AJUSTES
+   28. BARRA DE NAVEGACIÓN: TEMA Y PERFIL
+   29. CATÁLOGO: ACCIONES DE LOS EJERCICIOS
+   30. ELIMINACIÓN Y CONFIRMACIÓN
+   31. VENTANA DE PERFIL
+   32. AVATARES Y VARIANTES DE USUARIO
+   33. GESTIÓN DE USUARIOS
+   34. TEMPORIZADOR DE DESCANSO
+   35. CELEBRACIÓN DE RÉCORDS PERSONALES
+   36. PLANTILLAS DE RUTINAS
+   37. ANIMACIONES DE LOS COMPONENTES ADICIONALES
+   38. DISTRIBUCIÓN COMPARTIDA Y ACCESIBILIDAD
+   39. ADAPTACIÓN FINAL
+*/
+
+/* 01. FUENTES EXTERNAS
+   Carga Outfit para títulos y Plus Jakarta Sans para texto desde Google Fonts.
+   @import se mantiene antes de las reglas de estilos. */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap');
 
+/* 02. VARIABLES GLOBALES Y MODO OSCURO
+   Valores compartidos mediante var(...). El modo claro los reemplaza en la sección 27. */
 :root {
-  --bg-main: #0b0d14;
-  --bg-surface: #121520;
-  --bg-card: rgba(22, 27, 42, 0.7);
-  --bg-card-hover: rgba(30, 37, 58, 0.85);
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-active: rgba(255, 87, 34, 0.4);
-
-  --primary: #ff5722;
-  --primary-hover: #f4511e;
-  --primary-gradient: linear-gradient(135deg, #ff5722 0%, #ff8a65 100%);
-  --secondary-gradient: linear-gradient(135deg, #00e5ff 0%, #2979ff 100%);
-  
-  --accent: #ff7043;
-  --accent-cyan: #00e5ff;
-  --accent-purple: #b388ff;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --text-dim: #64748b;
-
-  --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
-  --shadow-glow: 0 0 30px rgba(255, 87, 34, 0.25);
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
+  --brand-burgundy: #5a0505;
+  --brand-petrol: #207384;
+  --brand-beige: #eed8c0;
+  --brand-white: #ffffff;
+  --bg-main: var(--brand-burgundy);
+  --bg-surface: var(--brand-burgundy);
+  --bg-card: var(--brand-burgundy);
+  --bg-card-hover: rgba(238, 216, 192, 0.08);
+  --border-subtle: var(--brand-petrol);
+  --border-active: var(--brand-beige);
+  --primary: var(--brand-petrol);
+  --primary-hover: var(--brand-burgundy);
+  --primary-gradient: linear-gradient(#207384, #207384);
+  --secondary-gradient: linear-gradient(#207384, #207384);
+  --accent: var(--brand-beige);
+  --accent-cyan: var(--brand-beige);
+  --accent-purple: var(--brand-beige);
+  --text-main: var(--brand-white);
+  --text-muted: var(--brand-beige);
+  --text-dim: var(--brand-beige);
+  --input-bg: var(--brand-beige);
+  --input-text: var(--brand-burgundy);
+  --selected-bg: var(--brand-petrol);
+  --selected-text: var(--brand-white);
+  --success: var(--accent);
+  --warning: var(--accent);
+  --danger: var(--accent);
+  --chart-line: var(--brand-beige);
+  --chart-grid: var(--brand-petrol);
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Outfit', sans-serif;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-glow: none;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  color-scheme: dark;
 }
 
+/* 03. BASE DE LA PÁGINA
+   El selector * aplica a todos los elementos. border-box incluye bordes y relleno
+   en el ancho declarado; margin y padding eliminan los espacios predeterminados. */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+/* Fondo y tipografía general. 100vh equivale a la altura de la ventana; line-height separa las líneas. */
 body {
   font-family: var(--font-body);
-  background-color: var(--bg-main);
+  background: var(--bg-main);
   color: var(--text-main);
   min-height: 100vh;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  background-image: 
-    radial-gradient(circle at 15% 15%, rgba(255, 87, 34, 0.08) 0%, transparent 45%),
-    radial-gradient(circle at 85% 75%, rgba(0, 229, 255, 0.05) 0%, transparent 50%);
-  background-attachment: fixed;
 }
 
-/* Base Typography */
+/* ==========================================================================
+   04. TEXTO, TÍTULOS Y ENLACES
+   Define la fuente y el grosor de los títulos, el aspecto de los enlaces y el cursor de los botones.
+   ========================================================================== */
 h1, h2, h3, h4, h5 {
   font-family: var(--font-heading);
   font-weight: 700;
@@ -67,28 +127,37 @@ a {
   text-decoration: none;
 }
 
-button {
-  font-family: inherit;
-  cursor: pointer;
+button,
+input,
+select,
+textarea {
+  font-family: inherit; /*inherit significa que toman la fuente del elemento que los contiene.*/
 }
 
-/* Glassmorphism Classes */
+/* ==========================================================================
+   05. TARJETAS COMPARTIDAS
+   La clase .card-glass aporta fondo, desenfoque, borde y sombra. Se reutiliza en varias pantallas.
+   ========================================================================== */
 .card-glass {
-  background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-subtle);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
   transition: all 0.25s ease;
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: none;
 }
 
 .card-glass:hover {
-  border-color: rgba(255, 255, 255, 0.16);
-  box-shadow: var(--shadow-md);
+  border-color: var(--border-subtle);
+  box-shadow: none;
 }
 
-/* Buttons */
+/* ==========================================================================
+   06. BOTONES COMPARTIDOS
+   La clase .btn establece la base; las variantes cambian colores, tamaños o ancho. :hover actúa al pasar el puntero y :active al presionar.
+   ========================================================================== */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -97,20 +166,25 @@ button {
   padding: 10px 20px;
   font-size: 0.95rem;
   font-weight: 600;
-  border-radius: var(--radius-sm);
   border: none;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 999px;
 }
 
 .btn-primary {
-  background: var(--primary-gradient);
-  color: #ffffff;
-  box-shadow: 0 4px 16px rgba(255, 87, 34, 0.35);
+  background: var(--brand-petrol);
+  color: var(--brand-white);
+  border-color: var(--brand-petrol);
+  box-shadow: none;
+  border-radius: 999px;
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 87, 34, 0.5);
+  transform: none;
+  background: var(--brand-burgundy);
+  color: var(--brand-white);
+  border-color: var(--brand-beige);
+  box-shadow: none;
 }
 
 .btn-primary:active {
@@ -118,24 +192,27 @@ button {
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.07);
-  color: var(--text-main);
-  border: 1px solid var(--border-subtle);
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-petrol);
+  border-radius: 999px;
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--brand-white);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .btn-ghost {
   background: transparent;
   color: var(--primary);
-  border: 1px dashed rgba(255, 87, 34, 0.4);
+  border: 1px dashed var(--border-subtle);
 }
 
 .btn-ghost:hover {
-  background: rgba(255, 87, 34, 0.08);
+  background: var(--bg-card);
   border-color: var(--primary);
 }
 
@@ -154,20 +231,25 @@ button {
 }
 
 .btn-danger-icon {
-  background: rgba(239, 68, 68, 0.12);
-  color: var(--danger);
-  border: 1px solid rgba(239, 68, 68, 0.25);
   padding: 6px;
   border-radius: 6px;
   transition: all 0.2s;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-burgundy);
 }
 
 .btn-danger-icon:hover {
-  background: var(--danger);
-  color: white;
+  background: var(--brand-burgundy);
+  color: var(--brand-white);
+  border-color: var(--brand-beige);
 }
 
-/* Badges */
+/* ==========================================================================
+   07. ETIQUETAS DE ESTADO
+   Pequeñas etiquetas para destacar información, videos o resultados. Comparten la clase base .badge.
+   ========================================================================== */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -181,38 +263,46 @@ button {
 }
 
 .badge-primary {
-  background: rgba(255, 87, 34, 0.15);
-  color: #ff7043;
-  border: 1px solid rgba(255, 87, 34, 0.3);
+  border: 1px solid var(--border-subtle);
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .badge-video {
-  background: rgba(0, 229, 255, 0.15);
-  color: var(--accent-cyan);
-  border: 1px solid rgba(0, 229, 255, 0.3);
+  border: 1px solid var(--border-subtle);
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .badge-muted {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-dim);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .badge-success {
-  background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  border: 1px solid var(--border-subtle);
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
-/* Muscle Tag */
+/* ==========================================================================
+   08. ETIQUETAS DE GRUPOS MUSCULARES
+   Presenta nombres de músculos y permite acomodar varias etiquetas en una fila que puede continuar abajo.
+   ========================================================================== */
 .muscle-tag {
   display: inline-block;
-  background: rgba(255, 255, 255, 0.06);
-  color: #cbd5e1;
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 0.8rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .muscle-tag.small {
@@ -226,7 +316,10 @@ button {
   gap: 6px;
 }
 
-/* Forms & Inputs */
+/* ==========================================================================
+   09. FORMULARIOS Y CAMPOS
+   Agrupa etiquetas, campos, selectores y textos de ayuda. :focus modifica el campo seleccionado para escribir.
+   ========================================================================== */
 .form-group {
   margin-bottom: 18px;
   display: flex;
@@ -237,26 +330,29 @@ button {
 .form-label {
   font-size: 0.88rem;
   font-weight: 600;
-  color: #cbd5e1;
+  color: var(--text-main);
 }
 
 .form-input {
   width: 100%;
-  background: rgba(10, 13, 22, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-sm);
-  color: var(--text-main);
   padding: 11px 14px;
   font-size: 0.95rem;
   font-family: inherit;
   transition: all 0.2s ease;
+  background: var(--input-bg);
+  color: var(--input-text);
+  border: 1px solid var(--border-subtle);
+  color-scheme: light;
 }
 
 .form-input:focus {
-  outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.2);
-  background: rgba(15, 20, 32, 0.9);
+  background: var(--input-bg);
+  color: var(--input-text);
+  outline: 2px solid var(--brand-petrol);
+  outline-offset: 2px;
+  box-shadow: none;
 }
 
 .form-select {
@@ -278,7 +374,7 @@ button {
 .input-suffix {
   position: absolute;
   right: 14px;
-  color: var(--text-muted);
+  color: var(--input-text);
   font-weight: 600;
   pointer-events: none;
 }
@@ -288,6 +384,7 @@ button {
   color: var(--text-dim);
 }
 
+/* Oculta visualmente un texto sin quitarlo de la lectura de tecnologías de asistencia. */
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -299,7 +396,10 @@ button {
   border: 0;
 }
 
-/* Alerts */
+/* ==========================================================================
+   10. MENSAJES DE ÉXITO Y ERROR
+   Define las cajas de aviso y sus colores según el resultado de una acción.
+   ========================================================================== */
 .alert-box {
   display: flex;
   align-items: center;
@@ -312,18 +412,25 @@ button {
 }
 
 .alert-error {
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.35);
-  color: #fca5a5;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-petrol);
+  box-shadow: none;
 }
 
 .alert-success {
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.35);
-  color: #6ee7b7;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-petrol);
+  box-shadow: none;
 }
 
-/* App Shell Layout */
+/* ==========================================================================
+   11. ESTRUCTURA GENERAL DE LA APLICACIÓN
+   Organiza la página en columna y limita el ancho del contenido. .main-content-container controla los márgenes principales.
+   ========================================================================== */
 .app-shell {
   min-height: 100vh;
   display: flex;
@@ -331,32 +438,36 @@ button {
 }
 
 .main-content-container {
-  max-width: 1280px;
   width: 100%;
   margin: 0 auto;
-  padding: 28px 24px 60px 24px;
   flex: 1;
+  max-width: 1440px;
+  padding: 30px 24px 100px;
 }
 
-/* Navbar */
+/* ==========================================================================
+   12. BARRA DE NAVEGACIÓN: ESTRUCTURA
+   Marca, enlaces, usuario y cierre de sesión. Los ajustes de modo claro están en 27 y los controles adicionales en 28.
+   ========================================================================== */
 .navbar-root {
-  background: rgba(14, 18, 28, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-subtle);
-  position: sticky;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   top: 0;
+  background: var(--bg-main);
+  border-bottom: none;
+  position: relative;
   z-index: 100;
 }
 
 .navbar-container {
-  max-width: 1280px;
   margin: 0 auto;
-  padding: 12px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  max-width: 1440px;
+  padding: 16px 32px;
+  gap: 24px;
+  flex-wrap: wrap;
 }
 
 .navbar-brand {
@@ -369,24 +480,25 @@ button {
   width: 42px;
   height: 42px;
   border-radius: 10px;
-  background: var(--primary-gradient);
+  background: var(--bg-card);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  box-shadow: 0 4px 14px rgba(255, 87, 34, 0.4);
+  color: var(--text-main);
+  box-shadow: none;
 }
 
 .brand-title {
   font-family: var(--font-heading);
-  font-size: 1.25rem;
-  font-weight: 800;
   letter-spacing: -0.01em;
-  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   display: block;
   line-height: 1.1;
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  color: var(--text-main);
+  font-size: 32px;
+  font-weight: 700;
 }
 
 .brand-subtitle {
@@ -400,31 +512,38 @@ button {
 .navbar-nav {
   display: flex;
   align-items: center;
-  gap: 8px;
+  flex: 1;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .nav-link {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
   border-radius: 8px;
-  color: var(--text-muted);
-  font-size: 0.92rem;
-  font-weight: 600;
   transition: all 0.2s ease;
-  background: transparent;
   border: none;
+  color: var(--text-main);
+  background: transparent;
+  font-size: 18px;
+  font-weight: 400;
+  padding: 8px 4px;
 }
 
 .nav-link:hover {
   color: var(--text-main);
-  background: rgba(255, 255, 255, 0.06);
+  background: transparent;
+  text-decoration: underline;
+  text-underline-offset: 6px;
 }
 
 .nav-link.active {
-  color: #ff7043;
-  background: rgba(255, 87, 34, 0.12);
+  color: var(--text-main);
+  background: transparent;
+  text-decoration: underline;
+  text-underline-offset: 6px;
 }
 
 .btn-link-action {
@@ -445,14 +564,14 @@ button {
   font-size: 0.8rem;
   font-weight: 600;
   border-radius: 20px;
-  background: rgba(0, 229, 255, 0.1);
+  background: var(--bg-card);
   color: var(--accent-cyan);
-  border: 1px solid rgba(0, 229, 255, 0.3);
+  border: 1px solid var(--border-subtle);
   transition: all 0.2s ease;
 }
 
 .btn-quick-switch:hover {
-  background: rgba(0, 229, 255, 0.2);
+  background: var(--bg-card);
 }
 
 .user-profile-chip {
@@ -460,31 +579,37 @@ button {
   align-items: center;
   gap: 10px;
   padding: 5px 12px 5px 6px;
-  background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-subtle);
-  border-radius: 30px;
+  background: var(--brand-petrol);
+  color: var(--brand-white);
+  border-color: var(--brand-petrol);
+  border-radius: 999px;
 }
 
 .user-avatar-circle {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgba(255, 87, 34, 0.2);
-  color: #ff7043;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .user-info-text {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
 .user-name {
-  font-size: 0.82rem;
   font-weight: 700;
   line-height: 1.1;
+  font-size: 15px;
+  color: var(--brand-white);
 }
 
 .user-role-badge {
@@ -495,11 +620,15 @@ button {
 }
 
 .user-role-badge.entrenador {
-  color: #ff7043;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .user-role-badge.atleta {
-  color: #38bdf8;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .btn-logout {
@@ -515,33 +644,42 @@ button {
 
 .btn-logout:hover {
   color: var(--danger);
-  background: rgba(239, 68, 68, 0.1);
+  background: var(--bg-card);
 }
 
-/* Modals */
+/* ==========================================================================
+   13. VENTANAS EMERGENTES: BASE
+   Fondo que cubre la pantalla, caja central, encabezado, cierre y pie de acciones. Se comparte entre distintos formularios.
+   ========================================================================== */
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(5, 7, 12, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
-  padding: 20px;
   animation: fadeIn 0.2s ease;
+  background: rgba(90, 5, 5, .65);
+  padding: 20px;
+  overflow: auto;
+  z-index: 2000;
 }
 
 .modal-container {
-  background: #151928;
-  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: var(--radius-lg);
-  width: 100%;
   max-width: 580px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
   overflow: hidden;
-  animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: none;
+  width: 100%;
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  min-width: 0;
+  animation: none;
 }
 
 .video-modal-card {
@@ -553,11 +691,12 @@ button {
 }
 
 .modal-header {
-  padding: 20px 24px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border-subtle);
+  align-items: flex-start;
+  gap: 16px;
+  padding: 22px;
 }
 
 .modal-title-group {
@@ -567,7 +706,9 @@ button {
 }
 
 .modal-title {
-  font-size: 1.25rem;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  color: var(--text-main);
 }
 
 .btn-icon-close {
@@ -582,8 +723,8 @@ button {
 }
 
 .btn-icon-close:hover {
-  color: white;
-  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+  background: var(--bg-card);
 }
 
 .modal-header-actions {
@@ -596,37 +737,42 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  color: #f87171;
   padding: 6px 12px;
-  border-radius: 6px;
   font-size: 0.82rem;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.2s;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-petrol);
+  border-radius: 999px;
 }
 
 .btn-open-external:hover {
-  background: rgba(239, 68, 68, 0.25);
-  color: white;
-  border-color: #ef4444;
+  background: var(--brand-white);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .modal-footer {
-  padding: 16px 24px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
   border-top: 1px solid var(--border-subtle);
-  background: rgba(10, 13, 22, 0.4);
+  background: var(--bg-surface);
+  flex-wrap: wrap;
+  padding: 18px 22px;
 }
 
-/* Video In-App Component (HU-05) */
+/* ==========================================================================
+   14. REPRODUCTOR Y DETALLE DE EJERCICIOS
+   Tamaños del video, contenido alternativo cuando no hay video y descripción dentro de la ventana.
+   ========================================================================== */
 .video-player-wrapper {
-  background: #000000;
   width: 100%;
+  background: #000000;
 }
 
 .video-responsive-box {
@@ -635,7 +781,7 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #000;
+  background: #000000;
 }
 
 .in-app-video-element {
@@ -657,17 +803,19 @@ button {
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--bg-card);
 }
 
 .placeholder-icon-circle {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: rgba(245, 158, 11, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .placeholder-title {
@@ -706,20 +854,24 @@ button {
 
 .exercise-description-text {
   font-size: 0.95rem;
-  color: #e2e8f0;
+  color: var(--text-main);
   line-height: 1.6;
 }
 
-/* Athlete Dashboard Hero */
+/* ==========================================================================
+   15. PANEL DEL ATLETA: ENCABEZADO
+   Presenta el plan activo, su entrenador y los datos principales del entrenamiento.
+   ========================================================================== */
 .plan-hero-banner {
-  background: linear-gradient(135deg, rgba(255, 87, 34, 0.15) 0%, rgba(22, 27, 42, 0.8) 100%);
-  border: 1px solid rgba(255, 87, 34, 0.3);
   border-radius: var(--radius-lg);
   padding: 28px 32px;
   margin-bottom: 28px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: none;
 }
 
 .hero-badge-wrap {
@@ -731,12 +883,15 @@ button {
 
 .hero-coach-tag {
   font-size: 0.85rem;
-  color: #cbd5e1;
+  color: var(--text-main);
 }
 
 .hero-plan-title {
-  font-size: 2.2rem;
-  margin-bottom: 14px;
+  font-family: var(--font-heading);
+  color: var(--text-main);
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 400;
+  line-height: 1.15;
 }
 
 .hero-meta-row {
@@ -753,7 +908,10 @@ button {
   gap: 8px;
 }
 
-/* Routine Pills */
+/* ==========================================================================
+   16. SELECTOR DE RUTINAS
+   Botones para elegir una rutina. La clase .active distingue la opción seleccionada.
+   ========================================================================== */
 .routines-selector-bar {
   margin-bottom: 24px;
 }
@@ -779,24 +937,24 @@ button {
   align-items: center;
   gap: 12px;
   padding: 12px 20px;
-  border-radius: var(--radius-md);
-  background: rgba(22, 27, 42, 0.6);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-muted);
   transition: all 0.2s ease;
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
 }
 
 .routine-pill-btn:hover {
-  background: rgba(30, 37, 58, 0.8);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: var(--bg-card-hover);
   color: var(--text-main);
+  border-color: var(--border-active);
 }
 
 .routine-pill-btn.active {
-  background: rgba(255, 87, 34, 0.16);
-  border-color: var(--primary);
-  color: var(--text-main);
-  box-shadow: 0 4px 16px rgba(255, 87, 34, 0.25);
+  box-shadow: none;
+  background: var(--brand-petrol);
+  color: var(--brand-white);
+  border-color: var(--brand-petrol);
 }
 
 .pill-dot {
@@ -808,7 +966,7 @@ button {
 
 .routine-pill-btn.active .pill-dot {
   background: var(--primary);
-  box-shadow: 0 0 8px var(--primary);
+  box-shadow: none;
 }
 
 .pill-text-col {
@@ -827,13 +985,17 @@ button {
   color: var(--text-dim);
 }
 
-/* Routine Execution Card */
+/* ==========================================================================
+   17. EJECUCIÓN DEL ENTRENAMIENTO
+   Contenedor de la rutina, lista de ejercicios, objetivos e ingreso a las guías.
+   ========================================================================== */
 .routine-execution-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: 30px;
-  box-shadow: var(--shadow-md);
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: none;
 }
 
 .routine-header-bar {
@@ -841,8 +1003,9 @@ button {
 }
 
 .routine-heading {
-  font-size: 1.6rem;
-  margin-bottom: 4px;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  color: var(--text-main);
 }
 
 .routine-subheading {
@@ -857,15 +1020,17 @@ button {
 }
 
 .exercise-workout-item {
-  background: rgba(14, 18, 28, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-md);
   padding: 20px;
   transition: all 0.2s ease;
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: none;
 }
 
 .exercise-workout-item:hover {
-  border-color: rgba(255, 255, 255, 0.14);
+  border-color: var(--border-subtle);
 }
 
 .exercise-item-header {
@@ -887,14 +1052,15 @@ button {
   font-family: var(--font-heading);
   font-size: 1.2rem;
   font-weight: 800;
-  color: var(--primary);
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: rgba(255, 87, 34, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .exercise-name {
@@ -919,53 +1085,63 @@ button {
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  border-radius: 20px;
-  background: rgba(0, 229, 255, 0.1);
-  color: var(--accent-cyan);
-  border: 1px solid rgba(0, 229, 255, 0.3);
   font-size: 0.85rem;
   font-weight: 700;
   transition: all 0.2s;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-petrol);
+  border-radius: 999px;
 }
 
 .btn-open-guide:hover {
-  background: rgba(0, 229, 255, 0.2);
-  transform: translateY(-1px);
+  transform: none;
+  background: var(--brand-white);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
-/* Sets Table */
+/* ==========================================================================
+   18. TABLA DE SERIES
+   Distribuye las series y sus campos de carga. El contenedor permite desplazarse cuando la tabla no entra.
+   ========================================================================== */
 .sets-table-container {
   overflow-x: auto;
 }
 
 .sets-table {
+  text-align: left;
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
 }
 
 .sets-table th {
   padding: 10px 14px;
   font-size: 0.8rem;
-  color: var(--text-dim);
-  font-weight: 700;
-  text-transform: uppercase;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  text-transform: none;
+  font-weight: 500;
 }
 
 .sets-table td {
   padding: 12px 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid var(--border-subtle);
   font-size: 0.95rem;
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
 }
 
 .row-completed td {
-  background: rgba(16, 185, 129, 0.05);
+  background: var(--bg-card);
 }
 
 .set-num-cell {
   font-weight: 700;
-  color: #cbd5e1;
+  color: var(--text-main);
 }
 
 .target-cell {
@@ -979,20 +1155,24 @@ button {
 
 .table-input {
   width: 100%;
-  background: rgba(10, 13, 22, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 6px;
-  color: white;
   padding: 7px 10px;
   font-size: 0.95rem;
   font-family: inherit;
   transition: all 0.15s;
+  background: var(--input-bg);
+  color: var(--input-text);
+  border: 1px solid var(--border-subtle);
+  color-scheme: light;
 }
 
 .table-input:focus {
-  outline: none;
   border-color: var(--primary);
-  background: rgba(20, 26, 42, 0.9);
+  background: var(--input-bg);
+  color: var(--input-text);
+  outline: 2px solid var(--brand-petrol);
+  outline-offset: 2px;
+  box-shadow: none;
 }
 
 .checkbox-container {
@@ -1009,7 +1189,7 @@ button {
   width: 22px;
   height: 22px;
   border-radius: 6px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid var(--border-subtle);
   display: inline-block;
   position: relative;
   transition: all 0.2s;
@@ -1022,7 +1202,7 @@ button {
 
 .checkbox-container input:checked + .custom-check-box::after {
   content: '✓';
-  color: white;
+  color: var(--text-main);
   position: absolute;
   top: 50%;
   left: 50%;
@@ -1031,7 +1211,10 @@ button {
   font-weight: 900;
 }
 
-/* Session Finish Footer */
+/* ==========================================================================
+   19. FINALIZACIÓN DE LA SESIÓN
+   Controles, resumen y espacios para completar el registro del entrenamiento.
+   ========================================================================== */
 .session-finish-footer {
   margin-top: 32px;
   padding-top: 24px;
@@ -1051,37 +1234,38 @@ button {
 }
 
 .btn-finish-session {
-  box-shadow: 0 4px 20px rgba(255, 87, 34, 0.4);
+  box-shadow: none;
 }
 
 .session-completed-banner {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.35);
   padding: 14px 24px;
   border-radius: var(--radius-md);
-  color: #34d399;
   font-weight: 600;
   font-size: 0.95rem;
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15);
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-petrol);
+  box-shadow: none;
 }
 
 .table-input:disabled {
-  background: rgba(15, 23, 42, 0.45);
-  color: #94a3b8;
-  border-color: rgba(255, 255, 255, 0.06);
   cursor: not-allowed;
-  opacity: 0.8;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  opacity: .65;
 }
 
 .textarea-notes:disabled {
-  background: rgba(15, 23, 42, 0.45);
-  color: #94a3b8;
-  border-color: rgba(255, 255, 255, 0.06);
   cursor: not-allowed;
-  opacity: 0.8;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  opacity: .65;
 }
 
 .checkbox-container.is-disabled {
@@ -1089,7 +1273,10 @@ button {
   opacity: 0.65;
 }
 
-/* KPI Cards & Metrics */
+/* ==========================================================================
+   20. TARJETAS DE INDICADORES
+   KPI significa indicador: valores destacados, unidades y progreso. Estas clases pueden usarse en más de una pantalla.
+   ========================================================================== */
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -1098,13 +1285,15 @@ button {
 }
 
 .kpi-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: none;
 }
 
 .kpi-top {
@@ -1142,16 +1331,16 @@ button {
 .adherence-progress-bar-track {
   width: 100%;
   height: 8px;
-  background: rgba(255, 255, 255, 0.08);
   border-radius: 4px;
   overflow: hidden;
+  background: var(--brand-beige);
 }
 
 .adherence-progress-bar-fill {
   height: 100%;
-  background: var(--primary-gradient);
   border-radius: 4px;
   transition: width 0.5s ease;
+  background: var(--brand-petrol);
 }
 
 .kpi-footer-note {
@@ -1164,11 +1353,14 @@ button {
 
 .kpi-incentive-msg {
   font-size: 0.85rem;
-  color: #38bdf8;
+  color: var(--text-main);
   font-weight: 600;
 }
 
-/* Charts Grid */
+/* ==========================================================================
+   21. MÉTRICAS Y GRÁFICOS
+   Distribución de paneles de progreso, títulos y elementos que acompañan los gráficos.
+   ========================================================================== */
 .charts-main-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
@@ -1177,6 +1369,10 @@ button {
 
 .chart-box-card {
   padding: 26px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: none;
 }
 
 .chart-card-header {
@@ -1188,10 +1384,9 @@ button {
 }
 
 .chart-box-title {
-  font-size: 1.25rem;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  color: var(--text-main);
 }
 
 .chart-box-subtitle {
@@ -1201,9 +1396,9 @@ button {
 
 .svg-chart-container {
   width: 100%;
-  background: rgba(10, 13, 22, 0.4);
   border-radius: var(--radius-sm);
   padding: 10px;
+  background: var(--bg-card);
 }
 
 .analytics-svg {
@@ -1229,26 +1424,34 @@ button {
 }
 
 .mini-history-table {
+  font-size: 0.88rem;
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.88rem;
 }
 
 .mini-history-table th {
   padding: 8px 12px;
-  color: var(--text-dim);
   font-size: 0.75rem;
-  text-transform: uppercase;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--border-subtle);
   text-align: left;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  text-transform: none;
+  font-weight: 500;
 }
 
 .mini-history-table td {
   padding: 8px 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
 }
 
-/* Catalog Grid */
+/* ==========================================================================
+   22. CATÁLOGO DE EJERCICIOS
+   Buscador, filtros, grilla y tarjetas del catálogo. Las acciones de editar y eliminar se completan en 29.
+   ========================================================================== */
 .catalog-header-row {
   display: flex;
   align-items: center;
@@ -1273,24 +1476,28 @@ button {
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--text-dim);
+  color: var(--input-text);
 }
 
 .search-input {
   width: 100%;
-  background: rgba(22, 27, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 30px;
-  color: white;
   padding: 12px 16px 12px 42px;
   font-size: 0.95rem;
   font-family: inherit;
+  background: var(--input-bg);
+  color: var(--input-text);
+  border: 1px solid var(--border-subtle);
+  color-scheme: light;
+  border-radius: 999px;
 }
 
 .search-input:focus {
-  outline: none;
   border-color: var(--primary);
-  background: rgba(30, 37, 58, 0.8);
+  background: var(--input-bg);
+  color: var(--input-text);
+  outline: 2px solid var(--brand-petrol);
+  outline-offset: 2px;
+  box-shadow: none;
 }
 
 .muscle-filter-pills {
@@ -1301,42 +1508,45 @@ button {
 
 .filter-pill-btn {
   padding: 6px 16px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-muted);
   font-size: 0.82rem;
   font-weight: 700;
   transition: all 0.2s;
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
 }
 
 .filter-pill-btn.active {
-  background: var(--primary-gradient);
-  color: white;
-  border-color: transparent;
+  background: var(--brand-petrol);
+  color: var(--brand-white);
+  border-color: var(--brand-petrol);
 }
 
 .exercises-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  /* Mantiene tarjetas de 320 px cuando hay espacio y se reduce en teléfonos. */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
   gap: 22px;
 }
 
 .exercise-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 14px;
   transition: all 0.25s ease;
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: none;
 }
 
 .exercise-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(255, 87, 34, 0.35);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+  transform: none;
+  border-color: var(--border-subtle);
+  box-shadow: none;
 }
 
 .exercise-card-header {
@@ -1377,7 +1587,10 @@ button {
   margin-top: 10px;
 }
 
-/* Trainer Plan Builder Layout */
+/* ==========================================================================
+   23. CONSTRUCTOR DE PLANES
+   Distribución de formularios y ejercicios que utiliza el entrenador para preparar un plan.
+   ========================================================================== */
 .trainer-builder-layout {
   display: flex;
   flex-direction: column;
@@ -1398,11 +1611,17 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .page-main-title {
-  font-size: 1.8rem;
+  font-family: var(--font-heading);
+  color: var(--text-main);
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 400;
+  line-height: 1.15;
 }
 
 .page-main-subtitle {
@@ -1434,10 +1653,12 @@ button {
 }
 
 .routine-builder-card {
-  background: rgba(14, 18, 28, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
   padding: 20px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: none;
 }
 
 .routine-card-top {
@@ -1465,21 +1686,26 @@ button {
 }
 
 .builder-table {
+  margin-bottom: 14px;
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 14px;
 }
 
 .builder-table th {
   padding: 8px 10px;
   font-size: 0.75rem;
-  color: var(--text-dim);
-  text-transform: uppercase;
   text-align: left;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  text-transform: none;
+  font-weight: 500;
 }
 
 .builder-table td {
   padding: 6px 6px;
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
 }
 
 .num-input {
@@ -1496,7 +1722,10 @@ button {
   margin-top: 20px;
 }
 
-/* Login Page Styles */
+/* ==========================================================================
+   24. INICIO DE SESIÓN
+   Fondo, tarjeta de acceso, marca y botones de demostración de la pantalla de ingreso.
+   ========================================================================== */
 .login-page-wrapper {
   min-height: 100vh;
   display: flex;
@@ -1507,32 +1736,35 @@ button {
 
 .login-card-container {
   width: 100%;
-  max-width: 480px;
-  background: rgba(18, 22, 34, 0.85);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border-radius: var(--radius-lg);
   padding: 36px 32px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: none;
+  max-width: 520px;
 }
 
 .brand-badge-large {
   width: 68px;
   height: 68px;
   border-radius: 18px;
-  background: rgba(255, 87, 34, 0.15);
-  border: 1px solid rgba(255, 87, 34, 0.35);
+  border: 1px solid var(--border-subtle);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--primary);
   margin-bottom: 16px;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .login-title {
-  font-size: 2rem;
   margin-bottom: 6px;
+  font-size: 48px;
+  font-weight: 500;
 }
 
 .login-subtitle {
@@ -1542,8 +1774,8 @@ button {
 }
 
 .demo-credentials-box {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px dashed rgba(255, 255, 255, 0.15);
+  background: var(--bg-card);
+  border: 1px dashed var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 16px;
   margin-bottom: 22px;
@@ -1570,30 +1802,35 @@ button {
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-subtle);
-  color: white;
   text-align: left;
   transition: all 0.2s;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-petrol);
+  border-radius: 16px;
+  min-width: 0;
+  min-height: 76px;
 }
 
 .btn-demo-card:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.25);
-  transform: translateY(-1px);
+  transform: none;
+  background: var(--brand-white);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .btn-demo-card.trainer {
-  border-left: 3px solid #ff7043;
+  border-left: 3px solid var(--border-subtle);
 }
 
 .btn-demo-card.athlete {
-  border-left: 3px solid #00e5ff;
+  border-left: 3px solid var(--border-subtle);
 }
 
 .demo-icon {
-  color: var(--text-muted);
+  color: var(--brand-burgundy);
+  flex-shrink: 0;
 }
 
 .demo-text {
@@ -1605,7 +1842,7 @@ button {
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: var(--brand-burgundy);
 }
 
 .demo-name {
@@ -1626,15 +1863,15 @@ button {
   left: 0;
   right: 0;
   height: 1px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--bg-card);
 }
 
 .divider-line span {
   position: relative;
-  background: #141826;
   padding: 0 12px;
   font-size: 0.78rem;
   color: var(--text-dim);
+  background: var(--bg-card);
 }
 
 .login-footer-info {
@@ -1654,7 +1891,10 @@ button {
   color: var(--text-muted);
 }
 
-/* Animations & Spinners */
+/* ==========================================================================
+   25. ANIMACIONES E INDICADORES DE CARGA
+   @keyframes define los pasos de una animación; animation la aplica. Aquí están las animaciones base y el indicador de carga.
+   ========================================================================== */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -1677,7 +1917,7 @@ button {
 .spinner {
   width: 38px;
   height: 38px;
-  border: 3px solid rgba(255, 87, 34, 0.2);
+  border: 3px solid var(--border-subtle);
   border-top-color: var(--primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
@@ -1699,7 +1939,10 @@ button {
   gap: 14px;
 }
 
-/* Responsive */
+/* ==========================================================================
+   26. ADAPTACIÓN GENERAL A PANTALLAS PEQUEÑAS
+   @media aplica estas reglas cuando la ventana mide 768 píxeles o menos. Hay otros ajustes locales en las secciones de perfil.
+   ========================================================================== */
 @media (max-width: 768px) {
   .navbar-container {
     flex-direction: column;
@@ -1720,154 +1963,33 @@ button {
   }
 }
 
-/* ═══════════════════════════════════════════════
-   LIGHT THEME OVERRIDES
-═══════════════════════════════════════════════ */
+/* ==========================================================================
+   27. MODO CLARO: VARIABLES Y AJUSTES
+   ThemeContext.tsx agrega .theme-light al documento. Primero se reemplazan variables; luego se ajustan componentes específicos. Otros ajustes claros permanecen junto a su componente.
+   ========================================================================== */
+/* Variables del modo claro. Las que no aparecen aquí conservan su valor de :root. */
 .theme-light {
-  --bg-main: #f0f2f8;
-  --bg-surface: #ffffff;
-  --bg-card: rgba(255, 255, 255, 0.9);
-  --bg-card-hover: rgba(245, 247, 255, 0.95);
-  --border-subtle: rgba(0, 0, 0, 0.10);
-  --border-active: rgba(255, 87, 34, 0.45);
-  --text-main: #1a1f35;
-  --text-muted: #5a6580;
-  --text-dim: #8a95b0;
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.12);
-  --shadow-glow: 0 0 30px rgba(255, 87, 34, 0.15);
+  --bg-main: var(--brand-white);
+  --bg-surface: var(--brand-white);
+  --bg-card: var(--brand-white);
+  --bg-card-hover: rgba(238, 216, 192, 0.35);
+  --border-active: var(--brand-burgundy);
+  --text-main: var(--brand-burgundy);
+  --text-muted: var(--brand-burgundy);
+  --text-dim: var(--brand-burgundy);
+  --accent: var(--brand-petrol);
+  --accent-cyan: var(--brand-petrol);
+  --accent-purple: var(--brand-petrol);
+  --chart-line: var(--brand-petrol);
+  color-scheme: light;
 }
 
-.theme-light body,
-.theme-light {
-  background-color: var(--bg-main);
-  color: var(--text-main);
-  background-image:
-    radial-gradient(circle at 15% 15%, rgba(255, 87, 34, 0.05) 0%, transparent 45%),
-    radial-gradient(circle at 85% 75%, rgba(0, 100, 200, 0.04) 0%, transparent 50%);
-}
+/* Ajustes del modo claro para componentes: estos selectores tienen más detalle que los estilos base. */
 
-.theme-light .navbar-root {
-  background: rgba(255, 255, 255, 0.92);
-  border-bottom-color: rgba(0,0,0,0.10);
-}
-
-.theme-light .card-glass,
-.theme-light .plan-hero-banner,
-.theme-light .routine-execution-card,
-.theme-light .exercise-card,
-.theme-light .kpi-card,
-.theme-light .chart-box-card {
-  background: var(--bg-card);
-  border-color: var(--border-subtle);
-  box-shadow: var(--shadow-sm);
-}
-
-.theme-light .form-input,
-.theme-light .modal-container,
-.theme-light .table-input {
-  background: #f8faff;
-  border-color: rgba(0,0,0,0.14);
-  color: var(--text-main);
-}
-
-.theme-light .form-input:focus,
-.theme-light .table-input:focus {
-  border-color: var(--primary);
-  background: #ffffff;
-}
-
-.theme-light .sets-table th {
-  background: rgba(0,0,0,0.04);
-  color: var(--text-muted);
-}
-
-.theme-light .sets-table td {
-  border-color: rgba(0,0,0,0.06);
-}
-
-.theme-light .modal-container {
-  background: #ffffff;
-}
-
-.theme-light .modal-footer {
-  background: rgba(0,0,0,0.03);
-}
-
-.theme-light .routine-pill-btn {
-  background: rgba(0,0,0,0.05);
-  color: var(--text-main);
-}
-
-.theme-light .routine-pill-btn.active {
-  background: var(--primary-gradient);
-  color: white;
-}
-
-.theme-light .filter-pill-btn {
-  background: rgba(0,0,0,0.06);
-  color: var(--text-muted);
-}
-
-.theme-light .filter-pill-btn.active {
-  background: var(--primary);
-  color: white;
-}
-
-.theme-light .nav-link {
-  color: var(--text-muted);
-}
-
-.theme-light .nav-link:hover,
-.theme-light .nav-link.active {
-  background: rgba(255, 87, 34, 0.10);
-  color: var(--primary);
-}
-
-.theme-light .user-profile-chip {
-  background: rgba(0,0,0,0.05);
-  border-color: rgba(0,0,0,0.10);
-}
-
-.theme-light .btn-logout,
-.theme-light .btn-icon-nav {
-  color: var(--text-muted);
-}
-
-.theme-light .btn-logout:hover,
-.theme-light .btn-icon-nav:hover {
-  background: rgba(0,0,0,0.08);
-  color: var(--text-main);
-}
-
-.theme-light .empty-plan-card,
-.theme-light .empty-plan-hero {
-  background: transparent;
-}
-
-.theme-light .demo-credentials-box {
-  background: rgba(0,0,0,0.04);
-  border-color: rgba(0,0,0,0.08);
-}
-
-.theme-light .btn-demo-card {
-  background: rgba(0,0,0,0.04);
-  border-color: rgba(0,0,0,0.10);
-  color: var(--text-main);
-}
-
-.theme-light .mini-history-table th,
-.theme-light .mini-history-table td {
-  border-color: rgba(0,0,0,0.07);
-}
-
-.theme-light .weight-history-table-box {
-  background: rgba(0,0,0,0.03);
-}
-
-/* ═══════════════════════════════════════════════
-   NAVBAR — Icono tema + chip de perfil clickable
-═══════════════════════════════════════════════ */
+/* ==========================================================================
+   28. BARRA DE NAVEGACIÓN: TEMA Y PERFIL
+   Completa la sección 12. El botón cambia el tema y la tarjeta de usuario abre el perfil. Estas reglas posteriores pueden reemplazar las anteriores.
+   ========================================================================== */
 .btn-icon-nav {
   background: transparent;
   border: none;
@@ -1883,26 +2005,30 @@ button {
 }
 
 .btn-icon-nav:hover {
-  background: rgba(255, 87, 34, 0.12);
+  background: var(--bg-card);
   color: var(--primary);
 }
 
 .user-profile-chip.clickable {
   cursor: pointer;
   border: none;
-  background: rgba(255,255,255,0.05);
   border: 1px solid var(--border-subtle);
   gap: 8px;
-  padding: 6px 10px 6px 8px;
-  border-radius: 10px;
   display: flex;
   align-items: center;
   transition: background 0.2s, border-color 0.2s;
+  background: var(--brand-petrol);
+  color: var(--brand-white);
+  border-color: var(--brand-petrol);
+  padding: 10px 24px;
+  border-radius: 999px;
+  min-height: 64px;
 }
 
 .user-profile-chip.clickable:hover {
-  background: rgba(255, 87, 34, 0.10);
-  border-color: var(--border-active);
+  background: var(--brand-petrol);
+  color: var(--brand-white);
+  border-color: var(--brand-beige);
 }
 
 .profile-chip-settings-icon {
@@ -1910,9 +2036,10 @@ button {
   flex-shrink: 0;
 }
 
-/* ═══════════════════════════════════════════════
-   EXERCISE CARD — Botones Editar / Eliminar
-═══════════════════════════════════════════════ */
+/* ==========================================================================
+   29. CATÁLOGO: ACCIONES DE LOS EJERCICIOS
+   Botones para editar o eliminar dentro de las tarjetas. Complementa la estructura del catálogo de la sección 22.
+   ========================================================================== */
 .card-trainer-actions {
   display: flex;
   gap: 8px;
@@ -1935,34 +2062,37 @@ button {
 }
 
 .btn-card-action.edit {
-  background: rgba(0, 229, 255, 0.08);
-  border-color: rgba(0, 229, 255, 0.25);
-  color: var(--accent-cyan);
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-petrol);
+  border-radius: 999px;
 }
 
 .btn-card-action.edit:hover {
-  background: rgba(0, 229, 255, 0.18);
-  border-color: rgba(0, 229, 255, 0.5);
+  background: var(--brand-white);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .btn-card-action.delete {
-  background: rgba(239, 68, 68, 0.08);
-  border-color: rgba(239, 68, 68, 0.25);
-  color: #ef4444;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-burgundy);
 }
 
 .btn-card-action.delete:hover {
-  background: rgba(239, 68, 68, 0.18);
-  border-color: rgba(239, 68, 68, 0.5);
+  background: var(--brand-burgundy);
+  color: var(--brand-white);
+  border-color: var(--brand-beige);
 }
 
-/* ═══════════════════════════════════════════════
-   BTN DANGER
-═══════════════════════════════════════════════ */
+/* ==========================================================================
+   30. ELIMINACIÓN Y CONFIRMACIÓN
+   Botones de acciones destructivas y ventana pequeña de confirmación. Los colores de peligro comunican el tipo de acción.
+   ========================================================================== */
 .btn-danger {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
-  border: none;
   padding: 10px 20px;
   border-radius: 10px;
   font-weight: 600;
@@ -1972,10 +2102,17 @@ button {
   gap: 8px;
   cursor: pointer;
   transition: opacity 0.2s, transform 0.1s;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-burgundy);
 }
 
 .btn-danger:hover {
   opacity: 0.9;
+  background: var(--brand-burgundy);
+  color: var(--brand-white);
+  border-color: var(--brand-beige);
 }
 
 .btn-danger:active {
@@ -1987,7 +2124,7 @@ button {
   cursor: not-allowed;
 }
 
-/* Modal pequeño para confirmar delete */
+/* Ventana pequeña que solicita confirmar una eliminación. */
 .modal-sm {
   max-width: 420px !important;
 }
@@ -2005,12 +2142,13 @@ button {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: rgba(239, 68, 68, 0.12);
-  border: 1.5px solid rgba(239, 68, 68, 0.3);
+  border: 1.5px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ef4444;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .delete-confirm-text {
@@ -2019,9 +2157,10 @@ button {
   line-height: 1.6;
 }
 
-/* ═══════════════════════════════════════════════
-   PROFILE MODAL
-═══════════════════════════════════════════════ */
+/* ==========================================================================
+   31. VENTANA DE PERFIL
+   Distribución de datos personales, cambio de tema y campos para actualizar la contraseña.
+   ========================================================================== */
 .profile-modal-card {
   max-width: 560px !important;
 }
@@ -2029,7 +2168,7 @@ button {
 .profile-form-body {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 8px;
 }
 
 .profile-section-label {
@@ -2039,11 +2178,12 @@ button {
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
   color: var(--text-dim);
   margin: 20px 0 12px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+  letter-spacing: .03em;
 }
 
 .profile-section-label:first-of-type {
@@ -2056,23 +2196,23 @@ button {
   text-transform: none;
   letter-spacing: 0;
   color: var(--text-dim);
-  margin-left: auto;
+  margin-left: 0;
 }
 
-/* Theme toggle row */
+/* Fila del perfil que agrupa el texto y el control para cambiar el tema. */
 .theme-toggle-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid var(--border-subtle);
   border-radius: 12px;
   padding: 12px 16px;
   margin-bottom: 8px;
-}
-
-.theme-light .theme-toggle-row {
-  background: rgba(0,0,0,0.04);
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: none;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .theme-toggle-desc {
@@ -2084,22 +2224,25 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 87, 34, 0.10);
-  border: 1px solid rgba(255, 87, 34, 0.3);
-  color: var(--primary);
   font-size: 0.82rem;
   font-weight: 600;
   padding: 8px 14px;
-  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-petrol);
+  border-radius: 999px;
 }
 
 .btn-theme-toggle:hover {
-  background: rgba(255, 87, 34, 0.20);
+  background: var(--brand-white);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
-/* Password grid */
+/* Distribuye los campos de contraseña; en ventanas pequeñas pasan a una sola columna. */
 .profile-pw-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -2112,22 +2255,21 @@ button {
   }
 }
 
-/* ═══════════════════════════════════════════════
-   AVATAR PRESETS IN PROFILE MODAL (HU-02)
-═══════════════════════════════════════════════ */
+/* ==========================================================================
+   32. AVATARES Y VARIANTES DE USUARIO
+   Vista previa y selección de avatar. También contiene variantes del rol administrador y botones de acceso de demostración.
+   ========================================================================== */
 .avatar-selection-box {
   display: flex;
   align-items: center;
   gap: 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-subtle);
   border-radius: 12px;
   padding: 14px;
   margin-bottom: 12px;
-}
-
-.theme-light .avatar-selection-box {
-  background: rgba(0, 0, 0, 0.03);
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: none;
 }
 
 .profile-avatar-preview {
@@ -2136,7 +2278,7 @@ button {
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--primary);
-  box-shadow: 0 0 12px rgba(255, 87, 34, 0.35);
+  box-shadow: none;
   flex-shrink: 0;
 }
 
@@ -2145,6 +2287,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-width: 0;
 }
 
 .avatar-help-text {
@@ -2177,14 +2320,14 @@ button {
 }
 
 .avatar-preset-btn:hover {
-  transform: scale(1.1);
-  border-color: rgba(255, 87, 34, 0.6);
+  transform: none;
+  border-color: var(--border-subtle);
 }
 
 .avatar-preset-btn.selected {
   border-color: var(--primary);
   transform: scale(1.1);
-  box-shadow: 0 0 10px rgba(255, 87, 34, 0.5);
+  box-shadow: none;
 }
 
 .form-input-sm {
@@ -2201,24 +2344,41 @@ button {
 }
 
 .user-role-badge.admin {
-  background: rgba(179, 136, 255, 0.18);
-  border-color: rgba(179, 136, 255, 0.5);
-  color: #b388ff;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .btn-demo-card.admin {
-  border-color: rgba(179, 136, 255, 0.3);
-  background: rgba(179, 136, 255, 0.05);
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-petrol);
+  border-radius: 16px;
 }
 
 .btn-demo-card.admin:hover {
-  border-color: rgba(179, 136, 255, 0.7);
-  background: rgba(179, 136, 255, 0.12);
+  background: var(--brand-white);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .demo-buttons-3 {
-  grid-template-columns: repeat(3, 1fr) !important;
+  grid-template-columns: minmax(0, 1fr) !important;
 }
+
+/* Registro de peso: separación interior y unidad fuera de las flechas numéricas. */
+.weight-form-fields { display: flex; flex-direction: column; gap: 18px; }
+.weight-form-fields .form-helper-text { margin: 0; }
+.weight-form .input-with-suffix { gap: 10px; }
+.weight-form .input-suffix { position: static; color: var(--text-main); flex-shrink: 0; }
+.weight-form .form-input { min-width: 0; }
+.weight-modal-card .modal-title-group { min-width: 0; }
+.weight-modal-card .modal-title { overflow-wrap: anywhere; }
+
+/* Selector de fotos: evita que el nombre del archivo ensanche el perfil. */
+.profile-photo-input { width: 100%; min-width: 0; color: var(--text-main); font: inherit; font-size: .85rem; }
+.profile-photo-input::file-selector-button { border: 1px solid var(--brand-petrol); border-radius: 12px; padding: 10px; margin-right: 8px; background: var(--brand-beige); color: var(--brand-burgundy); cursor: pointer; }
 
 @media (max-width: 650px) {
   .demo-buttons-3 {
@@ -2226,21 +2386,23 @@ button {
   }
 }
 
-/* ═══════════════════════════════════════════════
-   ADMIN USER MANAGEMENT PAGE (HU-01)
-═══════════════════════════════════════════════ */
+/* ==========================================================================
+   33. GESTIÓN DE USUARIOS
+   Pantalla de AdminUserManagementPage.tsx: encabezado, contadores, buscador, tabla y selector de rol. Para editar la pantalla de las referencias, empezar aquí.
+   ========================================================================== */
 .admin-page-container {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
+/* Encabezado: agrupa el título y el botón para crear usuarios. */
 .admin-header-banner {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
   gap: 16px;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .admin-badge-pill {
@@ -2253,16 +2415,19 @@ button {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  background: rgba(179, 136, 255, 0.15);
-  border: 1px solid rgba(179, 136, 255, 0.4);
-  color: #b388ff;
+  border: 1px solid var(--border-subtle);
   margin-bottom: 8px;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .admin-title {
-  font-size: 2rem;
+  font-family: var(--font-heading);
   color: var(--text-main);
-  margin-bottom: 4px;
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 400;
+  line-height: 1.15;
 }
 
 .admin-subtitle {
@@ -2270,60 +2435,76 @@ button {
   font-size: 0.95rem;
 }
 
+/* Contadores: distribuye el total de usuarios, entrenadores y atletas en columnas adaptables. */
 .admin-kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+  margin: 8px 32px 0;
 }
 
 .kpi-icon-box.primary {
-  background: rgba(0, 229, 255, 0.12);
-  color: var(--accent-cyan);
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .kpi-icon-box.warning {
-  background: rgba(245, 158, 11, 0.12);
-  color: var(--warning);
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .kpi-icon-box.success {
-  background: rgba(16, 185, 129, 0.12);
-  color: var(--success);
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
+/* Barra de herramientas: buscador y filtros por rol. */
 .admin-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  padding: 16px;
   border-radius: 14px;
   flex-wrap: wrap;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0 32px;
 }
 
 .admin-search-box {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border-subtle);
-  border-radius: 10px;
-  padding: 8px 14px;
   flex: 1;
-  min-width: 260px;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border-radius: 999px;
+  min-width: 0;
+  min-height: 46px;
+  padding: 10px 20px;
+  flex-basis: 100%;
 }
 
-.theme-light .admin-search-box {
-  background: rgba(0, 0, 0, 0.04);
+/* En esta barra la lupa participa de la fila, sin posicionamiento absoluto. */
+.admin-search-box .search-icon {
+  position: static;
+  transform: none;
+  flex-shrink: 0;
 }
 
 .admin-search-input {
-  background: transparent;
   border: none;
-  color: var(--text-main);
   font-size: 0.9rem;
   width: 100%;
   outline: none;
+  background: transparent;
+  color: var(--input-text);
 }
 
 .admin-filter-group {
@@ -2331,31 +2512,34 @@ button {
   gap: 8px;
 }
 
+/* Tabla: contenedor exterior; las reglas siguientes definen encabezados y celdas. */
 .admin-table-container {
-  border-radius: 16px;
   overflow: hidden;
   padding: 0;
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: none;
+  border-radius: 0;
 }
 
 .admin-users-table {
+  text-align: left;
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
 }
 
 .admin-users-table th {
   padding: 14px 18px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--text-dim);
-  background: rgba(255, 255, 255, 0.02);
   border-bottom: 1px solid var(--border-subtle);
-}
-
-.theme-light .admin-users-table th {
-  background: rgba(0, 0, 0, 0.03);
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  text-transform: none;
+  font-weight: 500;
+  font-size: 17px;
+  text-align: center;
 }
 
 .admin-users-table td {
@@ -2363,8 +2547,11 @@ button {
   font-size: 0.88rem;
   border-bottom: 1px solid var(--border-subtle);
   vertical-align: middle;
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
 }
 
+/* Contenido de las filas: avatar, nombre, correo, teléfono, entrenador y notas. */
 .user-cell-meta {
   display: flex;
   align-items: center;
@@ -2417,9 +2604,10 @@ button {
   border-radius: 20px;
   font-size: 0.78rem;
   font-weight: 600;
-  background: rgba(0, 229, 255, 0.08);
-  border: 1px solid rgba(0, 229, 255, 0.25);
-  color: var(--accent-cyan);
+  border: 1px solid var(--border-subtle);
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .user-notes-snippet {
@@ -2442,21 +2630,25 @@ button {
   color: var(--text-dim);
 }
 
+/* Acción de eliminar en una fila; :hover cambia su aspecto al pasar el puntero. */
 .btn-table-action.delete {
-  background: rgba(239, 68, 68, 0.08);
-  border: 1px solid rgba(239, 68, 68, 0.25);
-  color: #ef4444;
   padding: 6px 10px;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-burgundy);
 }
 
 .btn-table-action.delete:hover {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.5);
+  background: var(--brand-burgundy);
+  color: var(--brand-white);
+  border-color: var(--brand-beige);
 }
 
+/* Selector de rol del formulario de creación; .active marca el rol elegido. */
 .role-selector-pills {
   display: flex;
   gap: 10px;
@@ -2469,30 +2661,33 @@ button {
   justify-content: center;
   gap: 8px;
   padding: 10px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-muted);
   font-weight: 600;
   font-size: 0.88rem;
   cursor: pointer;
   transition: all 0.2s;
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
 }
 
 .role-select-btn:hover {
-  border-color: var(--border-active);
+  background: var(--bg-card-hover);
   color: var(--text-main);
+  border-color: var(--border-active);
 }
 
 .role-select-btn.active {
-  background: rgba(255, 87, 34, 0.15);
-  border-color: var(--primary);
-  color: var(--primary);
+  background: var(--brand-petrol);
+  color: var(--brand-white);
+  border-color: var(--brand-petrol);
 }
 
-/* ═══════════════════════════════════════════════
-   FLOATING REST TIMER WIDGET (HU-11)
-═══════════════════════════════════════════════ */
+/* ==========================================================================
+   34. TEMPORIZADOR DE DESCANSO
+   Ubicación flotante, reloj, barra de progreso y controles de pausa, reinicio y duración. Incluye botones que lo abren desde ejercicios.
+   ========================================================================== */
+/* position: fixed fija el temporizador a la ventana; bottom y right definen sus distancias al borde. */
 .rest-timer-floating-root {
   position: fixed;
   bottom: 24px;
@@ -2504,34 +2699,32 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(135deg, #161b2a, #1a2236);
-  border: 1.5px solid rgba(255, 87, 34, 0.4);
-  color: #ffffff;
+  border: 1.5px solid var(--border-subtle);
   padding: 10px 16px;
-  border-radius: 30px;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 16px rgba(255, 87, 34, 0.25);
   transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.theme-light .rest-timer-pill-btn {
-  background: #ffffff;
-  color: #1a1f35;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  background: var(--brand-petrol);
+  color: var(--brand-white);
+  border-color: var(--brand-petrol);
+  box-shadow: none;
+  border-radius: 999px;
 }
 
 .rest-timer-pill-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(255, 87, 34, 0.35);
+  transform: none;
+  background: var(--brand-burgundy);
+  color: var(--brand-white);
+  border-color: var(--brand-beige);
+  box-shadow: none;
 }
 
 .rest-timer-pill-btn.running {
-  border-color: var(--accent-cyan);
-  box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+  box-shadow: none;
+  border-color: var(--brand-beige);
 }
 
 .timer-pill-icon {
-  color: var(--primary);
+  color: var(--brand-beige);
 }
 
 .timer-pill-text {
@@ -2543,21 +2736,16 @@ button {
 
 .rest-timer-card {
   width: 290px;
-  background: rgba(18, 22, 36, 0.96);
-  border: 1px solid rgba(255, 87, 34, 0.35);
   border-radius: 18px;
   padding: 16px;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 87, 34, 0.2);
   display: flex;
   flex-direction: column;
   gap: 12px;
   animation: slideUp 0.25s ease-out;
-}
-
-.theme-light .rest-timer-card {
-  background: rgba(255, 255, 255, 0.98);
-  border-color: rgba(255, 87, 34, 0.3);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: none;
 }
 
 .rest-timer-header {
@@ -2591,22 +2779,22 @@ button {
 }
 
 .btn-icon-timer:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--bg-card);
   color: var(--text-main);
 }
 
 .timer-progress-bar-bg {
   width: 100%;
   height: 6px;
-  background: rgba(255, 255, 255, 0.08);
   border-radius: 4px;
   overflow: hidden;
+  background: var(--brand-beige);
 }
 
 .timer-progress-bar-fill {
   height: 100%;
-  background: var(--primary-gradient);
   transition: width 0.3s ease;
+  background: var(--brand-petrol);
 }
 
 .rest-timer-display {
@@ -2626,17 +2814,18 @@ button {
 }
 
 .timer-clock-digits.urgent {
-  color: #ef4444;
+  color: var(--text-main);
   animation: pulseUrgent 1s infinite alternate;
 }
 
 .timer-finished-badge {
   font-size: 0.72rem;
   font-weight: 700;
-  color: #10b981;
-  background: rgba(16, 185, 129, 0.12);
   padding: 3px 10px;
   border-radius: 12px;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .rest-timer-controls {
@@ -2650,19 +2839,23 @@ button {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background: var(--primary-gradient);
   border: none;
-  color: white;
   padding: 9px 14px;
-  border-radius: 10px;
   font-weight: 700;
   font-size: 0.88rem;
   cursor: pointer;
   transition: opacity 0.2s, transform 0.1s;
+  background: var(--brand-petrol);
+  color: var(--brand-white);
+  border-color: var(--brand-petrol);
+  box-shadow: none;
+  border-radius: 999px;
 }
 
 .btn-timer-primary.running {
-  background: linear-gradient(135deg, #00e5ff, #2979ff);
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .btn-timer-secondary {
@@ -2671,19 +2864,22 @@ button {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-main);
   padding: 9px;
-  border-radius: 10px;
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-petrol);
+  border-radius: 999px;
 }
 
 .btn-timer-secondary:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--brand-white);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .rest-timer-presets {
@@ -2694,46 +2890,49 @@ button {
 
 .preset-btn {
   flex: 1;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-muted);
   font-size: 0.75rem;
   font-weight: 600;
   padding: 5px 0;
-  border-radius: 6px;
   cursor: pointer;
   transition: all 0.15s;
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
 }
 
 .preset-btn:hover {
-  background: rgba(255, 87, 34, 0.12);
-  color: var(--primary);
+  background: var(--bg-card-hover);
+  color: var(--text-main);
+  border-color: var(--border-active);
 }
 
 .preset-btn.selected {
-  background: rgba(255, 87, 34, 0.2);
-  border-color: var(--primary);
-  color: var(--primary);
+  background: var(--brand-petrol);
+  color: var(--brand-white);
+  border-color: var(--brand-petrol);
 }
 
 .btn-trigger-rest {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: rgba(0, 229, 255, 0.08);
-  border: 1px solid rgba(0, 229, 255, 0.3);
-  color: var(--accent-cyan);
   padding: 6px 12px;
-  border-radius: 8px;
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-petrol);
+  border-radius: 999px;
 }
 
 .btn-trigger-rest:hover {
-  background: rgba(0, 229, 255, 0.18);
-  border-color: var(--accent-cyan);
+  background: var(--brand-white);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .exercise-action-buttons {
@@ -2744,29 +2943,26 @@ button {
 }
 
 .item-cadence-tag {
-  color: #b388ff;
+  color: var(--text-main);
   font-weight: 600;
 }
 
-/* ═══════════════════════════════════════════════
-   PR CELEBRATION MODAL (HU-09)
-═══════════════════════════════════════════════ */
+/* ==========================================================================
+   35. CELEBRACIÓN DE RÉCORDS PERSONALES
+   Ventana de un nuevo récord: trofeo, comparación con el valor anterior y mejora obtenida.
+   ========================================================================== */
 .pr-celebration-backdrop {
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(10px);
+  backdrop-filter: none;
+  background: rgba(90, 5, 5, .65);
 }
 
 .pr-celebration-card {
-  max-width: 520px !important;
-  background: linear-gradient(160deg, #181d2e 0%, #111422 100%) !important;
-  border: 2px solid rgba(255, 193, 7, 0.5) !important;
-  box-shadow: 0 0 50px rgba(255, 193, 7, 0.3) !important;
   text-align: center;
-}
-
-.theme-light .pr-celebration-card {
-  background: #ffffff !important;
-  border-color: rgba(255, 193, 7, 0.6) !important;
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: none;
+  max-width: 520px;
 }
 
 .pr-celebration-header {
@@ -2782,12 +2978,13 @@ button {
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 193, 7, 0.25) 0%, transparent 70%);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffc107;
   margin-bottom: 6px;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .pr-trophy-icon {
@@ -2798,26 +2995,27 @@ button {
   position: absolute;
   top: 6px;
   right: 6px;
-  color: #ffeb3b;
   animation: spin 3s linear infinite;
+  color: var(--brand-burgundy);
 }
 
 .pr-sparkle-2 {
   position: absolute;
   bottom: 8px;
   left: 8px;
-  color: #ff9800;
   animation: spin 4s linear infinite reverse;
+  color: var(--brand-burgundy);
 }
 
 .pr-celebration-title {
   font-family: var(--font-heading);
   font-size: 1.8rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   letter-spacing: 0.04em;
+  background: none;
+  color: var(--text-main);
+  -webkit-text-fill-color: currentColor;
 }
 
 .pr-celebration-subtitle {
@@ -2834,17 +3032,15 @@ button {
 }
 
 .pr-item-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 193, 7, 0.3);
   border-radius: 14px;
   padding: 14px 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-}
-
-.theme-light .pr-item-card {
-  background: rgba(0, 0, 0, 0.03);
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: none;
 }
 
 .pr-item-lead {
@@ -2857,11 +3053,12 @@ button {
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  background: rgba(255, 193, 7, 0.15);
-  color: #ffc107;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .pr-exercise-name {
@@ -2879,13 +3076,9 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--bg-card);
   border-radius: 10px;
   padding: 10px 14px;
-}
-
-.theme-light .pr-item-stats {
-  background: rgba(0, 0, 0, 0.04);
 }
 
 .pr-stat-box {
@@ -2907,33 +3100,39 @@ button {
 }
 
 .pr-stat-box.new .pr-stat-value {
-  color: #ffc107;
+  color: var(--text-main);
 }
 
 .pr-stat-arrow {
-  color: #10b981;
+  color: var(--text-main);
 }
 
 .pr-improvement-pill {
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.4);
-  color: #10b981;
+  border: 1px solid var(--border-subtle);
   font-weight: 700;
   font-size: 0.85rem;
   padding: 4px 10px;
   border-radius: 20px;
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .btn-pr-action {
   width: 100%;
   padding: 12px !important;
   font-size: 1rem !important;
-  background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%) !important;
+  background: var(--brand-petrol);
+  color: var(--brand-white);
+  border-color: var(--brand-petrol);
+  box-shadow: none;
+  border-radius: 999px;
 }
 
-/* ═══════════════════════════════════════════════
-   ROUTINE TEMPLATES UI (HU-12)
-═══════════════════════════════════════════════ */
+/* ==========================================================================
+   36. PLANTILLAS DE RUTINAS
+   Botones para cargar o guardar plantillas y tarjetas del selector de plantillas disponibles.
+   ========================================================================== */
 .routine-template-actions {
   display: flex;
   align-items: center;
@@ -2955,23 +3154,31 @@ button {
 }
 
 .btn-template-action.load {
-  background: rgba(0, 229, 255, 0.08);
-  border-color: rgba(0, 229, 255, 0.3);
-  color: var(--accent-cyan);
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-petrol);
+  border-radius: 999px;
 }
 
 .btn-template-action.load:hover {
-  background: rgba(0, 229, 255, 0.18);
+  background: var(--brand-white);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .btn-template-action.save {
-  background: rgba(255, 87, 34, 0.08);
-  border-color: rgba(255, 87, 34, 0.3);
-  color: var(--primary);
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-petrol);
+  border-radius: 999px;
 }
 
 .btn-template-action.save:hover {
-  background: rgba(255, 87, 34, 0.18);
+  background: var(--brand-white);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
 }
 
 .template-picker-grid {
@@ -2982,8 +3189,6 @@ button {
 }
 
 .template-card-choice {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1.5px solid var(--border-subtle);
   border-radius: 12px;
   padding: 14px;
   cursor: pointer;
@@ -2991,16 +3196,16 @@ button {
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
-
-.theme-light .template-card-choice {
-  background: rgba(0, 0, 0, 0.03);
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: none;
 }
 
 .template-card-choice:hover {
   border-color: var(--accent-cyan);
-  background: rgba(0, 229, 255, 0.05);
-  transform: translateY(-2px);
+  background: var(--bg-card);
+  transform: none;
 }
 
 .template-choice-header {
@@ -3040,7 +3245,10 @@ button {
   margin-top: auto;
 }
 
-/* Animations */
+/* ==========================================================================
+   37. ANIMACIONES DE LOS COMPONENTES ADICIONALES
+   Movimiento del trofeo, giro, aviso de urgencia y entrada del temporizador. Se conserva el orden de las definiciones existentes.
+   ========================================================================== */
 @keyframes bounceTrophy {
   0% { transform: translateY(0) scale(1); }
   100% { transform: translateY(-8px) scale(1.05); }
@@ -3058,4 +3266,268 @@ button {
 @keyframes slideUp {
   0% { opacity: 0; transform: translateY(15px); }
   100% { opacity: 1; transform: translateY(0); }
+}
+
+.filter-pill-btn:hover{
+  background: var(--bg-card-hover);
+  color: var(--text-main);
+  border-color: var(--border-active);
+}
+
+.btn-timer-primary:hover{
+  background: var(--brand-burgundy);
+  color: var(--brand-white);
+  border-color: var(--brand-beige);
+  box-shadow: none;
+}
+
+.btn-pr-action:hover{
+  background: var(--brand-burgundy);
+  color: var(--brand-white);
+  border-color: var(--brand-beige);
+  box-shadow: none;
+}
+
+.btn-remove-row{
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-burgundy);
+}
+
+.btn-remove-row:hover{
+  background: var(--brand-burgundy);
+  color: var(--brand-white);
+  border-color: var(--brand-beige);
+}
+
+.form-input::placeholder{
+  color: var(--input-text);
+  opacity: .65;
+}
+
+.table-input::placeholder{
+  color: var(--input-text);
+  opacity: .65;
+}
+
+.search-input::placeholder{
+  color: var(--input-text);
+  opacity: .65;
+}
+
+.alert-box.error{
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-petrol);
+  box-shadow: none;
+}
+
+.alert-box.success{
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border: 1px solid var(--brand-petrol);
+  box-shadow: none;
+}
+
+.admin-search-input::placeholder{
+  color: var(--input-text);
+  opacity: .8;
+}
+
+.user-profile-chip .user-role-badge{
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+  border-radius: 999px;
+  padding: 4px 24px;
+  text-transform: none;
+  font-weight: 400;
+}
+
+.admin-kpi-grid .kpi-card{
+  border-radius: 999px;
+  min-height: 76px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.admin-kpi-grid .kpi-info{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-kpi-grid .kpi-label{
+  font-size: 20px;
+  font-weight: 400;
+  text-transform: none;
+  color: var(--text-main);
+}
+
+.admin-kpi-grid .kpi-value{
+  font-size: 24px;
+}
+
+/* 38. DISTRIBUCIÓN COMPARTIDA Y ACCESIBILIDAD
+   min-width: 0 permite encoger columnas. Las tablas se desplazan dentro de su
+   contenedor; los formularios y ventanas permanecen dentro de la pantalla. */
+
+html, body, #root { min-width: 0; width: 100%; }
+
+*, *::before, *::after { box-sizing: border-box; }
+
+img, video, iframe, svg.analytics-svg { max-width: 100%; }
+
+button, input, select, textarea { font: inherit; }
+
+button { touch-action: manipulation; }
+
+button:disabled { opacity: .6; cursor: not-allowed; }
+
+button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+input, select, textarea { max-width: 100%; min-width: 0; }
+
+textarea { resize: vertical; }
+
+.app-shell, .main-content-container, .admin-page-container, .progress-page-layout,
+.trainer-builder-layout, .dashboard-content-layout, .card-glass, .kpi-card,
+.form-group, .chart-box-card, .routine-builder-card, .routine-execution-card { min-width: 0; }
+
+.modal-body { padding: 22px; }
+
+.modal-title-box { display: flex; align-items: flex-start; gap: 12px; min-width: 0; }
+
+.modal-title-box h2 { font-size: clamp(21px, 3vw, 27px); font-weight: 500; line-height: 1.2; }
+
+.modal-subheading, .user-cell-email, .user-cell-name, .demo-text, .user-name { overflow-wrap: anywhere; }
+
+.modal-header > button { flex-shrink: 0; }
+
+.btn-close-modal, .btn-remove-row { display: inline-flex; align-items: center; justify-content: center; min-width: 36px; min-height: 36px; border-radius: 50%; border: 1px solid var(--border-subtle); background: transparent; color: var(--text-main); }
+
+.btn-primary, .btn-secondary, .btn-danger { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; font-weight: 500; border-radius: 999px; }
+
+.form-row { display: flex; flex-wrap: wrap; gap: 16px; }
+
+.flex-1 { flex: 1 1 200px; min-width: 0; }
+
+.table-responsive, .sets-table-container, .routine-exercises-sublist, .weight-history-table-box { width: 100%; max-width: 100%; overflow-x: auto; }
+
+.admin-users-table { min-width: 850px; }
+
+.builder-table { min-width: 880px; }
+
+.sets-table { min-width: 560px; }
+
+.analytics-svg { display: block; width: 100%; height: auto; }
+
+.progress-header-row, .progress-top-actions, .catalog-header-row, .section-header-row,
+.builder-publish-bar, .routine-card-top { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+
+.progress-page-layout { display: flex; flex-direction: column; gap: 24px; }
+
+.builder-publish-bar { padding: 20px; }
+
+.routine-title-inputs { min-width: 0; flex-wrap: wrap; }
+
+.routine-name-input { min-width: 160px; }
+
+.routine-template-actions { flex-wrap: wrap; }
+
+.btn-add-exercise-row { margin-top: 16px; padding: 10px 18px; border: 1px dashed var(--border-subtle); border-radius: 999px; color: var(--text-main); background: transparent; }
+
+.empty-plan-hero, .empty-plan-card, .table-empty-box, .table-loading-box, .loading-state-box { padding: 32px 20px; text-align: center; color: var(--text-main); }
+
+.empty-description, .section-desc, .modal-subtitle-text { color: var(--text-muted); }
+
+.text-primary, .text-accent, .text-cyan, .text-success, .text-warning, .modal-icon { color: var(--accent); }
+
+.text-muted { color: var(--text-muted); }
+
+.user-profile-chip .user-role-badge { min-width: 96px; }
+
+.user-profile-chip .user-name { color: var(--brand-white); }
+
+.search-icon { color: var(--input-text); }
+
+.admin-search-box:focus-within { outline: 2px solid var(--brand-petrol); outline-offset: 3px; }
+
+.routine-pill-btn.active .pill-exercise-count { color: var(--brand-white); }
+
+.timer-pill-icon { color: var(--brand-beige); }
+
+.login-theme-toggle { display: flex; justify-content: flex-end; margin-bottom: 16px; }
+
+.trainer-plan-builder-container, .catalog-page-layout, .plan-builder-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+.builder-section { padding: 24px; min-width: 0; }
+.builder-title { font-size: clamp(28px, 4vw, 48px); font-weight: 400; line-height: 1.15; margin: 12px 0; }
+.builder-subtitle, .publish-desc, .form-helper-text { color: var(--text-muted); }
+.badge-pill-orange, .publish-badge { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border-radius: 999px; background: var(--brand-beige); color: var(--brand-burgundy); font-size: 13px; }
+.section-title, .athlete-filter-box { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.section-title { font-size: 21px; font-weight: 500; }
+.section-header-flex { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.section-header-flex > div, .publish-info-box { min-width: 0; flex: 1 1 240px; }
+.modal-body-form { padding: 22px; }
+.admin-create-modal { max-width: 680px; }
+.empty-catalog-box { padding: 40px 20px; text-align: center; }
+.chart-render-area, .athlete-filter-box select { min-width: 0; max-width: 100%; }
+
+/* 39. ADAPTACIÓN FINAL: escritorio, tablet y teléfono. */
+
+@media (max-width: 1100px) {
+  .navbar-nav { order: 3; flex-basis: 100%; justify-content: flex-start; }
+  .navbar-user-actions { margin-left: auto; }
+  .admin-kpi-grid { gap: 16px; margin: 0; }
+  .admin-toolbar { margin: 0; }
+  .admin-kpi-grid .kpi-label { font-size: 18px; }
+}
+
+@media (max-width: 768px) {
+  .navbar-container { flex-direction: row; align-items: center; padding: 16px; gap: 16px; }
+  .navbar-nav { gap: 16px; }
+  .nav-link { font-size: 16px; }
+  .navbar-user-actions { gap: 6px; }
+  .main-content-container { padding: 24px 16px 100px; }
+  .admin-kpi-grid, .kpi-grid, .charts-main-grid, .form-grid-3, .template-picker-grid { grid-template-columns: minmax(0, 1fr); }
+  .span-2 { grid-column: auto; }
+  .admin-kpi-grid .kpi-card { min-height: 64px; }
+  .admin-filter-group, .hero-meta-row, .finish-action-row { flex-wrap: wrap; }
+  .routine-execution-card, .form-section-card, .builder-section { padding: 18px; }
+  .exercise-workout-item { padding: 14px; }
+  .rest-timer-floating-root { right: 12px; bottom: 12px; }
+  .rest-timer-card { max-width: calc(100vw - 24px); }
+}
+
+@media (max-width: 520px) {
+  .modal-backdrop { padding: 12px; }
+  .modal-container { max-height: calc(100dvh - 24px); }
+  .modal-header, .modal-body, .modal-footer, .modal-body-content { padding: 16px; }
+  .profile-pw-grid { grid-template-columns: minmax(0, 1fr); }
+  .avatar-selection-box { flex-wrap: wrap; }
+  .avatar-options-group { flex-basis: 100%; }
+  .theme-toggle-row > *, .btn-theme-toggle { max-width: 100%; }
+  .btn-theme-toggle { justify-content: center; width: 100%; }
+  .profile-section-label { align-items: flex-start; }
+  .label-hint { flex-basis: 100%; }
+  .user-profile-chip.clickable { padding: 8px 12px; min-height: 54px; }
+  .user-profile-chip .user-name { font-size: 12px; max-width: 140px; }
+  .login-card-container { padding: 24px 18px; }
+  .login-page-wrapper { padding: 16px; }
+  .routine-title-inputs { flex-basis: 100%; }
+  .routine-template-actions { margin-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Dumbbell, Shield, User, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Shield, User, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { useTheme } from '../theme/ThemeContext.js';
 import { useAuth } from './AuthContext.js';
 
 export const LoginPage: React.FC = () => {
   const { login } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -40,12 +42,10 @@ export const LoginPage: React.FC = () => {
   return (
     <div className="login-page-wrapper">
       <div className="login-card-container">
+        <div className="login-theme-toggle"><button type="button" className="btn-theme-toggle" onClick={toggleTheme}>{theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}</button></div>
         {/* Header */}
         <div className="login-header text-center">
-          <div className="brand-badge-large">
-            <Dumbbell size={36} className="text-accent" />
-          </div>
-          <h1 className="login-title">APEX FIT</h1>
+          <h1 className="login-title">Gym</h1>
           <p className="login-subtitle">
             Plataforma de Alto Rendimiento y Seguimiento de Entrenamiento Físico
           </p>

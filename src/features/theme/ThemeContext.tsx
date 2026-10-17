@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useLayoutEffect } from 'react';
 
 type Theme = 'dark' | 'light';
 
@@ -12,17 +12,23 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem('gym_theme');
-    return (saved === 'light' || saved === 'dark') ? saved : 'dark';
+    try {
+      const saved = localStorage.getItem('gym_theme');
+      return (saved === 'light' || saved === 'dark') ? saved : 'dark';
+    } catch {
+      return 'dark';
+    }
   });
 
-  useEffect(() => {
-    if (theme === 'light') {
-      document.documentElement.classList.add('theme-light');
-    } else {
-      document.documentElement.classList.remove('theme-light');
+  // Aplicar antes de pintar evita mostrar el tema anterior durante un instante.
+  // Si el navegador bloquea el almacenamiento, el cambio visual sigue funcionando.
+  useLayoutEffect(() => {
+    document.documentElement.classList.toggle('theme-light', theme === 'light');
+    try {
+      localStorage.setItem('gym_theme', theme);
+    } catch {
+      // La preferencia dura esta sesión aunque no pueda persistirse.
     }
-    localStorage.setItem('gym_theme', theme);
   }, [theme]);
 
   const toggleTheme = () => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));

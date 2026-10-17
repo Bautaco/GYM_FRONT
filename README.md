@@ -200,14 +200,14 @@ La interfaz utiliza variables semánticas en [`src/index.css`](file:///d:/Bautac
 :root {
   --font-heading: 'Outfit', sans-serif;
   --font-body: 'Plus Jakarta Sans', sans-serif;
-  --primary: #10b981;
-  --primary-hover: #059669;
-  --accent: #6366f1;
+  --color-principal: #10b981;
+  --color-principal-al-pasar: #059669;
+  --color-acento: #6366f1;
 }
 
 [data-theme='dark'] {
   --bg-main: #0b0f19;
-  --bg-card: #111827;
+  --color-fondo-tarjeta: #111827;
   --text-main: #f9fafb;
   --text-muted: #9ca3af;
   --border-subtle: #1f2937;
@@ -215,7 +215,7 @@ La interfaz utiliza variables semánticas en [`src/index.css`](file:///d:/Bautac
 
 [data-theme='light'] {
   --bg-main: #f8fafc;
-  --bg-card: #ffffff;
+  --color-fondo-tarjeta: #ffffff;
   --text-main: #0f172a;
   --text-muted: #64748b;
   --border-subtle: #e2e8f0;

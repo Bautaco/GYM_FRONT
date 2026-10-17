@@ -152,14 +152,14 @@ export const ProgressPage: React.FC = () => {
             y1={height - padding}
             x2={width - padding}
             y2={height - padding}
-            stroke="rgba(255,255,255,0.15)"
+            stroke="var(--chart-grid)"
           />
           <line
             x1={padding}
             y1={padding}
             x2={width - padding}
             y2={padding}
-            stroke="rgba(255,255,255,0.06)"
+            stroke="var(--chart-grid)"
             strokeDasharray="4"
           />
 
@@ -167,7 +167,7 @@ export const ProgressPage: React.FC = () => {
           <path
             d={pathD}
             fill="none"
-            stroke="#ff5722"
+            stroke="var(--chart-line)"
             strokeWidth="3.5"
             strokeLinecap="round"
           />
@@ -179,15 +179,15 @@ export const ProgressPage: React.FC = () => {
                 cx={p.x}
                 cy={p.y}
                 r="6"
-                fill="#ff5722"
-                stroke="#12141a"
+                fill="var(--chart-line)"
+                stroke="var(--bg-card)"
                 strokeWidth="2"
               />
               <text
                 x={p.x}
                 y={p.y - 12}
                 textAnchor="middle"
-                fill="#ffffff"
+                fill="var(--text-main)"
                 fontSize="12"
                 fontWeight="600"
               >
@@ -197,7 +197,7 @@ export const ProgressPage: React.FC = () => {
                 x={p.x}
                 y={height - padding + 18}
                 textAnchor="middle"
-                fill="#94a3b8"
+                fill="var(--text-muted)"
                 fontSize="11"
               >
                 {p.date.split('-').slice(1).join('/')}
@@ -252,13 +252,13 @@ export const ProgressPage: React.FC = () => {
             y1={height - padding}
             x2={width - padding}
             y2={height - padding}
-            stroke="rgba(255,255,255,0.15)"
+            stroke="var(--chart-grid)"
           />
 
           <path
             d={pathD}
             fill="none"
-            stroke="#00e5ff"
+            stroke="var(--chart-line)"
             strokeWidth="3.5"
             strokeLinecap="round"
           />
@@ -269,15 +269,15 @@ export const ProgressPage: React.FC = () => {
                 cx={p.x}
                 cy={p.y}
                 r="6"
-                fill="#00e5ff"
-                stroke="#12141a"
+                fill="var(--chart-line)"
+                stroke="var(--bg-card)"
                 strokeWidth="2"
               />
               <text
                 x={p.x}
                 y={p.y - 12}
                 textAnchor="middle"
-                fill="#ffffff"
+                fill="var(--text-main)"
                 fontSize="12"
                 fontWeight="600"
               >
@@ -287,7 +287,7 @@ export const ProgressPage: React.FC = () => {
                 x={p.x}
                 y={height - padding + 18}
                 textAnchor="middle"
-                fill="#94a3b8"
+                fill="var(--text-muted)"
                 fontSize="11"
               >
                 {new Date(p.date || p.recordedAt || Date.now()).toLocaleDateString(undefined, {

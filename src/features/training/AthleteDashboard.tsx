@@ -252,6 +252,7 @@ export const AthleteDashboard: React.FC = () => {
       try {
         confetti({
           particleCount: 80,
+          colors: ['#5a0505', '#207384', '#eed8c0', '#ffffff'],
           spread: 70,
           origin: { y: 0.6 },
         });
