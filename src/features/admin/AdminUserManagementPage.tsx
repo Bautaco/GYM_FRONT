@@ -17,6 +17,7 @@ import {
 import { authService } from '../../services/authService.js';
 import { User, UserRole } from '../../types/index.js';
 import { useAuth } from '../auth/AuthContext.js';
+import { prepareProfilePhoto } from '../../utils/profilePhoto.js';
 
 export const AdminUserManagementPage: React.FC = () => {
   const { user: currentUser } = useAuth();
@@ -39,6 +40,8 @@ export const AdminUserManagementPage: React.FC = () => {
   const [phone, setPhone] = useState('');
   const [notes, setNotes] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
+  const [isPreparingPhoto, setIsPreparingPhoto] = useState(false);
+  const [photoError, setPhotoError] = useState('');
 
   const [formError, setFormError] = useState('');
   const [formSuccess, setFormSuccess] = useState('');
@@ -73,13 +76,32 @@ export const AdminUserManagementPage: React.FC = () => {
     setPhone('');
     setNotes('');
     setAvatarUrl('');
+    setPhotoError('');
     setFormError('');
     setFormSuccess('');
     setIsCreateModalOpen(true);
   };
 
+  // La foto es opcional: si no se elige, avatarUrl queda vacío y el usuario
+  // podrá cargarla después desde su propio perfil.
+  const handlePhotoChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    setPhotoError('');
+    setIsPreparingPhoto(true);
+    try {
+      setAvatarUrl(await prepareProfilePhoto(file));
+    } catch (error) {
+      setPhotoError(error instanceof Error ? error.message : 'No se pudo cargar la foto.');
+    } finally {
+      setIsPreparingPhoto(false);
+    }
+  };
+
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isPreparingPhoto) return;
     setFormError('');
     setFormSuccess('');
 
@@ -474,16 +496,20 @@ export const AdminUserManagementPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* URL Avatar */}
+                {/* Foto opcional: el administrador puede dejarla vacía. */}
                 <div className="form-group">
-                  <label className="form-label">URL de Avatar / Foto (Opcional)</label>
+                  <label className="form-label" htmlFor="new-user-photo">Foto de Perfil (Opcional)</label>
                   <input
-                    type="url"
-                    placeholder="https://ejemplo.com/foto.jpg"
-                    value={avatarUrl}
-                    onChange={(e) => setAvatarUrl(e.target.value)}
-                    className="form-input"
+                    id="new-user-photo"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={handlePhotoChange}
+                    disabled={isPreparingPhoto || isSubmitting}
+                    className="profile-photo-input"
                   />
+                  <span className="form-helper-text">JPG, PNG o WebP. También puede agregarla luego desde su perfil.</span>
+                  {isPreparingPhoto && <span role="status">Preparando foto...</span>}
+                  {photoError && <span role="alert">{photoError}</span>}
                 </div>
 
                 {/* Notas */}
@@ -504,14 +530,14 @@ export const AdminUserManagementPage: React.FC = () => {
                   type="button"
                   onClick={() => setIsCreateModalOpen(false)}
                   className="btn-secondary"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isPreparingPhoto}
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   className="btn-primary"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isPreparingPhoto}
                 >
                   {isSubmitting ? 'Guardando...' : 'Crear Usuario'}
                 </button>

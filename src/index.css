@@ -43,6 +43,10 @@
    38. DISTRIBUCIÓN COMPARTIDA Y ACCESIBILIDAD
    39. ADAPTACIÓN FINAL
    40. INTEGRACIÓN: MAPA ANATÓMICO Y DETALLE DE EJERCICIO
+   41. AJUSTES DE CONTRASTE: LOGIN Y RUTINA
+   42. TABLA DE RUTINA: ESTADOS Y BORDES
+   43. PANEL DEL ATLETA Y FOTO EN ASIGNACIÓN
+   44. TÍTULOS, AVATARES Y MODALES DE ADMINISTRACIÓN
 */
 
 /* 01. FUENTES EXTERNAS
@@ -4307,4 +4311,355 @@ textarea { resize: vertical; }
 @media (max-width: 600px) {
   .zones-section-with-figure { flex-direction: column; align-items: stretch; }
   .zones-right-column { display: flex; justify-content: center; }
+}
+
+/* ==========================================================================
+   41. AJUSTES DE CONTRASTE: LOGIN Y RUTINA
+   El título del login es texto, por eso no necesita una caja propia. En la
+   rutina se usan dos superficies claras para separarla del fondo bordó.
+   ========================================================================== */
+.login-title {
+  max-width: none;
+  margin: 0 0 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.routine-execution-card {
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+}
+
+.routine-execution-card .routine-heading,
+.routine-execution-card .exercise-name,
+.routine-execution-card .exercise-target-targets,
+.routine-execution-card .routine-subheading,
+.routine-execution-card .sets-table,
+.routine-execution-card .sets-table th,
+.routine-execution-card .sets-table td {
+  color: var(--brand-burgundy);
+}
+
+.exercise-workout-item {
+  background: var(--brand-white);
+  color: var(--brand-burgundy);
+  border-color: var(--brand-petrol);
+}
+
+.routine-execution-card .sets-table th,
+.routine-execution-card .sets-table td {
+  border-color: var(--brand-petrol);
+}
+
+.routine-execution-card .sets-table th { background: var(--brand-beige); }
+
+.theme-light .routine-execution-card { background: var(--brand-white); }
+
+/* ==========================================================================
+   42. TABLA DE RUTINA: ESTADOS Y BORDES
+   Una sesión finalizada usa la clase .row-completed. Sin estas reglas heredaba
+   el fondo bordó general y parecía que algunas filas estaban rotas. La tabla
+   queda contenida dentro de la tarjeta para que sus esquinas no sobresalgan.
+   ========================================================================== */
+.routine-execution-card .exercise-workout-item {
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+.routine-execution-card .sets-table-container {
+  border: 1px solid var(--brand-petrol);
+  border-radius: 12px;
+  overflow: auto;
+  background: var(--brand-white);
+}
+
+.routine-execution-card .sets-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.routine-execution-card .sets-table td,
+.routine-execution-card .sets-table .row-completed td {
+  background: var(--brand-white);
+  color: var(--brand-burgundy);
+}
+
+.routine-execution-card .sets-table th {
+  background: var(--brand-beige);
+  color: var(--brand-burgundy);
+}
+
+.routine-execution-card .sets-table th,
+.routine-execution-card .sets-table td {
+  border: 0;
+  border-right: 1px solid var(--brand-petrol);
+  border-bottom: 1px solid var(--brand-petrol);
+}
+
+.routine-execution-card .sets-table tr > :last-child { border-right: 0; }
+.routine-execution-card .sets-table tbody tr:last-child td { border-bottom: 0; }
+
+/* ==========================================================================
+   43. PANEL DEL ATLETA Y FOTO EN ASIGNACIÓN
+   El atleta vuelve al lenguaje visual del constructor: superficies bordó con
+   bordes petróleo y campos beige. La foto junto al selector identifica al
+   alumno elegido sin intentar poner imágenes dentro de un <select> nativo.
+   ========================================================================== */
+.routine-execution-card {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--brand-petrol);
+}
+
+.routine-execution-card .routine-heading,
+.routine-execution-card .exercise-name,
+.routine-execution-card .exercise-target-targets,
+.routine-execution-card .routine-subheading,
+.routine-execution-card .sets-table,
+.routine-execution-card .sets-table th,
+.routine-execution-card .sets-table td {
+  color: var(--text-main);
+}
+
+.routine-execution-card .exercise-workout-item {
+  background: rgba(238, 216, 192, .06);
+  color: var(--text-main);
+  border-color: var(--brand-petrol);
+}
+
+.routine-execution-card .sets-table-container {
+  background: rgba(238, 216, 192, .04);
+  border-color: var(--brand-petrol);
+}
+
+.routine-execution-card .sets-table th {
+  background: rgba(238, 216, 192, .12);
+  color: var(--brand-beige);
+}
+
+.routine-execution-card .sets-table td,
+.routine-execution-card .sets-table .row-completed td {
+  background: transparent;
+  color: var(--text-main);
+}
+
+.routine-execution-card .sets-table th,
+.routine-execution-card .sets-table td {
+  border-color: var(--brand-petrol);
+}
+
+.routine-execution-card .row-completed td { background: rgba(238, 216, 192, .08); }
+
+.theme-light .routine-execution-card { background: var(--brand-white); color: var(--brand-burgundy); }
+.theme-light .routine-execution-card .routine-heading,
+.theme-light .routine-execution-card .exercise-name,
+.theme-light .routine-execution-card .exercise-target-targets,
+.theme-light .routine-execution-card .routine-subheading,
+.theme-light .routine-execution-card .sets-table,
+.theme-light .routine-execution-card .sets-table th,
+.theme-light .routine-execution-card .sets-table td { color: var(--brand-burgundy); }
+.theme-light .routine-execution-card .exercise-workout-item { background: var(--brand-beige); }
+.theme-light .routine-execution-card .sets-table-container { background: var(--brand-white); }
+.theme-light .routine-execution-card .sets-table th { color: var(--brand-burgundy); background: var(--brand-beige); }
+.theme-light .routine-execution-card .sets-table td,
+.theme-light .routine-execution-card .sets-table .row-completed td { background: var(--brand-white); color: var(--brand-burgundy); }
+
+.athlete-select-with-avatar { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.athlete-select-with-avatar select { flex: 1; min-width: 0; }
+.selected-athlete-avatar { width: 42px; height: 42px; flex: 0 0 42px; object-fit: cover; border-radius: 50%; border: 2px solid var(--brand-petrol); background: var(--brand-beige); }
+
+/* ==========================================================================
+   44. TÍTULOS, AVATARES Y MODALES DE ADMINISTRACIÓN
+   Las pantallas principales comparten una escala de título. Los avatares se
+   ubican fuera de los <select> porque las opciones nativas no aceptan imágenes.
+   Las medidas del modal evitan que la grilla de campos fuerce sus bordes.
+   ========================================================================== */
+.page-main-title,
+.admin-title,
+.builder-title,
+.catalog-title {
+  font-family: var(--font-heading);
+  font-size: clamp(32px, 3.2vw, 44px);
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--text-main);
+}
+
+.athlete-filter-with-avatar { flex-wrap: nowrap; }
+.athlete-filter-with-avatar select { flex: 1; min-width: 0; }
+.athlete-filter-with-avatar .selected-athlete-avatar { width: 36px; height: 36px; flex-basis: 36px; }
+
+.user-profile-chip .user-avatar-img {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid var(--brand-beige);
+  background: var(--brand-beige);
+}
+
+.admin-create-modal {
+  width: min(680px, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px);
+  overflow: hidden;
+}
+
+.admin-create-modal .modal-body { min-width: 0; overflow-y: auto; }
+.admin-create-modal .form-row { min-width: 0; gap: 14px; }
+.admin-create-modal .form-row > .form-group { min-width: 0; }
+.admin-create-modal .modal-footer { flex-wrap: wrap; }
+.admin-create-modal .form-input,
+.admin-create-modal .form-select,
+.admin-create-modal textarea { width: 100%; min-width: 0; }
+.admin-create-modal .role-selector-pills { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.admin-create-modal .role-select-btn { min-width: 0; justify-content: center; }
+
+@media (max-width: 600px) {
+  .page-main-title, .admin-title, .builder-title, .catalog-title { font-size: 32px; }
+  .admin-create-modal .form-row { flex-direction: column; }
+  .admin-create-modal .role-selector-pills { grid-template-columns: minmax(0, 1fr); }
+  .admin-create-modal .modal-footer > button { flex: 1 1 140px; }
+  .athlete-filter-with-avatar { width: 100%; }
+}
+
+/* ===========================================================================
+   45. VENTANAS EMERGENTES: BORDES ENTEROS Y PIE UNIFICADO
+   El contenedor exterior no debe desplazarse: si lo hiciera, el navegador
+   dibuja el pie por fuera de sus esquinas redondeadas. El desplazamiento queda
+   dentro del cuerpo de cada ventana y el pie conserva el mismo fondo que ella.
+   =========================================================================== */
+.modal-backdrop {
+  padding: 24px;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.modal-container {
+  width: min(580px, calc(100vw - 48px));
+  max-width: calc(100vw - 48px);
+  max-height: calc(100dvh - 48px);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+}
+
+.modal-container.video-modal-card { width: min(740px, calc(100vw - 48px)); }
+.modal-container.admin-create-modal { width: min(680px, calc(100vw - 48px)); }
+
+.modal-header {
+  flex: 0 0 auto;
+  padding: 18px 22px;
+  background: var(--bg-card);
+}
+
+.modal-form,
+.weight-form {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-body,
+.modal-body-content,
+.modal-body-form,
+.weight-form-fields {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.modal-footer {
+  flex: 0 0 auto;
+  padding: 16px 22px;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-subtle);
+}
+
+@media (max-width: 780px) {
+  .modal-backdrop { padding: 12px; align-items: center; }
+  .modal-container,
+  .modal-container.admin-create-modal,
+  .modal-container.video-modal-card {
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+    max-height: calc(100dvh - 24px);
+    border-radius: 16px;
+  }
+  .modal-header { padding: 14px 16px; }
+  .modal-footer { padding: 12px 16px; }
+}
+
+/* ===========================================================================
+   46. CASILLAS DE SERIES
+   Se dibuja una casilla propia para que el estado sea visible tanto sobre el
+   fondo bordó del modo oscuro como sobre el blanco del modo claro.
+   =========================================================================== */
+.routine-execution-card .custom-check-box {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--brand-petrol);
+  border-radius: 6px;
+  background: var(--brand-white);
+  box-shadow: inset 0 0 0 1px rgba(90, 5, 5, .10);
+}
+
+.routine-execution-card .checkbox-container input[type="checkbox"]:checked + .custom-check-box {
+  background: var(--brand-petrol);
+  border-color: var(--brand-petrol);
+  box-shadow: none;
+}
+
+.routine-execution-card .checkbox-container input[type="checkbox"]:checked + .custom-check-box::after {
+  content: "\2713";
+  color: var(--brand-white);
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.routine-execution-card .checkbox-container input[type="checkbox"]:focus-visible + .custom-check-box {
+  outline: 3px solid var(--brand-beige);
+  outline-offset: 2px;
+}
+
+.theme-light .routine-execution-card .checkbox-container input[type="checkbox"]:focus-visible + .custom-check-box {
+  outline-color: var(--brand-burgundy);
+}
+
+/* El input real cubre toda la casilla (aunque sea transparente), por eso se
+   puede marcar al hacer clic sobre el cuadrado además de mediante su etiqueta. */
+.routine-execution-card .checkbox-container input[type="checkbox"] {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.routine-execution-card .custom-check-box { pointer-events: none; }
+
+.routine-execution-card .checkbox-container.is-disabled input[type="checkbox"] {
+  cursor: not-allowed;
+}
+
+/* El aviso de sesión finalizada usa fondo beige en ambos temas: su ícono debe
+   conservar el azul petróleo para no perderse sobre ese fondo. */
+.session-completed-banner .text-success {
+  color: var(--brand-petrol);
+  stroke-width: 2.75;
+  flex: 0 0 auto;
 }

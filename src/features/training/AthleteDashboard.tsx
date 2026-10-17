@@ -45,6 +45,7 @@ export const AthleteDashboard: React.FC = () => {
   const [isSavingSession, setIsSavingSession] = useState(false);
   const [sessionSuccessMessage, setSessionSuccessMessage] = useState('');
   const [isSessionFinished, setIsSessionFinished] = useState(false);
+  const [weeklyScheduleNotice, setWeeklyScheduleNotice] = useState('');
   const [detectedPrs, setDetectedPrs] = useState<DetectedPR[]>([]);
 
   // Modal de Video In-App
@@ -73,21 +74,75 @@ export const AthleteDashboard: React.FC = () => {
       setExercisesCatalog(catalog);
       setPastSessions(sessions || []);
 
-      // Si hay plan, inicializar la rutina seleccionada
+      // Al ingresar, busca la primera rutina pendiente desde hoy hasta el domingo.
+      // Una sesión se identifica por su fecha: el lunes vuelve a estar disponible
+      // cuando llega el lunes de una semana nueva.
       if (planData && planData.routines.length > 0) {
-        const todayDayOfWeek = new Date().getDay(); // 0 = Domingo, 1 = Lunes...
-        const matchedIdx = planData.routines.findIndex(
-          (r) => r.dayOfWeek === (todayDayOfWeek === 0 ? 7 : todayDayOfWeek),
-        );
-        const initialIdx = matchedIdx !== -1 ? matchedIdx : 0;
-        setSelectedRoutineIndex(initialIdx);
-        loadRoutineSessionState(planData.routines[initialIdx], sessions || []);
+        selectNextPendingRoutine(planData.routines, sessions || []);
       }
     } catch (err: any) {
       setError('Error al cargar la información del plan de entrenamiento.');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const getLocalDateKey = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const getSessionDateKey = (session: any) => {
+    const rawDate = String(session.date || '');
+    return /^\d{4}-\d{2}-\d{2}/.test(rawDate)
+      ? rawDate.slice(0, 10)
+      : getLocalDateKey(new Date(session.date));
+  };
+
+  // La numeración se presenta siempre en el selector aunque un entrenador haya
+  // cargado una plantilla con un nombre libre, por ejemplo “Rutina de Piernas”.
+  const getRoutineDisplayName = (routine: Routine, index: number) => {
+    const nameWithoutDayPrefix = (routine.name || 'Sesión de entrenamiento')
+      .replace(/^día\s*\d+\s*:\s*/i, '')
+      .trim();
+    return `Día ${index + 1}: ${nameWithoutDayPrefix}`;
+  };
+
+  const selectNextPendingRoutine = (routines: Routine[], sessions: any[]) => {
+    const today = new Date();
+    const currentDay = today.getDay() || 7; // Domingo es 7 en el plan.
+
+    for (let offset = 0; offset <= 7 - currentDay; offset += 1) {
+      const plannedDate = new Date(today);
+      plannedDate.setDate(today.getDate() + offset);
+      const plannedDay = plannedDate.getDay() || 7;
+      const plannedDateKey = getLocalDateKey(plannedDate);
+      const nextIndex = routines.findIndex((routine) =>
+        routine.dayOfWeek === plannedDay &&
+        !sessions.some((session) =>
+          session.completed &&
+          session.routineId === routine.id &&
+          getSessionDateKey(session) === plannedDateKey,
+        ),
+      );
+
+      if (nextIndex !== -1) {
+        setWeeklyScheduleNotice('');
+        setSelectedRoutineIndex(nextIndex);
+        loadRoutineSessionState(routines[nextIndex], sessions);
+        return;
+      }
+    }
+
+    setSessionSets([]);
+    setSessionNotes('');
+    setIsSessionFinished(false);
+    setSessionSuccessMessage('');
+    setWeeklyScheduleNotice(
+      'Completaste todas las jornadas programadas para esta semana. Tu próxima rutina se habilitará al comenzar la próxima semana.',
+    );
   };
 
   const loadRoutineSessionState = (
@@ -98,9 +153,9 @@ export const AthleteDashboard: React.FC = () => {
     setSessionSuccessMessage('');
     setError('');
 
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr = getLocalDateKey(new Date());
     const existingSession = sessions.find((s) => {
-      const sessionDateStr = new Date(s.date).toISOString().split('T')[0];
+      const sessionDateStr = getSessionDateKey(s);
       return sessionDateStr === todayStr && s.routineId === routine.id;
     });
 
@@ -156,7 +211,7 @@ export const AthleteDashboard: React.FC = () => {
   };
 
   const handleRoutineSelect = (index: number) => {
-    if (!activePlan) return;
+    if (!activePlan || weeklyScheduleNotice) return;
     setSelectedRoutineIndex(index);
     loadRoutineSessionState(activePlan.routines[index], pastSessions);
   };
@@ -239,7 +294,7 @@ export const AthleteDashboard: React.FC = () => {
         trainingPlanId: activePlan.id,
         routineId: currentRoutine?.id || 'routine-1',
         routineName: currentRoutine?.name || 'Rutina Diaria',
-        date: new Date().toISOString().split('T')[0],
+        date: getLocalDateKey(new Date()),
         completed: true,
         notes: sessionNotes,
         sets: sessionSets.map((s) => ({
@@ -254,7 +309,8 @@ export const AthleteDashboard: React.FC = () => {
 
       // Actualizar listado local de sesiones completadas
       const savedSession = result.session || result;
-      setPastSessions((prev) => [...prev, savedSession]);
+      const updatedSessions = [...pastSessions, savedSession];
+      setPastSessions(updatedSessions);
 
       // HU-09: Si se detectaron nuevas marcas personales (PRs), activar celebración
       if (result.personalRecords && result.personalRecords.length > 0) {
@@ -279,6 +335,9 @@ export const AthleteDashboard: React.FC = () => {
 
       // Bloquear cualquier modificación posterior (Solo lectura)
       setIsSessionFinished(true);
+      // Busca la próxima jornada pendiente de esta semana. Si no existe,
+      // muestra un aviso para no repetir una rutina ya finalizada.
+      selectNextPendingRoutine(activePlan.routines, updatedSessions);
     } catch (err: any) {
       setError(
         err.response?.data?.message || 'Error al persistir la sesión en el servidor',
@@ -360,10 +419,11 @@ export const AthleteDashboard: React.FC = () => {
                 key={idx}
                 onClick={() => handleRoutineSelect(idx)}
                 className={`routine-pill-btn ${isSelected ? 'active' : ''}`}
+                disabled={Boolean(weeklyScheduleNotice)}
               >
                 <div className="pill-dot"></div>
                 <div className="pill-text-col">
-                  <span className="pill-routine-name">{routine.name}</span>
+                  <span className="pill-routine-name">{getRoutineDisplayName(routine, idx)}</span>
                   <span className="pill-exercise-count">
                     {routine.exerciseItems?.length || 0} Ejercicios
                   </span>
@@ -389,11 +449,21 @@ export const AthleteDashboard: React.FC = () => {
         </div>
       )}
 
+      {weeklyScheduleNotice && (
+        <div className="alert-box alert-success weekly-schedule-notice">
+          <Calendar size={20} />
+          <span>{weeklyScheduleNotice}</span>
+        </div>
+      )}
+
       {/* Lista de Ejercicios y Carga de Marcas Reales (HU-02 & HU-03) */}
+      {!weeklyScheduleNotice && (
       <div className="routine-execution-card">
         <div className="routine-header-bar">
           <div>
-            <h2 className="routine-heading">{currentRoutine?.name}</h2>
+            <h2 className="routine-heading">
+              {currentRoutine && getRoutineDisplayName(currentRoutine, selectedRoutineIndex)}
+            </h2>
             {currentRoutine?.description && (
               <p className="routine-subheading">{currentRoutine.description}</p>
             )}
@@ -585,8 +655,13 @@ export const AthleteDashboard: React.FC = () => {
           </div>
         </div>
       </div>
+      )}
+
+
 
       {/* Modal de Confirmación de Finalización de Sesión (Seguridad y UX) */}
+
+
       {isConfirmFinishModalOpen && (
         <div className="modal-backdrop" onClick={() => setIsConfirmFinishModalOpen(false)}>
           <div

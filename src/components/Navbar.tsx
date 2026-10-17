@@ -21,6 +21,8 @@ export const Navbar: React.FC = () => {
   const location = useLocation();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const closeProfile = useCallback(() => setIsProfileOpen(false), []);
+  const avatarUrl = user?.avatarUrl ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.fullName || 'Usuario')}&background=eed8c0&color=5a0505&bold=true`;
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -106,6 +108,7 @@ export const Navbar: React.FC = () => {
               onClick={() => setIsProfileOpen(true)}
               title="Configuración de perfil"
             >
+              <img className="user-avatar-img" src={avatarUrl} alt="" />
               <div className="user-info-text">
                 <span className="user-name">{user?.fullName || 'Usuario'}</span>
                 <span className={`user-role-badge ${role?.toLowerCase()}`}>

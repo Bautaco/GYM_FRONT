@@ -38,6 +38,13 @@ export const ProgressPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isWeightModalOpen, setIsWeightModalOpen] = useState(false);
 
+  // El selector nativo muestra texto; la foto al costado identifica al atleta elegido.
+  const selectedAthlete = athletes.find((athlete) => athlete.id === selectedAthleteId);
+  const selectedAthleteAvatar = selectedAthlete?.avatarUrl ||
+    (selectedAthlete
+      ? `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedAthlete.fullName)}&background=eed8c0&color=5a0505&bold=true`
+      : '');
+
   // Cargar atletas si es entrenador, o usar ID propio si es atleta
   useEffect(() => {
     initView();
@@ -317,7 +324,7 @@ export const ProgressPage: React.FC = () => {
         <div className="progress-top-actions">
           {/* Selector de alumno para el entrenador o administrador */}
           {(role === UserRole.ENTRENADOR || role === UserRole.ADMIN) && athletes.length > 0 && (
-            <div className="athlete-filter-box">
+            <div className="athlete-filter-box athlete-filter-with-avatar">
               <User size={16} />
               <label htmlFor="athleteFilterSelect" className="visually-hidden">
                 Filtrar por Atleta:
@@ -334,6 +341,14 @@ export const ProgressPage: React.FC = () => {
                   </option>
                 ))}
               </select>
+              {selectedAthlete && (
+                <img
+                  className="selected-athlete-avatar"
+                  src={selectedAthleteAvatar}
+                  alt={`Foto de ${selectedAthlete.fullName}`}
+                  title={selectedAthlete.fullName}
+                />
+              )}
             </div>
           )}
 

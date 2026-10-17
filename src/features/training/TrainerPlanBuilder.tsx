@@ -36,6 +36,21 @@ interface RoutineFormState {
   }[];
 }
 
+const createEmptyRoutines = (): RoutineFormState[] => [
+  {
+    name: 'Día 1: Piernas y Core',
+    dayOfWeek: 1,
+    description: 'Enfoque en sentadilla y potencia inferior',
+    exerciseItems: [],
+  },
+  {
+    name: 'Día 2: Torso y Empuje',
+    dayOfWeek: 3,
+    description: 'Enfoque en press de banca y hombros',
+    exerciseItems: [],
+  },
+];
+
 export const TrainerPlanBuilder: React.FC = () => {
   const [athletes, setAthletes] = useState<AthleteUser[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -52,21 +67,17 @@ export const TrainerPlanBuilder: React.FC = () => {
     new Date(Date.now() + 28 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
   );
 
+  // El selector nativo no puede mostrar imágenes dentro de cada opción. Por eso
+  // mostramos el avatar del atleta elegido junto al campo, sin cambiar cómo se asigna el plan.
+  const selectedAthlete = athletes.find((athlete) => athlete.id === selectedAthleteId);
+  const selectedAthleteAvatar = selectedAthlete?.avatarUrl ||
+    (selectedAthlete
+      ? `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedAthlete.fullName)}&background=eed8c0&color=5a0505&bold=true`
+      : '');
+
   // Rutinas del Plan
-  const [routines, setRoutines] = useState<RoutineFormState[]>([
-    {
-      name: 'Día 1: Piernas y Core',
-      dayOfWeek: 1, // Lunes
-      description: 'Enfoque en sentadilla y potencia inferior',
-      exerciseItems: [],
-    },
-    {
-      name: 'Día 2: Torso y Empuje',
-      dayOfWeek: 3, // Miércoles
-      description: 'Enfoque en press de banca y hombros',
-      exerciseItems: [],
-    },
-  ]);
+  const [routines, setRoutines] = useState<RoutineFormState[]>(createEmptyRoutines);
+  const [isLoadingAssignedPlan, setIsLoadingAssignedPlan] = useState(false);
 
   // Modal para Cargar Plantilla (HU-12)
   const [isLoadModalOpen, setIsLoadModalOpen] = useState(false);
@@ -103,33 +114,73 @@ export const TrainerPlanBuilder: React.FC = () => {
         setSelectedAthleteId(athletesList[0].id);
       }
 
-      // Si las rutinas no tienen ejercicios, precargar el primer ejercicio como guía
-      if (exercisesList.length > 0) {
-        const defaultEx = exercisesList[0];
-        setRoutines((prev) =>
-          prev.map((r) => ({
-            ...r,
-            exerciseItems: [
-              {
-                exerciseId: defaultEx.id,
-                exerciseName: defaultEx.nombre,
-                targetSets: 4,
-                targetReps: 8,
-                targetWeightKg: 60,
-                restSeconds: 90,
-                notes: 'Control en la fase excéntrica',
-                cadence: '3-0-1-0',
-              },
-            ],
-          })),
-        );
-      }
+      // Las rutinas empiezan vacías a propósito. El entrenador debe añadir los
+      // ejercicios que correspondan o cargar una plantilla; así nunca se asigna
+      // por error un único ejercicio genérico a un atleta.
     } catch (err: any) {
       setErrorMessage('Error al cargar la lista de alumnos o ejercicios.');
     } finally {
       setIsLoadingData(false);
     }
   };
+
+  // Cada atleta conserva su plan activo. Al volver al diseñador o cambiar de
+  // atleta, se carga aquí para editarlo en vez de empezar un formulario nuevo.
+  useEffect(() => {
+    if (!selectedAthleteId) return;
+
+    let requestIsCurrent = true;
+    const loadAssignedPlan = async () => {
+      setIsLoadingAssignedPlan(true);
+      setErrorMessage('');
+      try {
+        const plan = await trainingService.getActivePlan(selectedAthleteId);
+        if (!requestIsCurrent) return;
+
+        if (!plan) {
+          setPlanName('Mesociclo de Hipertrofia & Fuerza');
+          setStartDate(new Date().toISOString().slice(0, 10));
+          setEndDate(new Date(Date.now() + 28 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10));
+          setRoutines(createEmptyRoutines());
+          setSuccessMessage('');
+          return;
+        }
+
+        setPlanName(plan.name);
+        setStartDate(String(plan.startDate).slice(0, 10));
+        setEndDate(String(plan.endDate).slice(0, 10));
+        setRoutines(
+          plan.routines.map((routine) => ({
+            name: routine.name,
+            dayOfWeek: Number(routine.dayOfWeek),
+            description: routine.description || '',
+            exerciseItems: routine.exerciseItems.map((item) => ({
+              exerciseId: item.exerciseId,
+              exerciseName: item.exerciseName,
+              targetSets: Number(item.targetSets),
+              targetReps: Number(item.targetReps),
+              targetWeightKg: Number(item.targetWeightKg),
+              restSeconds: Number(item.restSeconds) || 90,
+              notes: item.notes || '',
+              cadence: item.cadence || '3-0-1-0',
+            })),
+          })),
+        );
+        setSuccessMessage('Plan activo cargado. Podés modificarlo y volver a asignarlo.');
+      } catch (err: any) {
+        if (requestIsCurrent) {
+          setErrorMessage('No se pudo cargar el plan vigente de este atleta.');
+        }
+      } finally {
+        if (requestIsCurrent) setIsLoadingAssignedPlan(false);
+      }
+    };
+
+    loadAssignedPlan();
+    return () => {
+      requestIsCurrent = false;
+    };
+  }, [selectedAthleteId]);
 
   const handleAddRoutine = () => {
     const nextDay = (routines.length * 2 + 1) % 7 || 5;
@@ -397,7 +448,7 @@ export const TrainerPlanBuilder: React.FC = () => {
     }
   };
 
-  if (isLoadingData) {
+  if (isLoadingData || isLoadingAssignedPlan) {
     return (
       <div className="fullscreen-loading">
         <div className="spinner"></div>
@@ -460,22 +511,32 @@ export const TrainerPlanBuilder: React.FC = () => {
 
             <div className="form-group">
               <label className="form-label">Alumno / Atleta Asignado *</label>
-              <select
-                required
-                className="form-input form-select"
-                value={selectedAthleteId}
-                onChange={(e) => setSelectedAthleteId(e.target.value)}
-              >
-                {athletes.length === 0 ? (
-                  <option value="">No hay atletas registrados</option>
-                ) : (
-                  athletes.map((ath) => (
-                    <option key={ath.id} value={ath.id}>
-                      {ath.fullName} ({ath.email})
-                    </option>
-                  ))
+              <div className="athlete-select-with-avatar">
+                <select
+                  required
+                  className="form-input form-select"
+                  value={selectedAthleteId}
+                  onChange={(e) => setSelectedAthleteId(e.target.value)}
+                >
+                  {athletes.length === 0 ? (
+                    <option value="">No hay atletas registrados</option>
+                  ) : (
+                    athletes.map((ath) => (
+                      <option key={ath.id} value={ath.id}>
+                        {ath.fullName} ({ath.email})
+                      </option>
+                    ))
+                  )}
+                </select>
+                {selectedAthlete && (
+                  <img
+                    className="selected-athlete-avatar"
+                    src={selectedAthleteAvatar}
+                    alt={`Foto de ${selectedAthlete.fullName}`}
+                    title={selectedAthlete.fullName}
+                  />
                 )}
-              </select>
+              </div>
             </div>
 
             <div className="form-group">
