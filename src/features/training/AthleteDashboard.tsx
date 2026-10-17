@@ -10,6 +10,7 @@ import {
   Info,
   ChevronRight,
   Flame,
+  X,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { trainingService } from '../../services/trainingService.js';
@@ -50,6 +51,9 @@ export const AthleteDashboard: React.FC = () => {
   const [selectedExerciseForModal, setSelectedExerciseForModal] =
     useState<Exercise | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Modal de confirmación al finalizar sesión
+  const [isConfirmFinishModalOpen, setIsConfirmFinishModalOpen] = useState(false);
 
   useEffect(() => {
     loadPlanAndExercises();
@@ -182,8 +186,8 @@ export const AthleteDashboard: React.FC = () => {
     }
   };
 
-  // Guardado de la sesión de ejecución
-  const handleFinishSession = async () => {
+  // Validación previa antes de abrir modal de confirmación
+  const handleRequestFinishSession = () => {
     if (!user || !activePlan || isSessionFinished) return;
     setError('');
 
@@ -216,6 +220,15 @@ export const AthleteDashboard: React.FC = () => {
         }
       }
     }
+
+    // Si todas las validaciones pasan, se despliega el modal de confirmación
+    setIsConfirmFinishModalOpen(true);
+  };
+
+  // Guardado real de la sesión tras confirmación del atleta
+  const handleConfirmAndSaveSession = async () => {
+    setIsConfirmFinishModalOpen(false);
+    if (!user || !activePlan || isSessionFinished) return;
 
     const currentRoutine = activePlan.routines[selectedRoutineIndex];
 
@@ -561,7 +574,7 @@ export const AthleteDashboard: React.FC = () => {
               </div>
             ) : (
               <button
-                onClick={handleFinishSession}
+                onClick={handleRequestFinishSession}
                 disabled={isSavingSession}
                 className="btn btn-primary btn-large btn-finish-session"
               >
@@ -572,6 +585,75 @@ export const AthleteDashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal de Confirmación de Finalización de Sesión (Seguridad y UX) */}
+      {isConfirmFinishModalOpen && (
+        <div className="modal-backdrop" onClick={() => setIsConfirmFinishModalOpen(false)}>
+          <div
+            className="modal-container modal-sm finish-confirm-card"
+            onClick={(e) => e.stopPropagation()}
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="finish-confirm-title"
+          >
+            <div className="modal-header">
+              <div className="modal-title-group">
+                <Sparkles size={20} className="text-primary" />
+                <h3 id="finish-confirm-title" className="modal-title">
+                  Finalizar Sesión de Entrenamiento
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsConfirmFinishModalOpen(false)}
+                className="btn-icon-close"
+                title="Cerrar (Cancelar)"
+                aria-label="Cerrar modal"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="modal-body-content">
+              <div className="finish-confirm-body">
+                <div className="finish-confirm-icon-box">
+                  <Dumbbell size={36} className="text-primary" />
+                </div>
+                <h4 className="finish-confirm-heading">¿Confirmar fin del entrenamiento?</h4>
+                <p className="finish-confirm-text">
+                  ¿Estás seguro de que deseas finalizar la sesión de entrenamiento del día? Se guardarán todas las series registradas.
+                </p>
+                <div className="finish-confirm-badge-summary">
+                  <span>
+                    Series completadas:{' '}
+                    <strong>{sessionSets.filter((s) => s.isCompleted).length}</strong> de{' '}
+                    <strong>{sessionSets.length}</strong>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-footer finish-confirm-footer">
+              <button
+                type="button"
+                onClick={() => setIsConfirmFinishModalOpen(false)}
+                className="btn btn-secondary"
+                disabled={isSavingSession}
+              >
+                Cancelar / Seguir Entrenando
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmAndSaveSession}
+                disabled={isSavingSession}
+                className="btn btn-primary"
+              >
+                <CheckCircle size={16} />
+                <span>{isSavingSession ? 'Guardando...' : 'Confirmar y Guardar'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal de Video y Zonas Musculares (HU-07) */}
       <VideoPlayerModal

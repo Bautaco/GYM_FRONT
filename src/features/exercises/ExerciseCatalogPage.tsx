@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  BookOpen,
   Plus,
   Play,
   Dumbbell,
@@ -10,18 +9,20 @@ import {
   X,
   Pencil,
   Trash2,
+  Tag,
+  PlusCircle,
+  Sparkles,
 } from 'lucide-react';
 import { trainingService } from '../../services/trainingService.js';
 import { useAuth } from '../auth/AuthContext.js';
 import { Exercise, UserRole } from '../../types/index.js';
-import { VideoPlayerModal } from '../../components/VideoPlayerModal.js';
+import { ExerciseDetailModal } from '../../components/ExerciseDetailModal.js';
 
-const MUSCLE_GROUPS = ['Piernas', 'Pecho', 'Espalda', 'Hombros', 'Brazos', 'Core'];
+const DEFAULT_MUSCLE_GROUPS = ['Piernas', 'Pecho', 'Espalda', 'Hombros', 'Brazos', 'Core'];
 
 const emptyForm = () => ({
   nombre: '',
   grupo: 'Piernas',
-  zonas: 'Cuádriceps, Glúteos',
   descripcion: '',
   videoUrl: '',
 });
@@ -29,11 +30,13 @@ const emptyForm = () => ({
 export const ExerciseCatalogPage: React.FC = () => {
   const { role } = useAuth();
   const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [muscleGroups, setMuscleGroups] = useState<string[]>(DEFAULT_MUSCLE_GROUPS);
+  const [targetZonesList, setTargetZonesList] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMuscle, setSelectedMuscle] = useState<string>('TODOS');
   const [isLoading, setIsLoading] = useState(true);
 
-  // Video modal
+  // Video & Detail modal
   const [selectedExerciseForModal, setSelectedExerciseForModal] = useState<Exercise | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -41,6 +44,10 @@ export const ExerciseCatalogPage: React.FC = () => {
   const [editTarget, setEditTarget] = useState<Exercise | null>(null); // null = crear
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [form, setForm] = useState(emptyForm());
+  const [isCustomGroupMode, setIsCustomGroupMode] = useState(false);
+  const [customGroupName, setCustomGroupName] = useState('');
+  const [formSelectedZones, setFormSelectedZones] = useState<string[]>([]);
+  const [newZoneInput, setNewZoneInput] = useState('');
   const [formError, setFormError] = useState('');
   const [formSuccess, setFormSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,24 +58,56 @@ export const ExerciseCatalogPage: React.FC = () => {
   const [deleteError, setDeleteError] = useState('');
 
   useEffect(() => {
-    loadExercises();
+    loadAllData();
   }, []);
 
-  const loadExercises = async () => {
+  const loadAllData = async () => {
     setIsLoading(true);
     try {
-      const data = await trainingService.getExercises();
-      setExercises(data);
-    } catch (e) {
-      console.error(e);
+      await Promise.all([loadExercises(), loadMetadata()]);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const loadExercises = async () => {
+    try {
+      const data = await trainingService.getExercises();
+      setExercises(data);
+    } catch (e) {
+      console.error('Error al cargar ejercicios:', e);
+    }
+  };
+
+  const loadMetadata = async () => {
+    try {
+      const [groups, zones] = await Promise.all([
+        trainingService.getMuscleGroups().catch(() => []),
+        trainingService.getTargetZones().catch(() => []),
+      ]);
+      if (groups && groups.length > 0) {
+        setMuscleGroups(groups);
+      }
+      if (zones && zones.length > 0) {
+        setTargetZonesList(zones);
+      }
+    } catch (e) {
+      console.error('Error al cargar metadatos musculares:', e);
+    }
+  };
+
   const openCreateModal = () => {
     setEditTarget(null);
-    setForm(emptyForm());
+    setIsCustomGroupMode(false);
+    setCustomGroupName('');
+    setFormSelectedZones(['Cuádriceps', 'Glúteo Mayor']);
+    setNewZoneInput('');
+    setForm({
+      nombre: '',
+      grupo: muscleGroups[0] || 'Piernas',
+      descripcion: '',
+      videoUrl: '',
+    });
     setFormError('');
     setFormSuccess('');
     setIsFormModalOpen(true);
@@ -76,16 +115,59 @@ export const ExerciseCatalogPage: React.FC = () => {
 
   const openEditModal = (ex: Exercise) => {
     setEditTarget(ex);
+    const existsInGroups = muscleGroups.some(
+      (g) => g.toLowerCase() === ex.grupoMuscularPrincipal.toLowerCase(),
+    );
+    if (!existsInGroups && ex.grupoMuscularPrincipal) {
+      setIsCustomGroupMode(true);
+      setCustomGroupName(ex.grupoMuscularPrincipal);
+    } else {
+      setIsCustomGroupMode(false);
+      setCustomGroupName('');
+    }
+    setFormSelectedZones(
+      ex.zonasTrabajadas && ex.zonasTrabajadas.length > 0
+        ? [...ex.zonasTrabajadas]
+        : [ex.grupoMuscularPrincipal],
+    );
+    setNewZoneInput('');
     setForm({
       nombre: ex.nombre,
       grupo: ex.grupoMuscularPrincipal,
-      zonas: (ex.zonasTrabajadas || []).join(', '),
       descripcion: ex.descripcion,
       videoUrl: ex.videoUrl || '',
     });
     setFormError('');
     setFormSuccess('');
     setIsFormModalOpen(true);
+  };
+
+  // Manejador para agregar zonas trabajadas dinámicamente
+  const handleAddZone = (zoneToAdd?: string) => {
+    const raw = (zoneToAdd !== undefined ? zoneToAdd : newZoneInput).trim();
+    if (!raw) return;
+
+    // Permitir separar por comas en caso de pegar varios términos
+    const split = raw
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+
+    const updated = [...formSelectedZones];
+    for (const item of split) {
+      if (!updated.some((z) => z.toLowerCase() === item.toLowerCase())) {
+        updated.push(item);
+      }
+    }
+
+    setFormSelectedZones(updated);
+    if (zoneToAdd === undefined) {
+      setNewZoneInput('');
+    }
+  };
+
+  const handleRemoveZone = (indexToRemove: number) => {
+    setFormSelectedZones((prev) => prev.filter((_, idx) => idx !== indexToRemove));
   };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -98,15 +180,21 @@ export const ExerciseCatalogPage: React.FC = () => {
       return;
     }
 
-    const zonesArray = form.zonas
-      .split(',')
-      .map((z) => z.trim())
-      .filter((z) => z.length > 0);
+    const finalGroup = isCustomGroupMode ? customGroupName.trim() : form.grupo.trim();
+    if (!finalGroup) {
+      setFormError('Debes seleccionar o ingresar un Grupo Muscular Principal.');
+      return;
+    }
+
+    if (formSelectedZones.length === 0) {
+      setFormError('Debes especificar al menos una Zona Trabajada.');
+      return;
+    }
 
     const payload = {
       nombre: form.nombre.trim(),
-      grupoMuscularPrincipal: form.grupo,
-      zonasTrabajadas: zonesArray.length > 0 ? zonesArray : [form.grupo],
+      grupoMuscularPrincipal: finalGroup,
+      zonasTrabajadas: formSelectedZones,
       descripcion: form.descripcion.trim(),
       videoUrl: form.videoUrl.trim() || undefined,
     };
@@ -115,12 +203,15 @@ export const ExerciseCatalogPage: React.FC = () => {
     try {
       if (editTarget) {
         await trainingService.updateExercise(editTarget.id, payload);
-        setFormSuccess('¡Ejercicio actualizado correctamente!');
+        setFormSuccess('¡Ejercicio actualizado y grupos musculares sincronizados!');
       } else {
         await trainingService.createExercise(payload);
-        setFormSuccess('¡Ejercicio creado y dado de alta en el catálogo!');
+        setFormSuccess('¡Ejercicio creado y dado de alta en el catálogo con éxito!');
       }
-      await loadExercises();
+
+      // Recargar catálogo y metadatos dinámicos para que las nuevas opciones queden disponibles
+      await Promise.all([loadExercises(), loadMetadata()]);
+
       setTimeout(() => {
         setIsFormModalOpen(false);
         setFormSuccess('');
@@ -158,7 +249,13 @@ export const ExerciseCatalogPage: React.FC = () => {
     return matchesSearch && matchesMuscle;
   });
 
-  const muscleCategories = ['TODOS', ...MUSCLE_GROUPS.map((m) => m.toUpperCase())];
+  // Filtros superiores dinámicos que se expanden automáticamente con nuevos grupos
+  const dynamicCategories = ['TODOS', ...muscleGroups.map((m) => m.toUpperCase())];
+
+  // Sugerencias de zonas para agregar con un solo clic (que no estén ya seleccionadas)
+  const unselectedSuggestions = targetZonesList.filter(
+    (z) => !formSelectedZones.some((sz) => sz.toLowerCase() === z.toLowerCase()),
+  );
 
   return (
     <div className="catalog-page-layout">
@@ -167,7 +264,7 @@ export const ExerciseCatalogPage: React.FC = () => {
         <div>
           <h1 className="page-main-title">Catálogo Oficial de Ejercicios</h1>
           <p className="page-main-subtitle">
-            Guía biomecánica completa con zonas musculares trabajadas y reproducción in-app de técnica de ejecución.
+            Guía biomecánica completa con zonas musculares trabajadas dinámicas, muñeco anatómico y reproducción in-app de técnica.
           </p>
         </div>
 
@@ -193,7 +290,7 @@ export const ExerciseCatalogPage: React.FC = () => {
         </div>
 
         <div className="muscle-filter-pills">
-          {muscleCategories.map((m) => (
+          {dynamicCategories.map((m) => (
             <button
               key={m}
               onClick={() => setSelectedMuscle(m)}
@@ -285,14 +382,14 @@ export const ExerciseCatalogPage: React.FC = () => {
         </div>
       )}
 
-      {/* Video Modal */}
-      <VideoPlayerModal
+      {/* Video & Detail Modal con Muñeco Anatómico (HU-07) */}
+      <ExerciseDetailModal
         exercise={selectedExerciseForModal}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
 
-      {/* Create / Edit Modal */}
+      {/* Create / Edit Modal con Combobox Dinámico y Creador de Tags */}
       {isFormModalOpen && (
         <div className="modal-backdrop" onClick={() => setIsFormModalOpen(false)}>
           <div className="modal-container" onClick={(e) => e.stopPropagation()} role="dialog">
@@ -331,29 +428,138 @@ export const ExerciseCatalogPage: React.FC = () => {
                 />
               </div>
 
+              {/* 1. Combobox Dinámico para Grupo Muscular Principal */}
               <div className="form-group">
                 <label className="form-label">Grupo Muscular Principal *</label>
-                <select
-                  className="form-input"
-                  value={form.grupo}
-                  onChange={(e) => setForm({ ...form, grupo: e.target.value })}
-                >
-                  {MUSCLE_GROUPS.map((g) => (
-                    <option key={g} value={g}>{g}</option>
-                  ))}
-                </select>
+                <div className="group-select-row">
+                  {!isCustomGroupMode ? (
+                    <>
+                      <select
+                        className="form-input"
+                        value={form.grupo}
+                        onChange={(e) => {
+                          if (e.target.value === '__NEW__') {
+                            setIsCustomGroupMode(true);
+                            setCustomGroupName('');
+                          } else {
+                            setForm({ ...form, grupo: e.target.value });
+                          }
+                        }}
+                      >
+                        {muscleGroups.map((g) => (
+                          <option key={g} value={g}>
+                            {g}
+                          </option>
+                        ))}
+                        <option value="__NEW__">➕ Crear nuevo grupo muscular...</option>
+                      </select>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsCustomGroupMode(true);
+                          setCustomGroupName('');
+                        }}
+                        className="custom-toggle-btn"
+                      >
+                        <Plus size={14} />
+                        <span>Ingresar un grupo muscular personalizado</span>
+                      </button>
+                    </>
+                  ) : (
+                    <div className="custom-group-input-box">
+                      <input
+                        type="text"
+                        autoFocus
+                        placeholder="Ej. Cuello, Trapecios, Cardio..."
+                        className="form-input"
+                        value={customGroupName}
+                        onChange={(e) => setCustomGroupName(e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setIsCustomGroupMode(false)}
+                        className="btn btn-secondary btn-sm"
+                        style={{ whiteSpace: 'nowrap' }}
+                      >
+                        Elegir de lista
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
 
+              {/* 2. Zonas Trabajadas Dinámicas con Creación Sobre la Marcha */}
               <div className="form-group">
-                <label className="form-label">Zonas Trabajadas (separadas por coma) *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ej. Glúteo Mayor, Isquiotibiales, Core"
-                  className="form-input"
-                  value={form.zonas}
-                  onChange={(e) => setForm({ ...form, zonas: e.target.value })}
-                />
+                <label className="form-label">Zonas Trabajadas / Músculos Específicos *</label>
+                <div className="zone-input-row">
+                  <input
+                    type="text"
+                    placeholder="Escribí una zona (ej. Glúteo Medio) y presioná Enter o Agregar..."
+                    className="form-input"
+                    value={newZoneInput}
+                    onChange={(e) => setNewZoneInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddZone();
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleAddZone()}
+                    className="btn-add-tag"
+                  >
+                    <Plus size={15} />
+                    <span>Agregar</span>
+                  </button>
+                </div>
+
+                {/* Chips de Zonas Seleccionadas */}
+                <div className="selected-zones-container">
+                  {formSelectedZones.map((zone, idx) => (
+                    <span key={idx} className="selected-zone-badge">
+                      <Tag size={12} />
+                      <span>{zone}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveZone(idx)}
+                        className="btn-remove-zone"
+                        title="Quitar zona"
+                      >
+                        <X size={13} />
+                      </button>
+                    </span>
+                  ))}
+                  {formSelectedZones.length === 0 && (
+                    <span className="input-hint" style={{ color: '#f87171' }}>
+                      Debes agregar al menos una zona muscular trabajada.
+                    </span>
+                  )}
+                </div>
+
+                {/* Bandeja de sugerencias rápidas desde la base de datos */}
+                {unselectedSuggestions.length > 0 && (
+                  <div className="quick-zones-section">
+                    <span className="quick-zones-title">
+                      Zonas registradas en la base de datos (clic para sumar):
+                    </span>
+                    <div className="quick-zones-pills">
+                      {unselectedSuggestions.slice(0, 16).map((zone) => (
+                        <button
+                          key={zone}
+                          type="button"
+                          onClick={() => handleAddZone(zone)}
+                          className="quick-zone-chip"
+                          title={`Agregar ${zone}`}
+                        >
+                          <PlusCircle size={12} />
+                          <span>{zone}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="form-group">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   X,
@@ -32,6 +32,66 @@ const AVATAR_PRESETS = [
   'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150',
   'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150',
 ];
+
+/**
+ * Redimensiona y comprime una imagen seleccionada desde PC/Teléfono a un cuadrado 1:1
+ * optimizado para avatar (~25-35KB), evitando problemas de peso y red.
+ */
+const _compressAndResizeImage = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith('image/')) {
+      reject(new Error('El archivo seleccionado debe ser una imagen válida.'));
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          const MAX_SIZE = 300;
+          const width = img.width;
+          const height = img.height;
+
+          // Crop centrado a proporción cuadrada 1:1
+          const minDim = Math.min(width, height);
+          const startX = (width - minDim) / 2;
+          const startY = (height - minDim) / 2;
+
+          canvas.width = MAX_SIZE;
+          canvas.height = MAX_SIZE;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(e.target?.result as string);
+            return;
+          }
+
+          ctx.drawImage(
+            img,
+            startX,
+            startY,
+            minDim,
+            minDim,
+            0,
+            0,
+            MAX_SIZE,
+            MAX_SIZE,
+          );
+
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+          resolve(dataUrl);
+        } catch (err) {
+          reject(err);
+        }
+      };
+      img.onerror = () => reject(new Error('No se pudo procesar la imagen.'));
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = () => reject(new Error('Error al leer el archivo.'));
+    reader.readAsDataURL(file);
+  });
+};
 
 export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
   const { user } = useAuth();
@@ -222,11 +282,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
             </div>
 
             <div className="avatar-selection-box">
-              <img
-                src={currentDisplayAvatar}
-                alt={user.fullName}
-                className="profile-avatar-preview"
-              />
+              <img src={currentDisplayAvatar} alt={user.fullName} className="profile-avatar-preview" />
               <div className="avatar-options-group">
                 <label className="avatar-help-text" htmlFor="profile-photo">Elegí una foto de tu dispositivo:</label>
                 <input id="profile-photo" type="file" accept="image/jpeg,image/png,image/webp" onChange={handlePhotoChange} disabled={isPreparingPhoto || isSubmitting} className="profile-photo-input" />
@@ -265,7 +321,6 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
                 type="button"
                 onClick={toggleTheme}
                 className="btn-theme-toggle"
-                aria-pressed={theme === 'light'}
               >
                 {theme === 'dark' ? (
                   <>
@@ -324,7 +379,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
               />
             </div>
 
-            {/* SECCIÓN 4: CAMBIO DE CONTRASEÑA */}
+            {/* SECCIÓN 3: CAMBIO DE CONTRASEÑA */}
             <div className="profile-section-label">
               <Lock size={15} />
               <span>Cambiar Contraseña</span>
