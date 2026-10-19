@@ -72,15 +72,17 @@ export const Navbar: React.FC = () => {
               </Link>
             )}
 
-            {/* Compartido */}
-            <Link
-              to="/exercises"
-              className={`nav-link ${isActive('/exercises') ? 'active' : ''}`}
-            >
-              <BookOpen size={18} />
-              <span>Catálogo</span>
-            </Link>
-
+            {/* CATÁLOGO: visible solamente para el entrenador */}
+            {role === UserRole.ENTRENADOR && (
+              <Link
+                to="/exercises"
+                className={`nav-link ${isActive('/exercises') ? 'active' : ''}`}
+              >
+                <BookOpen size={18} />
+                <span>Catálogo</span>
+              </Link>
+            )}
+            
             <Link
               to="/progress"
               className={`nav-link ${isActive('/progress') ? 'active' : ''}`}

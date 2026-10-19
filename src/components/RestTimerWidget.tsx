@@ -144,7 +144,7 @@ export const RestTimerWidget: React.FC = () => {
           <div className="rest-timer-header">
             <div className="timer-header-title">
               <Timer size={16} className="timer-icon-lead" />
-              <span>Cronómetro de Descanso (HU-11)</span>
+              <span>Cronómetro de Descanso</span>
             </div>
             <div className="rest-timer-header-actions">
               <button

@@ -73,9 +73,18 @@ export const AppRoutes: React.FC = () => {
             }
           />
 
-          {/* Catálogo de Ejercicios */}
-          <Route path="/exercises" element={<ExerciseCatalogPage />} />
-
+         {/* Catálogo de ejercicios: acceso exclusivo del entrenador */}
+        <Route
+          path="/exercises"
+          element={
+            role === UserRole.ENTRENADOR ? (
+              <ExerciseCatalogPage />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
+        
           {/* Métricas y Evolución de Cargas */}
           <Route path="/progress" element={<ProgressPage />} />
 

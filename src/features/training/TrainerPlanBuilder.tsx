@@ -92,6 +92,8 @@ export const TrainerPlanBuilder: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  /* Controla la ventana de confirmación antes de asignar el plan */
+  const [isConfirmSavePlanOpen, setIsConfirmSavePlanOpen] = useState(false);
 
   useEffect(() => {
     loadInitialData();
@@ -377,6 +379,18 @@ export const TrainerPlanBuilder: React.FC = () => {
     }
   };
 
+  /* Muestra un error y lleva al entrenador hasta el aviso */
+  const showPlanError = (message: string) => {
+    setErrorMessage(message);
+
+    setTimeout(() => {
+      document.querySelector('.alert-error')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }, 0);
+  };
+
   // Submit HU-03: Crear y asignar plan
   const handleSubmitPlan = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -398,15 +412,24 @@ export const TrainerPlanBuilder: React.FC = () => {
       return;
     }
 
-    for (let i = 0; i < routines.length; i++) {
-      if (routines[i].exerciseItems.length === 0) {
-        setErrorMessage(
-          `La rutina "${routines[i].name || `Día ${i + 1}`}" no tiene ejercicios agregados. Añade al menos uno.`,
-        );
-        return;
-      }
-    }
+    /* Busca la primera rutina que no tenga ejercicios */
+    const emptyRoutineIndex = routines.findIndex(
+      (routine) => routine.exerciseItems.length === 0,
+    );
 
+    if (emptyRoutineIndex !== -1) {
+      const emptyRoutine = routines[emptyRoutineIndex];
+      showPlanError(
+        `La rutina "${emptyRoutine.name || `Día ${emptyRoutineIndex + 1}`}" está vacía. Debes agregar al menos un ejercicio antes de guardar el plan.`,
+      );
+    return;
+    }
+    /* Si no encontró errores, muestra la ventana de confirmación */
+    setIsConfirmSavePlanOpen(true);
+    };
+
+    /* Guarda el plan después de que el entrenador confirma */
+  const handleConfirmSavePlan = async () => {
     setIsSubmitting(true);
     try {
       const payload = {
@@ -432,7 +455,7 @@ export const TrainerPlanBuilder: React.FC = () => {
       };
 
       await trainingService.createPlan(payload);
-
+      setIsConfirmSavePlanOpen(false);
       setSuccessMessage(
         '🎉 ¡Plan de entrenamiento creado y asignado con éxito! Se ha activado como el plan vigente para el atleta.',
       );
@@ -468,7 +491,7 @@ export const TrainerPlanBuilder: React.FC = () => {
           </div>
           <h1 className="builder-title">Diseñador y Asignador de Planes</h1>
           <p className="builder-subtitle">
-            Estructura microciclos por días, rutinas, series objetivo, pausas y notas técnicas de cadencia (HU-03 & HU-12).
+            Estructura microciclos por días, rutinas, series objetivo, pausas y notas técnicas de cadencia.
           </p>
         </div>
       </div>
@@ -569,10 +592,10 @@ export const TrainerPlanBuilder: React.FC = () => {
             <div>
               <h2 className="section-title">
                 <Dumbbell size={18} />
-                <span>2. Rutinas y Ejercicios Prescritos ({routines.length} Días)</span>
+                <span>2. Rutinas y Ejercicios Prescritos ({routines.length} Rutinas)</span>
               </h2>
               <p className="section-desc">
-                Define los ejercicios, descansos y tempos para cada sesión. Puedes reutilizar plantillas prediseñadas (HU-12).
+                Define los ejercicios, descansos y tempos para cada sesión. Puedes reutilizar plantillas prediseñadas.
               </p>
             </div>
             <button
@@ -838,6 +861,101 @@ export const TrainerPlanBuilder: React.FC = () => {
           </button>
         </div>
       </form>
+
+      {/* Confirmación antes de guardar y asignar el plan */}
+      {isConfirmSavePlanOpen && (
+       <div
+          className="modal-backdrop"
+          onClick={() => {
+            if (!isSubmitting) {
+              setIsConfirmSavePlanOpen(false);
+            }
+          }}
+        >
+           <div
+            className="modal-container modal-sm finish-confirm-card"
+            onClick={(e) => e.stopPropagation()}
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="confirm-save-plan-title"
+          >
+            <div className="modal-header">
+              <div className="modal-title-group">
+                <Save size={20} className="text-primary" />
+
+                <h3 id="confirm-save-plan-title" className="modal-title">
+                  Guardar y asignar plan
+                </h3>
+              </div>
+
+              <button
+                type="button"
+                className="btn-icon-close"
+                onClick={() => setIsConfirmSavePlanOpen(false)}
+                disabled={isSubmitting}
+                aria-label="Cerrar confirmación"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="modal-body-content">
+              <div className="finish-confirm-body">
+                <div className="finish-confirm-icon-box">
+                  <Dumbbell size={36} className="text-primary" />
+                </div>
+
+                <h4 className="finish-confirm-heading">
+                  ¿Confirmás la asignación del plan?
+                </h4>
+
+                <p className="finish-confirm-text">
+                  El plan se guardará y quedará activo para{' '}
+                  <strong>{selectedAthlete?.fullName || 'el atleta seleccionado'}</strong>.
+                </p>
+
+                <div className="finish-confirm-badge-summary">
+                  <span>
+                    Rutinas: <strong>{routines.length}</strong>
+                    {' · '}
+                    Ejercicios:{' '}
+                    <strong>
+                      {routines.reduce(
+                        (total, routine) => total + routine.exerciseItems.length,
+                        0,
+                      )}
+                    </strong>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-footer finish-confirm-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setIsConfirmSavePlanOpen(false)}
+                disabled={isSubmitting}
+              >
+                Cancelar y revisar
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleConfirmSavePlan}
+                disabled={isSubmitting}
+              >
+                <CheckCircle size={16} />
+
+                <span>
+                  {isSubmitting ? 'Guardando...' : 'Confirmar y guardar'}
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal: Cargar Plantilla (HU-12) */}
       {isLoadModalOpen && (
