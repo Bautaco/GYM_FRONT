@@ -97,13 +97,13 @@ GYM_FRONT/
 | :--- | :--- | :--- | :--- |
 | **HU-01: Gestión Centralizada de Usuarios** | `/admin/users` | `ADMIN` | Creación de cuentas institucionales (`ENTRENADOR` y `ATLETA`) desde el panel de control. Listado general y eliminación. Se descarta el registro público abierto para mantener la seguridad institucional. |
 | **HU-02: Autenticación, Sesión y Perfil** | `/login`, `ProfileModal` | Todos | Login con JWT persistido en `localStorage`. Botones de acceso rápido para demostración rápida de los 3 roles. Modal de perfil para actualización de datos, avatar preset y cambio seguro de contraseña. |
-| **HU-03: Catálogo Multimedia de Ejercicios** | `/exercises` | Compartido | Catálogo de ejercicios clasificados por grupo muscular. Los entrenadores cuentan con CRUD completo (creación, edición completa de todos los campos y baja segura). |
-| **HU-04: Constructor y Asignador de Planes** | `/trainer/assign-plan` | `ENTRENADOR` | Creación de planes con rutinas diarias, series, repeticiones sugeridas y descansos. Gestión de plantillas de rutina (guardado y carga rápida para agilizar prescripciones). |
+| **HU-03: Catálogo Multimedia de Ejercicios** | `/exercises` | `ENTRENADOR` | Vista exclusiva de gestión para el entrenador con CRUD completo (creación, edición completa de parámetros biomecánicos y baja segura). Los atletas visualizan los videos técnicos directamente integrados en sus rutinas activas. |
+| **HU-04: Constructor y Asignador de Planes** | `/trainer/assign-plan` | `ENTRENADOR` | Creación de planes con rutinas diarias, series, repeticiones sugeridas, descansos y **Cadencia / Tempo** (ej. `"3-0-1-0"`). Gestión de plantillas de rutina (guardado y carga rápida para agilizar prescripciones). |
 | **HU-05: Reproductor Multimedia In-App** | `VideoPlayerModal` | Compartido | Visualización de técnica y guías en modal in-app. Soporta videos estándar de YouTube, enlaces de **YouTube Shorts** (`youtube.com/shorts/...`) y archivos de video MP4 directos. |
 | **HU-06: Ejecución Interactiva de Rutinas** | `/` (Atleta) | `ATLETA` | Navegación entre días de la rutina activa. Registro interactivo de peso real (kg) y repeticiones logradas serie por serie con selección manual. Escala RPE (1-10), feedback y sellado de sesión completada. |
 | **HU-07: Récords Personales (PRs)** | `PrCelebrationModal` | `ATLETA` | Comparación automática de las cargas levantadas con el histórico. Si se supera una marca anterior, se dispara una celebración con confeti animado (`canvas-confetti`). |
-| **HU-08: Temporizador Flotante de Descanso** | `RestTimerWidget` | Compartido | Widget flotante persistente en pantalla con presets de descanso (30s, 60s, 90s, 120s), pausa, reanudación y alerta visual y sonora. |
-| **HU-09: Registro Antropométrico** | `BodyWeightModal` | `ATLETA` | Modal accesible desde la barra superior y panel de progreso para ingresar pesajes en kg con fecha y validación numérica estricta. |
+| **HU-08: Temporizador Flotante de Descanso** | `RestTimerWidget` | `ATLETA` | Widget flotante persistente en pantalla durante el entrenamiento del atleta con presets de descanso (30s, 60s, 90s, 120s), pausa, reanudación y alerta visual y sonora. |
+| **HU-09: Registro Antropométrico** | `BodyWeightModal` | `ATLETA` | Modal accesible dentro del panel de progreso y métricas para ingresar pesajes en kg con fecha y validación numérica estricta. |
 | **HU-10: Analítica de Progresión de Cargas** | `/progress` | Compartido | Gráficos interactivos de líneas (**Recharts**) con la evolución del peso máximo (1RM / carga máx) alcanzado por ejercicio a lo largo del tiempo. |
 | **HU-11: Métricas de Adherencia al Plan** | `/progress` | Compartido | Cálculo y visualización en tiempo real del porcentaje de adherencia, comparando rutinas ejecutadas vs. prescritas por el entrenador. |
 | **HU-12: Sistema Multi-tema y Accesibilidad** | Barra de navegación | Todos | Alternancia instantánea entre **Modo Oscuro** (obsidian & neon) y **Modo Claro** (alto contraste), persistido en `localStorage` y aplicado mediante variables CSS nativas. |
@@ -120,8 +120,8 @@ El enrutamiento está centralizado en [`src/routes/AppRoutes.tsx`](file:///d:/Ba
 | `/` | `AthleteDashboard` | `ATLETA` | Si el rol es `ADMIN`, redirige a `/admin/users`. Si es `ENTRENADOR`, redirige a `/trainer/assign-plan`. |
 | `/admin/users` | `AdminUserManagementPage` | `ADMIN` | Si no es admin, redirige a la ruta principal correspondiente a su rol. |
 | `/trainer/assign-plan` | `TrainerPlanBuilder` | `ENTRENADOR` | Si no es entrenador, redirige a la ruta principal correspondiente a su rol. |
-| `/exercises` | `ExerciseCatalogPage` | Todos los roles | Vista compartida; los botones de creación, edición y borrado solo se activan para el entrenador. |
-| `/progress` | `ProgressPage` | Todos los roles | Atletas ven sus propias curvas; entrenadores y admins pueden auditar a cualquier atleta mediante selector. |
+| `/exercises` | `ExerciseCatalogPage` | `ENTRENADOR` | Vista de gestión técnica reservada para entrenadores. Si otro rol intenta acceder, es redirigido a `/`. |
+| `/progress` | `ProgressPage` | Todos los roles | Atletas ven sus propias curvas y registran su peso corporal; entrenadores y admins pueden auditar a cualquier atleta mediante selector. |
 
 ---
 
