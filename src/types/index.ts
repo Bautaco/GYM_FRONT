@@ -71,6 +71,9 @@ export interface TrainingPlan {
   startDate: string;
   endDate: string;
   isActive: boolean;
+  frequencyPerWeek?: number;
+  sessionsPerDay?: number;
+  createdAt?: string;
   routines: Routine[];
 }
 

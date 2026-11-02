@@ -4724,3 +4724,281 @@ textarea { resize: vertical; }
   flex: 0 0 auto;
 }
 
+
+
+/* ==========================================================================
+   41. MÓDULO DISEÑADOR Y ASIGNADOR DE PLANES (HISTORIAL, OVERLAP & FRECUENCIAS)
+   ========================================================================== */
+.athlete-history-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.history-loading-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px 16px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.plan-history-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.plan-history-card {
+  background: var(--bg-surface, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--border-subtle, rgba(238, 216, 192, 0.15));
+  border-radius: var(--radius-md, 12px);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+}
+
+.plan-history-card:hover {
+  border-color: var(--brand-beige, #eed8c0);
+  background: rgba(238, 216, 192, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.plan-history-card.active-editing {
+  border-color: var(--brand-coral, #e0533c);
+  background: rgba(224, 83, 60, 0.08);
+  box-shadow: 0 0 0 1px var(--brand-coral, #e0533c);
+}
+
+.history-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.plan-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badge-in-progress {
+  background: rgba(16, 185, 129, 0.18);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.badge-scheduled {
+  background: rgba(59, 130, 246, 0.18);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.badge-finished {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.badge-editing-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--brand-coral, #e0533c);
+  color: #ffffff;
+}
+
+.history-plan-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.history-meta-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.history-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.history-card-footer {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.history-action-hint {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--brand-beige, #eed8c0);
+  transition: color 0.2s ease;
+}
+
+.plan-history-card:hover .history-action-hint {
+  color: #ffffff;
+}
+
+.editing-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 12px 18px;
+  border-radius: var(--radius-md, 10px);
+}
+
+.editing-banner-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 auto;
+}
+
+.btn-cancel-edit {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid currentColor;
+  color: inherit;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-cancel-edit:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.empty-routines-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 44px 20px;
+  border: 2px dashed var(--border-subtle, rgba(238, 216, 192, 0.25));
+  border-radius: var(--radius-md, 12px);
+  background: rgba(0, 0, 0, 0.12);
+  gap: 10px;
+}
+
+.publish-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.alert-warning {
+  background: rgba(245, 158, 11, 0.14);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.alert-info {
+  background: rgba(59, 130, 246, 0.14);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.mt-3 {
+  margin-top: 14px;
+}
+
+.mt-2 {
+  margin-top: 8px;
+}
+
+.text-muted-sm {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* =============================================
+   42. ACORDEÓN — Historial de Planes Asignados
+   ============================================= */
+.history-accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  padding: 4px 0;
+  user-select: none;
+  flex-wrap: wrap;
+}
+.history-accordion-header:hover .history-chevron {
+  color: var(--brand-beige, #eed8c0);
+}
+.history-accordion-title-block {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.history-accordion-subtitle {
+  margin-top: 4px;
+}
+.history-accordion-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.history-accordion-body {
+  margin-top: 20px;
+}
+.history-chevron {
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+}
+.history-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--brand-burgundy, #5a0505);
+  color: var(--brand-beige, #eed8c0);
+  font-size: 12px;
+  font-weight: 700;
+  margin-left: 8px;
+  border: 1px solid rgba(238,216,192,0.25);
+}
+.btn-sm {
+  padding: 5px 12px;
+  font-size: 13px;
+}

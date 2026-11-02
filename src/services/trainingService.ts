@@ -60,8 +60,20 @@ export const trainingService = {
     return response.data;
   },
 
+  async getAllPlansByAthlete(athleteId: string): Promise<TrainingPlan[]> {
+    const response = await api.get<TrainingPlan[]>(
+      `/api/v1/training-plans/athlete/${athleteId}/all`,
+    );
+    return response.data;
+  },
+
   async createPlan(plan: any): Promise<TrainingPlan> {
     const response = await api.post<TrainingPlan>('/api/v1/training-plans', plan);
+    return response.data;
+  },
+
+  async updatePlan(id: string, plan: any): Promise<TrainingPlan> {
+    const response = await api.put<TrainingPlan>(`/api/v1/training-plans/${id}`, plan);
     return response.data;
   },
 
