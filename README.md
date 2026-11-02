@@ -9,7 +9,7 @@
 ![Lucide Icons](https://img.shields.io/badge/Lucide_Icons-F97316?style=for-the-badge&logo=lucide&logoColor=white)
 ![CSS3](https://img.shields.io/badge/Vanilla_CSS-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 
-Frontend web moderno, reactivo y de alto rendimiento concebido para optimizar la interacción diaria entre **administradores**, **entrenadores** y **atletas**. Desarrollado con **React 18**, **Vite** y **TypeScript**, integrando prescripción de programas de entrenamiento, ejecución interactiva de rutinas, reproductor multimedia in-app (con soporte nativo para YouTube Shorts), temporizador flotante de descansos, celebración de récords personales con confeti, registro antropométrico, soporte multi-tema (Modo Oscuro / Claro) y paneles analíticos en tiempo real.
+Frontend web moderno, reactivo y de alto rendimiento concebido para optimizar la interacción diaria entre **administradores**, **entrenadores** y **atletas**. Desarrollado con **React 18**, **Vite** y **TypeScript**, integrando prescripción de programas de entrenamiento, ejecución interactiva de rutinas, reproductor multimedia in-app (con soporte nativo para YouTube Shorts), temporizador flotante de descansos, celebración de récords personales con confeti, historial cronológico de planes asignados con acordeón colapsable, validación de superposición de fechas, registro antropométrico, soporte multi-tema (Modo Oscuro / Claro) y paneles analíticos en tiempo real.
 
 ---
 
@@ -64,7 +64,7 @@ GYM_FRONT/
 │   │   │
 │   │   ├── training/                 # Prescripción y ejecución de entrenamientos
 │   │   │   ├── AthleteDashboard.tsx  # Vista de atleta: selector de rutinas y tabla de ejecución (HU-06)
-│   │   │   └── TrainerPlanBuilder.tsx# Vista de entrenador: creador de planes y plantillas (HU-04)
+│   │   │   └── TrainerPlanBuilder.tsx# Vista de entrenador: creador de planes, historial y plantillas (HU-04/HU-13)
 │   │   │
 │   │   ├── exercises/                # Catálogo técnico de movimientos
 │   │   │   └── ExerciseCatalogPage.tsx # Catálogo con filtros y CRUD completo (HU-03)
@@ -75,7 +75,7 @@ GYM_FRONT/
 │   ├── services/                     # Capa de comunicación HTTP con Axios
 │   │   ├── api.ts                    # Cliente base con interceptores de autorización Bearer
 │   │   ├── authService.ts            # Endpoints de login, registro, atletas, usuarios admin y perfil
-│   │   ├── trainingService.ts        # Endpoints de planes, sesiones, catálogo, templates y pesajes
+│   │   ├── trainingService.ts        # Endpoints de planes, sesiones, catálogo, templates, pesajes, historial de planes y actualización
 │   │   └── analyticsService.ts       # Endpoints de adherencia y progresión de fuerza
 │   │
 │   ├── routes/                       # Enrutamiento y control de acceso
@@ -91,14 +91,14 @@ GYM_FRONT/
 
 ---
 
-## 🎯 3. Mapeo Integral de Historias de Usuario (HU-01 a HU-12)
+## 🎯 3. Mapeo Integral de Historias de Usuario (HU-01 a HU-13)
 
 | Historia de Usuario | Módulo / Vista | Rol | Descripción y Criterios Cumplidos |
 | :--- | :--- | :--- | :--- |
 | **HU-01: Gestión Centralizada de Usuarios** | `/admin/users` | `ADMIN` | Creación de cuentas institucionales (`ENTRENADOR` y `ATLETA`) desde el panel de control. Listado general y eliminación. Se descarta el registro público abierto para mantener la seguridad institucional. |
 | **HU-02: Autenticación, Sesión y Perfil** | `/login`, `ProfileModal` | Todos | Login con JWT persistido en `localStorage`. Botones de acceso rápido para demostración rápida de los 3 roles. Modal de perfil para actualización de datos, avatar preset y cambio seguro de contraseña. |
 | **HU-03: Catálogo Multimedia de Ejercicios** | `/exercises` | `ENTRENADOR` | Vista exclusiva de gestión para el entrenador con CRUD completo (creación, edición completa de parámetros biomecánicos y baja segura). Los atletas visualizan los videos técnicos directamente integrados en sus rutinas activas. |
-| **HU-04: Constructor y Asignador de Planes** | `/trainer/assign-plan` | `ENTRENADOR` | Creación de planes con rutinas diarias, series, repeticiones sugeridas, descansos y **Cadencia / Tempo** (ej. `"3-0-1-0"`). Gestión de plantillas de rutina (guardado y carga rápida para agilizar prescripciones). |
+| **HU-04: Constructor y Asignador de Planes** | `/trainer/assign-plan` | `ENTRENADOR` | Creación de planes con rutinas diarias, series, repeticiones sugeridas, descansos y **Cadencia / Tempo** (ej. `"3-0-1-0"`). Gestión de plantillas de rutina (guardado y carga rápida para agilizar prescripciones). Configuración de **frecuencia semanal** (1-7 días) y **sesiones por día**. |
 | **HU-05: Reproductor Multimedia In-App** | `VideoPlayerModal` | Compartido | Visualización de técnica y guías en modal in-app. Soporta videos estándar de YouTube, enlaces de **YouTube Shorts** (`youtube.com/shorts/...`) y archivos de video MP4 directos. |
 | **HU-06: Ejecución Interactiva de Rutinas** | `/` (Atleta) | `ATLETA` | Navegación entre días de la rutina activa. Registro interactivo de peso real (kg) y repeticiones logradas serie por serie con selección manual. Escala RPE (1-10), feedback y sellado de sesión completada. |
 | **HU-07: Récords Personales (PRs)** | `PrCelebrationModal` | `ATLETA` | Comparación automática de las cargas levantadas con el histórico. Si se supera una marca anterior, se dispara una celebración con confeti animado (`canvas-confetti`). |
@@ -107,6 +107,7 @@ GYM_FRONT/
 | **HU-10: Analítica de Progresión de Cargas** | `/progress` | Compartido | Gráficos interactivos de líneas (**Recharts**) con la evolución del peso máximo (1RM / carga máx) alcanzado por ejercicio a lo largo del tiempo. |
 | **HU-11: Métricas de Adherencia al Plan** | `/progress` | Compartido | Cálculo y visualización en tiempo real del porcentaje de adherencia, comparando rutinas ejecutadas vs. prescritas por el entrenador. |
 | **HU-12: Sistema Multi-tema y Accesibilidad** | Barra de navegación | Todos | Alternancia instantánea entre **Modo Oscuro** (obsidian & neon) y **Modo Claro** (alto contraste), persistido en `localStorage` y aplicado mediante variables CSS nativas. |
+| **HU-13: Gestión Avanzada de Planes y Validación** | `/trainer/assign-plan` | `ENTRENADOR` | **Reseteo automático** del formulario tras asignación exitosa. **Historial cronológico de planes** en acordeón colapsable con badges de estado (`En Curso`, `Programado`, `Finalizado`) y edición al hacer clic. **Validación de superposición de fechas** con alertas claras. **Frecuencia semanal** y **sesiones por día** como parámetros del plan. |
 
 ---
 
@@ -231,6 +232,6 @@ Para facilitar las pruebas de auditoría y evaluación del sistema, la pantalla 
 | Rol | Correo Electrónico | Contraseña | Vistas y Capacidades |
 | :--- | :--- | :--- | :--- |
 | **ADMIN** | `admin@gym.com` | `admin123` | Control total de usuarios (`/admin/users`), creación y eliminación de cuentas de entrenadores y atletas |
-| **ENTRENADOR** | `entrenador@gym.com` | `admin123` | Asignar planes a atletas (`/trainer/assign-plan`), plantillas de rutinas, CRUD de catálogo, auditar analíticas de alumnos |
-| **ATLETA 1** | `atleta@gym.com` | `atleta123` | Rutina activa asignada de 2 días, registro interactivo de series, pesaje antropométrico y gráficos de fuerza/adherencia |
+| **ENTRENADOR** | `entrenador@gym.com` | `admin123` | Asignar planes a atletas (`/trainer/assign-plan`), plantillas de rutinas, historial cronológico de planes por alumno, validación de superposición de fechas, CRUD de catálogo, auditar analíticas de alumnos |
+| **ATLETA 1** | `atleta@gym.com` | `atleta123` | Rutina activa asignada de 2 días (frecuencia: 3 días/semana, 1 sesión/día), registro interactivo de series, pesaje antropométrico y gráficos de fuerza/adherencia |
 | **ATLETA 2** | `marcos@gym.com` | `atleta123` | Alumno registrado disponible en el selector del entrenador para asignación de nuevos microciclos |
