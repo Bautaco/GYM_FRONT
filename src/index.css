@@ -3350,6 +3350,22 @@ textarea {
   gap: 6px;
 }
 
+.user-cell-whatsapp-link {
+  display: inline-flex;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  margin-left: -8px;
+  border-radius: 8px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.user-cell-whatsapp-link:hover {
+  background-color: rgba(37, 211, 102, 0.12);
+  color: #128c7e;
+  text-decoration: underline;
+}
+
 .trainer-assigned-badge {
   display: inline-flex;
   align-items: center;
