@@ -12,6 +12,7 @@ import {
   Tag,
   PlusCircle,
   Sparkles,
+  VideoOff,
 } from 'lucide-react';
 import { trainingService } from '../../services/trainingService.js';
 import { useAuth } from '../auth/AuthContext.js';
@@ -196,7 +197,7 @@ export const ExerciseCatalogPage: React.FC = () => {
       grupoMuscularPrincipal: finalGroup,
       zonasTrabajadas: formSelectedZones,
       descripcion: form.descripcion.trim(),
-      videoUrl: form.videoUrl.trim() || undefined,
+      videoUrl: form.videoUrl.trim() !== '' ? form.videoUrl.trim() : null,
     };
 
     setIsSubmitting(true);
@@ -324,12 +325,22 @@ export const ExerciseCatalogPage: React.FC = () => {
                     <Play size={12} /> Video In-App
                   </span>
                 ) : (
-                  <span className="badge badge-muted">Sin Video</span>
+                  <span className="badge badge-no-video">
+                    <VideoOff size={12} /> Sin video
+                  </span>
                 )}
               </div>
 
               <h3 className="card-exercise-name">{ex.nombre}</h3>
               <p className="card-exercise-desc">{ex.descripcion}</p>
+
+              {/* Estado de video en la tarjeta */}
+              {!ex.videoUrl && (
+                <div className="card-no-video-notice">
+                  <VideoOff size={15} />
+                  <span>Sin video demostrativo</span>
+                </div>
+              )}
 
               <div className="card-zones-box">
                 <span className="zones-label">Músculos involucrados:</span>
@@ -583,8 +594,21 @@ export const ExerciseCatalogPage: React.FC = () => {
                   value={form.videoUrl}
                   onChange={(e) => setForm({ ...form, videoUrl: e.target.value })}
                 />
+                {/* Estado visual del video */}
+                {editTarget && !form.videoUrl && editTarget.videoUrl && (
+                  <div className="video-clear-warning">
+                    <VideoOff size={14} />
+                    <span>Al guardar, se eliminará el video actual y el ejercicio quedará sin video demostrativo.</span>
+                  </div>
+                )}
+                {!form.videoUrl && (
+                  <div className="no-video-form-hint">
+                    <VideoOff size={13} />
+                    <span>Sin video — el ejercicio quedará sin demostración multimedia.</span>
+                  </div>
+                )}
                 <span className="input-hint">
-                  Podés pegar un enlace de YouTube (incluyendo Shorts) o un video directo (.mp4, .webm).
+                  Podés pegar un enlace de YouTube (incluyendo Shorts) o un video directo (.mp4, .webm). Dejá el campo vacío para quitar el video.
                 </span>
               </div>
 

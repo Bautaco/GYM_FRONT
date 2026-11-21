@@ -28,7 +28,7 @@ export interface Exercise {
   grupoMuscularPrincipal: string;
   zonasTrabajadas: string[];
   descripcion: string;
-  videoUrl?: string;
+  videoUrl?: string | null;
 }
 
 export interface ExerciseItem {
@@ -149,3 +149,118 @@ export interface StrengthProgress {
 }
 
 export type ExerciseMaxWeightHistory = StrengthProgress;
+
+export interface AdminOverviewFilters {
+  period?: 'all' | '30d' | '90d' | '365d';
+  startDate?: string;
+  endDate?: string;
+  trainerId?: string;
+  adherenceRange?: 'all' | 'green' | 'yellow' | 'red';
+}
+
+export interface AdminExecutiveOverview {
+  filters: {
+    period: 'all' | '30d' | '90d' | '365d';
+    trainerId: string;
+    adherenceRange: 'all' | 'green' | 'yellow' | 'red';
+  };
+  adherenceAndCoverage: {
+    overallAdherencePct: number;
+    adherenceRanges: {
+      green: { count: number; percentage: number };
+      yellow: { count: number; percentage: number };
+      red: { count: number; percentage: number };
+    };
+    planCoverage: {
+      totalAthletes: number;
+      athletesWithActivePlan: number;
+      athletesWithExpiredPlan: number;
+      athletesWithoutPlan: number;
+      activePlanCoveragePercentage: number;
+    };
+    athletesList: {
+      athleteId: string;
+      athleteName: string;
+      trainerId: string;
+      trainerName: string;
+      hasActivePlan: boolean;
+      planStatus: 'Activo' | 'Vencido' | 'Sin Plan';
+      planName: string;
+      adherencePercentage: number;
+      completedSessions: number;
+      plannedSessions: number;
+      range: 'green' | 'yellow' | 'red';
+      lastSessionDate: string | null;
+      tonnageKg: number;
+    }[];
+  };
+  loadAndSportsPerformance: {
+    fatigueAndLoad: {
+      averageRpe: number;
+      rpeDistribution: {
+        level: string;
+        range: string;
+        count: number;
+        percentage: number;
+        color: string;
+      }[];
+      totalDurationMinutes: number;
+      averageDurationMinutes: number;
+      totalTonnageKg: number;
+      averageSessionTonnageKg: number;
+      totalCompletedSessions: number;
+    };
+    strengthAndRecords: {
+      totalPRs: number;
+      averageEstimated1RM: number;
+      strengthEvolution: {
+        monthYear: string;
+        sessionsCount: number;
+        tonnageKg: number;
+        prsDetected: number;
+        averageRpe: number;
+      }[];
+    };
+    anthropometry: {
+      totalWeightRecords: number;
+      weighedAthletesCount: number;
+      weighInFrequencyPerAthlete: number;
+    };
+    biomechanicalDistribution: {
+      muscleGroup: string;
+      totalSets: number;
+      percentage: number;
+    }[];
+  };
+  staffAndCatalogOperation: {
+    usersByRole: {
+      adminCount: number;
+      trainerCount: number;
+      athleteCount: number;
+      totalUsers: number;
+    };
+    coachesPerformance: {
+      trainerId: string;
+      trainerName: string;
+      email: string;
+      phone: string;
+      assignedAthletesCount: number;
+      prescribedPlansCount: number;
+      activePlansCount: number;
+      templatesCreatedCount: number;
+      avgAdherencePct: number;
+      completedSessionsCount: number;
+    }[];
+    catalogMetrics: {
+      totalExercises: number;
+      exercisesWithVideo: number;
+      exercisesWithoutVideo: number;
+      videoCoveragePercentage: number;
+      videoTypes: {
+        youtubeStandard: number;
+        youtubeShorts: number;
+        directMp4: number;
+      };
+    };
+  };
+}

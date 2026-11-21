@@ -5002,3 +5002,740 @@ textarea { resize: vertical; }
   padding: 5px 12px;
   font-size: 13px;
 }
+
+/* ==========================================================================
+   43. PANEL DE CONTROL Y RENDIMIENTO INSTITUCIONAL — CAR (DIRECCIÓN TÉCNICA)
+   ========================================================================== */
+.car-admin-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.car-institutional-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 12px 18px;
+  background: rgba(238, 216, 192, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+}
+
+.car-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--brand-burgundy, #5a0505);
+  color: var(--brand-beige, #eed8c0);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(238, 216, 192, 0.25);
+}
+
+.car-sync-timestamp {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Selector de pestañas para Admin */
+.car-tabs-nav {
+  display: inline-flex;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 4px;
+  gap: 6px;
+}
+
+.car-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.car-tab-btn:hover {
+  color: var(--brand-beige, #eed8c0);
+}
+
+.car-tab-btn.active {
+  background: var(--brand-burgundy, #5a0505);
+  color: var(--brand-beige, #eed8c0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Grilla de 6 KPIs Ejecutivos */
+.car-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.car-kpi-card {
+  padding: 20px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid var(--border-subtle);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.car-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.car-kpi-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.car-kpi-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.car-kpi-metric {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.car-kpi-big {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1;
+}
+
+.car-kpi-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.car-kpi-footnote {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 10px;
+}
+
+/* Grilla de Secciones Operativas */
+.car-section-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+  gap: 24px;
+}
+
+.car-card-block {
+  padding: 24px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-subtle);
+}
+
+.car-card-header {
+  margin-bottom: 20px;
+}
+
+.car-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0 0 6px 0;
+}
+
+.car-card-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Tablas Ejecutivas */
+.car-table-wrapper {
+  overflow-x: auto;
+}
+
+.car-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.car-table th {
+  text-align: left;
+  padding: 10px 12px;
+  color: var(--text-muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.car-table td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+}
+
+.car-table tr:hover td {
+  background: rgba(238, 216, 192, 0.03);
+}
+
+.car-tag {
+  display: inline-block;
+  padding: 3px 8px;
+  background: rgba(238, 216, 192, 0.1);
+  color: var(--brand-beige, #eed8c0);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.car-inline-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.car-mini-track {
+  flex: 1;
+  min-width: 60px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.car-mini-fill {
+  height: 100%;
+  background: var(--color-principal, #10b981);
+  border-radius: 999px;
+}
+
+/* Distribución Biomecánica */
+.car-biomechanical-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.car-bio-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.car-bio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.car-bio-name {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.car-bio-pct {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.car-bio-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.car-bio-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand-coral, #ff6b6b), var(--color-principal, #10b981));
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+/* Semáforo de Estado */
+.car-status-pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.status-critico {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.status-alerta {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.status-moderado {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+/* Cuadro de Honor */
+.car-performers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.car-performer-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  transition: background 0.2s ease;
+}
+
+.car-performer-row:hover {
+  background: rgba(238, 216, 192, 0.05);
+}
+
+.car-performer-rank {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--brand-beige, #eed8c0);
+  min-width: 28px;
+}
+
+.car-performer-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.car-performer-name {
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 14px;
+}
+
+.car-performer-details {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.car-performer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(238, 216, 192, 0.1);
+  color: var(--brand-beige, #eed8c0);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid rgba(238, 216, 192, 0.2);
+}
+
+.car-loading-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   44. NUEVAS MÉTRICAS DEL ADMINISTRADOR (CAR) - BLOQUES, FILTROS Y RECHARTS
+   ========================================================================== */
+.car-block-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.car-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.car-block-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.car-block-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 4px 0 0 0;
+}
+
+/* Barra de Filtros */
+.car-filters-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 20px;
+  border-radius: 14px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+}
+
+.car-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.car-filter-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.car-filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.car-select-wrapper select {
+  min-width: 170px;
+  background-color: var(--input-bg);
+  color: var(--input-text);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Sub-badges de los KPIs */
+.car-kpi-sub-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.car-sub-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Grillas de Gráficos Recharts */
+.car-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 20px;
+}
+
+.car-chart-card {
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  display: flex;
+  flex-direction: column;
+}
+
+.car-chart-header {
+  margin-bottom: 16px;
+}
+
+.car-chart-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0 0 4px 0;
+}
+
+.car-chart-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.car-chart-body {
+  width: 100%;
+  min-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Tooltip personalizado Recharts */
+.car-recharts-tooltip {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 10px 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  font-size: 12px;
+}
+
+.car-recharts-tooltip .tooltip-title {
+  font-weight: 700;
+  margin: 0 0 6px 0;
+  color: var(--text-main);
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 4px;
+}
+
+.car-recharts-tooltip .tooltip-item {
+  margin: 2px 0;
+  font-size: 12px;
+}
+
+/* Header flexible y buscador de tabla */
+.car-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.car-table-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.car-table-search .search-icon {
+  position: absolute;
+  left: 10px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.car-table-search input {
+  padding-left: 32px;
+  min-width: 260px;
+}
+
+/* Grilla de Multimedia Video */
+.car-multimedia-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+}
+
+.car-multi-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+}
+
+.car-multi-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.youtube-color {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.shorts-color {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.mp4-color {
+  background: rgba(32, 115, 132, 0.2);
+  color: var(--brand-beige, #eed8c0);
+  border: 1px solid var(--brand-petrol, #207384);
+}
+
+.pending-color {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.car-multi-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.car-multi-val {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.1;
+}
+
+.car-multi-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Animación de spin para icono de refresco */
+.spin-icon {
+  animation: car-spin 1s linear infinite;
+}
+
+@keyframes car-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.car-institutional-subtext {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+
+/* ============================================================
+   § 45 — Catálogo: estado "Sin Video" mejorado
+   ============================================================ */
+
+/* Badge especial "Sin video" en la tarjeta */
+.badge-no-video {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(148, 163, 184, 0.14);
+  color: var(--text-muted, #94a3b8);
+  border: 1px solid rgba(148, 163, 184, 0.28);
+}
+
+/* Aviso en la tarjeta cuando no hay video */
+.card-no-video-notice {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px dashed rgba(148, 163, 184, 0.3);
+  color: var(--text-muted, #94a3b8);
+  font-size: 12px;
+  margin: 8px 0 4px;
+  font-style: italic;
+}
+
+/* Aviso en el formulario de edición cuando el campo de video está vacío */
+.no-video-form-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 6px 10px;
+  border-radius: 7px;
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px dashed rgba(148, 163, 184, 0.28);
+  color: var(--text-muted, #94a3b8);
+  font-size: 12px;
+  font-style: italic;
+}
+
+/* Aviso de advertencia cuando el usuario está por borrar un video existente */
+.video-clear-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin-top: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #f59e0b;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.video-clear-warning svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Modo claro: ajustar contrastes */
+[data-theme='light'] .badge-no-video {
+  background: rgba(100, 116, 139, 0.12);
+  color: #64748b;
+  border-color: rgba(100, 116, 139, 0.25);
+}
+
+[data-theme='light'] .card-no-video-notice,
+[data-theme='light'] .no-video-form-hint {
+  background: rgba(100, 116, 139, 0.07);
+  border-color: rgba(100, 116, 139, 0.25);
+  color: #64748b;
+}

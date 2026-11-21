@@ -1,4 +1,4 @@
-# ⚡ Frontend - Plataforma Web de Entrenamiento Físico y Seguimiento
+# ⚡ Frontend - Plataforma Web de Entrenamiento Físico y Alto Rendimiento (APEX FIT)
 
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
@@ -6,232 +6,160 @@
 ![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
 ![Axios](https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white)
 ![Recharts](https://img.shields.io/badge/Recharts-22b5bf?style=for-the-badge&logo=d3dotjs&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
 ![Lucide Icons](https://img.shields.io/badge/Lucide_Icons-F97316?style=for-the-badge&logo=lucide&logoColor=white)
 ![CSS3](https://img.shields.io/badge/Vanilla_CSS-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 
-Frontend web moderno, reactivo y de alto rendimiento concebido para optimizar la interacción diaria entre **administradores**, **entrenadores** y **atletas**. Desarrollado con **React 18**, **Vite** y **TypeScript**, integrando prescripción de programas de entrenamiento, ejecución interactiva de rutinas, reproductor multimedia in-app (con soporte nativo para YouTube Shorts), temporizador flotante de descansos, celebración de récords personales con confeti, historial cronológico de planes asignados con acordeón colapsable, validación de superposición de fechas, registro antropométrico, soporte multi-tema (Modo Oscuro / Claro) y paneles analíticos en tiempo real.
+Frontend web moderno, reactivo y de alto rendimiento concebido para optimizar la gestión integral del entrenamiento físico entre **directores deportivos / administradores (`ADMIN`)**, **entrenadores (`ENTRENADOR`)** y **atletas (`ATLETA`)**. Desarrollado con **React**, **Vite** y **TypeScript**, integrando prescripción de microciclos, ejecución interactiva de rutinas, reproductor multimedia in-app (con soporte para YouTube Shorts y MP4), panel de control ejecutivo de alto rendimiento con gráficos interactivos, mapa anatómico biomecánico, temporizador flotante de descansos, celebración de récords personales con confeti, sistema multi-tema (Modo Oscuro / Claro) y suite completa de pruebas automatizadas con **Vitest** y **Testing Library**.
 
 ---
 
-## 🎯 1. Título y Descripción General
+## 🎯 1. Resumen del Producto y Capacidades Clave
 
-### Nombre del Proyecto
-**APEX FIT - Frontend: Plataforma Web de Entrenamiento Físico y Seguimiento**
+### 📊 Dashboard Ejecutivo para el Administrador del CAR (`/progress`)
+Diseñado específicamente para directores deportivos y administradores de centros de alto rendimiento:
+- **1. Adherencia y Cobertura de Planes**:
+  - Semáforos de adherencia global y por atleta: Verde (`≥ 80%`), Amarillo (`50–79%`) y Rojo (`< 50%`).
+  - Cobertura de planes activos vs. planes vencidos o atletas sin plan.
+  - Tabla de auditoría con buscador en tiempo real por nombre de atleta o plan.
+- **2. Carga, Fatiga y Rendimiento Deportivo**:
+  - Gráficos interactivos con **Recharts**: distribución de RPE en 4 bandas de esfuerzo (Recuperación, Moderado, Alto, Máximo).
+  - Promedio de RPE ponderado de la institución.
+  - Tonelaje acumulado (volumen total levantado en kg).
+  - Récords Personales (PRs) detectados y evolución agregada de fuerza.
+  - Frecuencia de registros antropométricos (pesajes corporales).
+- **3. Operación del Staff y Catálogo de Ejercicios**:
+  - Desglose de usuarios activos por rol (`ADMIN`, `ENTRENADOR`, `ATLETA`).
+  - Métricas de rendimiento por entrenador (atletas asignados, microciclos prescritos, uso de plantillas de rutina y adherencia promedio).
+  - Auditoría multimedia del catálogo (total de ejercicios, cobertura porcentual de video y desglose por YouTube estándar, Shorts y MP4).
+- **Filtros Interactivos**: Período temporal (`Todos`, `30 días`, `90 días`, `1 año`), filtro por entrenador asignado y filtro por rango de adherencia.
 
-### Resumen del Producto
-La aplicación web ofrece una experiencia inmersiva, limpia y de nivel empresarial sin dependencias pesadas de UI, apoyada en un sistema de diseño propio basado en CSS semántico y tokens de diseño:
-- **Control de Acceso Basado en Roles (RBAC)**: Segmentación estricta entre `ADMIN`, `ENTRENADOR` y `ATLETA`.
-- **Panel de Administración Centralizado**: El `ADMIN` gestiona el alta y baja de cuentas institucionales; no existe registro público abierto al azar.
-- **Reproductor Multimedia In-App**: Guías biomecánicas con videos demostrativos y **YouTube Shorts** sin redirigir al usuario fuera de la aplicación.
-- **Registro de Marcas sin Fricción**: Registro serie por serie de pesos reales (kg) y repeticiones logradas, con selección manual de series ejecutadas y bloqueo de edición una vez guardada la sesión.
-- **Celebración de Récords Personales (PRs)**: Detección inteligente de marcas superadas y ventana modal de felicitación con animación de confeti interactivo.
-- **Temporizador de Descanso Flotante**: Cronómetro siempre visible para controlar los intervalos de pausa entre series según la prescripción.
-- **Auditoría y Progresión Visual**: Gráficos interactivos de fuerza (cargas máximas por ejercicio con Recharts), evolución de peso corporal y medidor dinámico de adherencia al plan.
-- **Autogestión de Perfil y Preferencias**: Edición de datos personales, teléfono, notas, selector de avatares, cambio seguro de contraseña y alternancia instantánea entre Modo Oscuro y Modo Claro.
+### 🏋️ Catálogo Biomecánico Dinámico (`/exercises`)
+- **Grupos y Zonas Trabajadas Dinámicas**: Selección rápida desde la base de datos o creación sobre la marcha de nuevos grupos musculares y zonas anatómicas específicas.
+- **Muñeco Anatómico Interactivo (`AnatomicalBodyFigure.tsx`)**: Representación esquemática del cuerpo humano que ilumina las regiones musculares involucradas en cada ejercicio.
+- **Soporte Multimedia In-App**: Reproducción directa de videos demostrativos de YouTube estándar, YouTube Shorts y archivos directos MP4/WebM.
+- **Manejo Robusto de Ejercicios Sin Video**:
+  - Al editar un ejercicio y dejar el campo de video vacío o borrarlo, el sistema lo persiste como `null` en la base de datos.
+  - En la tarjeta del catálogo se exhibe el badge especial `Sin video` y el aviso *"Sin video demostrativo"*.
+  - En el modal de detalle se presenta un bloque visual explicativo con recomendaciones técnicas y anatómicas alternativas.
+  - En el formulario de edición se alerta al entrenador antes de guardar la eliminación de un video.
 
-> 🚫 **Delimitación de Alcance (Exclusiones Deliberadas)**: La aplicación web se enfoca estrictamente en el rendimiento deportivo, prescripción técnica de rutinas y evolución biomecánica. No contiene módulos de cobro, pasarelas de pago, facturación ni gestión de reservas físicas de turnos.
+### ⚡ Flujos de Entrenador y Atleta
+- **Prescripción de Microciclos (`/trainer/assign-plan`)**: Creador visual de rutinas con series, repeticiones sugeridas, descansos, cadencia/tempo, frecuencia semanal y sesiones por día. Historial cronológico con acordeón colapsable y **validación de superposición de fechas**.
+- **Ejecución Interactiva (`/`)**: Registro serie por serie de pesos reales y repeticiones, calificación de esfuerzo RPE (1–10) y temporizador flotante de descansos persistente en pantalla.
+- **Celebración de Récords Personales (PRs)**: Detección automática al registrar marcas superiores a las históricas y animación modal con confeti interactivo (`canvas-confetti`).
+- **Sistema Multi-tema**: Conmutación instantánea entre **Modo Oscuro** y **Modo Claro** sin parpadeos, persistido en `localStorage` y gobernado por variables CSS.
+
+> 🚫 **Delimitación de Alcance**: La aplicación se enfoca estrictamente en la preparación física y el rendimiento deportivo. No contiene módulos de cobro, pasarelas de pago, facturación ni molinetes físicos.
 
 ---
 
-## 🏗️ 2. Arquitectura de Software y Estructura del Proyecto
-
-El proyecto implementa una **Arquitectura Basada en Características (Feature-Based Architecture)**, organizando el estado, componentes y servicios por contexto de negocio:
+## 🏗️ 2. Estructura del Proyecto
 
 ```
 GYM_FRONT/
-├── public/                           # Assets estáticos y favicon
 ├── src/
-│   ├── assets/                       # Iconografía y recursos gráficos
+│   ├── components/                   # Componentes reutilizables
+│   │   ├── AnatomicalBodyFigure.tsx  # Muñeco anatómico vectorial interactivo
+│   │   ├── ExerciseDetailModal.tsx   # Modal de ficha técnica, video y mapa muscular
+│   │   ├── VideoPlayerModal.tsx      # Lógica de reproducción in-app y fallback "sin video"
+│   │   ├── Navbar.tsx                # Barra de navegación con perfil y selector de tema
+│   │   ├── ProfileModal.tsx          # Autogestión de perfil, avatares y clave
+│   │   ├── BodyWeightModal.tsx       # Registro rápido de pesajes
+│   │   ├── RestTimerWidget.tsx       # Widget flotante con presets de descanso
+│   │   └── PrCelebrationModal.tsx    # Modal de celebración de PRs con confeti
 │   │
-│   ├── components/                   # Componentes transversales reutilizables
-│   │   ├── Navbar.tsx                # Barra superior con navegación, toggle de tema y perfil
-│   │   ├── ProfileModal.tsx          # Modal de configuración de usuario, avatares y contraseña
-│   │   ├── VideoPlayerModal.tsx      # Modal reproductor in-app con soporte YouTube Shorts y HTML5
-│   │   ├── BodyWeightModal.tsx       # Modal de registro antropométrico rápido
-│   │   ├── RestTimerWidget.tsx       # Widget flotante con cronómetro y presets de descanso
-│   │   └── PrCelebrationModal.tsx    # Modal de celebración de récords personales con confeti
+│   ├── features/                     # Módulos por contexto de negocio
+│   │   ├── admin/                    # Panel administrativo de usuarios (alta y baja)
+│   │   ├── auth/                     # Contexto de autenticación JWT y pantalla de login
+│   │   ├── exercises/                # Catálogo de ejercicios y formulario modal
+│   │   ├── progress/                 # Dashboard Ejecutivo CAR y gráficos de fuerza
+│   │   ├── theme/                    # Contexto y tokens de modo Claro/Oscuro
+│   │   └── training/                 # Asignador de planes y mesa de ejecución del atleta
 │   │
-│   ├── features/                     # Módulos funcionales de negocio
-│   │   ├── admin/                    # Gestión administrativa del sistema
-│   │   │   └── AdminUserManagementPage.tsx # Panel de control de usuarios (HU-01)
-│   │   │
-│   │   ├── auth/                     # Autenticación y control de sesión
-│   │   │   ├── AuthContext.tsx       # Contexto global de sesión, token JWT y datos de usuario
-│   │   │   └── LoginPage.tsx         # Pantalla de inicio de sesión con botones de acceso rápido demo
-│   │   │
-│   │   ├── theme/                    # Sistema de Temas (Dark / Light)
-│   │   │   └── ThemeContext.tsx      # Manejo de tema global y sincronización con localStorage
-│   │   │
-│   │   ├── training/                 # Prescripción y ejecución de entrenamientos
-│   │   │   ├── AthleteDashboard.tsx  # Vista de atleta: selector de rutinas y tabla de ejecución (HU-06)
-│   │   │   └── TrainerPlanBuilder.tsx# Vista de entrenador: creador de planes, historial y plantillas (HU-04/HU-13)
-│   │   │
-│   │   ├── exercises/                # Catálogo técnico de movimientos
-│   │   │   └── ExerciseCatalogPage.tsx # Catálogo con filtros y CRUD completo (HU-03)
-│   │   │
-│   │   └── progress/                 # Métricas, gráficos y adherencia
-│   │       └── ProgressPage.tsx      # Gráficos de fuerza (Recharts), peso y adherencia (HU-10/11)
+│   ├── services/                     # Capa de comunicación con Axios
+│   │   ├── api.ts                    # Cliente base con interceptores Bearer y 401
+│   │   ├── analyticsService.ts       # Consultas de métricas ejecutivas CAR y adherencia
+│   │   ├── authService.ts            # Servicios de autenticación y usuarios
+│   │   └── trainingService.ts        # Catálogo, planes, plantillas y sesiones
 │   │
-│   ├── services/                     # Capa de comunicación HTTP con Axios
-│   │   ├── api.ts                    # Cliente base con interceptores de autorización Bearer
-│   │   ├── authService.ts            # Endpoints de login, registro, atletas, usuarios admin y perfil
-│   │   ├── trainingService.ts        # Endpoints de planes, sesiones, catálogo, templates, pesajes, historial de planes y actualización
-│   │   └── analyticsService.ts       # Endpoints de adherencia y progresión de fuerza
-│   │
-│   ├── routes/                       # Enrutamiento y control de acceso
-│   │   └── AppRoutes.tsx             # Rutas públicas y privadas protegidas por rol (RBAC)
-│   │
+│   ├── routes/                       # Enrutamiento protegido por RBAC (AppRoutes.tsx)
 │   ├── types/                        # Tipado estricto TypeScript
-│   │   └── index.ts                  # User, Role, Exercise, Plan, Session, LoggedSet, Metric, Template
-│   │
-│   ├── index.css                     # Sistema de diseño, tokens CSS, dark/light theme, animaciones
-│   ├── App.tsx                       # Shell principal con Providers (Theme, Auth, Router)
-│   └── main.tsx                      # Punto de entrada de la aplicación Vite
+│   ├── index.css                     # Sistema de diseño, tokens y variables semánticas
+│   ├── setupTests.ts                 # Configuración de matchers Jest-DOM para Vitest
+│   └── App.tsx                       # Shell con proveedores globales
+├── vite.config.ts                    # Configuración de compilación Vite
+├── vitest.config.ts                  # Configuración de pruebas Vitest + JSDOM
+└── tsconfig.app.json                 # Configuración de tipos TypeScript
 ```
 
 ---
 
-## 🎯 3. Mapeo Integral de Historias de Usuario (HU-01 a HU-13)
+## ⚙️ 3. Configuración e Instalación
 
-| Historia de Usuario | Módulo / Vista | Rol | Descripción y Criterios Cumplidos |
-| :--- | :--- | :--- | :--- |
-| **HU-01: Gestión Centralizada de Usuarios** | `/admin/users` | `ADMIN` | Creación de cuentas institucionales (`ENTRENADOR` y `ATLETA`) desde el panel de control. Listado general y eliminación. Se descarta el registro público abierto para mantener la seguridad institucional. |
-| **HU-02: Autenticación, Sesión y Perfil** | `/login`, `ProfileModal` | Todos | Login con JWT persistido en `localStorage`. Botones de acceso rápido para demostración rápida de los 3 roles. Modal de perfil para actualización de datos, avatar preset y cambio seguro de contraseña. |
-| **HU-03: Catálogo Multimedia de Ejercicios** | `/exercises` | `ENTRENADOR` | Vista exclusiva de gestión para el entrenador con CRUD completo (creación, edición completa de parámetros biomecánicos y baja segura). Los atletas visualizan los videos técnicos directamente integrados en sus rutinas activas. |
-| **HU-04: Constructor y Asignador de Planes** | `/trainer/assign-plan` | `ENTRENADOR` | Creación de planes con rutinas diarias, series, repeticiones sugeridas, descansos y **Cadencia / Tempo** (ej. `"3-0-1-0"`). Gestión de plantillas de rutina (guardado y carga rápida para agilizar prescripciones). Configuración de **frecuencia semanal** (1-7 días) y **sesiones por día**. |
-| **HU-05: Reproductor Multimedia In-App** | `VideoPlayerModal` | Compartido | Visualización de técnica y guías en modal in-app. Soporta videos estándar de YouTube, enlaces de **YouTube Shorts** (`youtube.com/shorts/...`) y archivos de video MP4 directos. |
-| **HU-06: Ejecución Interactiva de Rutinas** | `/` (Atleta) | `ATLETA` | Navegación entre días de la rutina activa. Registro interactivo de peso real (kg) y repeticiones logradas serie por serie con selección manual. Escala RPE (1-10), feedback y sellado de sesión completada. |
-| **HU-07: Récords Personales (PRs)** | `PrCelebrationModal` | `ATLETA` | Comparación automática de las cargas levantadas con el histórico. Si se supera una marca anterior, se dispara una celebración con confeti animado (`canvas-confetti`). |
-| **HU-08: Temporizador Flotante de Descanso** | `RestTimerWidget` | `ATLETA` | Widget flotante persistente en pantalla durante el entrenamiento del atleta con presets de descanso (30s, 60s, 90s, 120s), pausa, reanudación y alerta visual y sonora. |
-| **HU-09: Registro Antropométrico** | `BodyWeightModal` | `ATLETA` | Modal accesible dentro del panel de progreso y métricas para ingresar pesajes en kg con fecha y validación numérica estricta. |
-| **HU-10: Analítica de Progresión de Cargas** | `/progress` | Compartido | Gráficos interactivos de líneas (**Recharts**) con la evolución del peso máximo (1RM / carga máx) alcanzado por ejercicio a lo largo del tiempo. |
-| **HU-11: Métricas de Adherencia al Plan** | `/progress` | Compartido | Cálculo y visualización en tiempo real del porcentaje de adherencia, comparando rutinas ejecutadas vs. prescritas por el entrenador. |
-| **HU-12: Sistema Multi-tema y Accesibilidad** | Barra de navegación | Todos | Alternancia instantánea entre **Modo Oscuro** (obsidian & neon) y **Modo Claro** (alto contraste), persistido en `localStorage` y aplicado mediante variables CSS nativas. |
-| **HU-13: Gestión Avanzada de Planes y Validación** | `/trainer/assign-plan` | `ENTRENADOR` | **Reseteo automático** del formulario tras asignación exitosa. **Historial cronológico de planes** en acordeón colapsable con badges de estado (`En Curso`, `Programado`, `Finalizado`) y edición al hacer clic. **Validación de superposición de fechas** con alertas claras. **Frecuencia semanal** y **sesiones por día** como parámetros del plan. |
-
----
-
-## 🚦 4. Rutas del Sistema y Control de Acceso (RBAC)
-
-El enrutamiento está centralizado en [`src/routes/AppRoutes.tsx`](file:///d:/Bautaco/Documents/Universidad/Ingenieria%20y%20calidad%20de%20software/Proyecto%203/GYM/GYM_FRONT/src/routes/AppRoutes.tsx):
-
-| Ruta | Componente | Roles Permitidos | Comportamiento / Redirección |
-| :--- | :--- | :--- | :--- |
-| `/login` | `LoginPage` | Público | Si ya está autenticado, redirige automáticamente según el rol del usuario. |
-| `/` | `AthleteDashboard` | `ATLETA` | Si el rol es `ADMIN`, redirige a `/admin/users`. Si es `ENTRENADOR`, redirige a `/trainer/assign-plan`. |
-| `/admin/users` | `AdminUserManagementPage` | `ADMIN` | Si no es admin, redirige a la ruta principal correspondiente a su rol. |
-| `/trainer/assign-plan` | `TrainerPlanBuilder` | `ENTRENADOR` | Si no es entrenador, redirige a la ruta principal correspondiente a su rol. |
-| `/exercises` | `ExerciseCatalogPage` | `ENTRENADOR` | Vista de gestión técnica reservada para entrenadores. Si otro rol intenta acceder, es redirigido a `/`. |
-| `/progress` | `ProgressPage` | Todos los roles | Atletas ven sus propias curvas y registran su peso corporal; entrenadores y admins pueden auditar a cualquier atleta mediante selector. |
-
----
-
-## ⚙️ 5. Requisitos Previos, Configuración e Instalación
-
-### Prerrequisitos
-- **Node.js**: Versión LTS `v18.x`, `v20.x` o superior.
+### Requisitos Previos
+- **Node.js**: `v20.x` o superior.
 - **npm**: `v9.x` o superior.
-- **Backend Activo**: El servicio `GYM_BACK` debe estar ejecutándose en `http://localhost:3000`.
+- **Backend Activo**: `GYM_BACK` ejecutándose en `http://localhost:3000`.
 
 ### Variables de Entorno
 
-Crear un archivo `.env` en la raíz de `GYM_FRONT` tomando como modelo `.env.example`:
+Crear el archivo `.env` en la raíz de `GYM_FRONT`:
+```env
+VITE_API_URL=http://localhost:3000
+```
+
+### Comandos Principales
 
 ```bash
-cp .env.example .env
-```
+# 1. Instalar dependencias
+npm install --legacy-peer-deps
 
-#### Contenido de `.env.example`
-```env
-# URL base de la API REST del backend
-VITE_API_BASE_URL=http://localhost:3000/api/v1
-```
+# 2. Iniciar servidor de desarrollo (con HMR)
+npm run dev
 
-### Comandos de Instalación y Ejecución
+# 3. Ejecutar suite de pruebas automatizadas (Vitest + Testing Library)
+npm run test
 
-1. **Instalar dependencias del proyecto:**
-   ```bash
-   cd GYM_FRONT
-   npm install --legacy-peer-deps
-   ```
+# 4. Compilar para producción (validación de tipos estricta y bundle optimizado)
+npm run build
 
-2. **Iniciar servidor de desarrollo (con HMR y recarga instantánea):**
-   ```bash
-   npm run dev
-   ```
-   *La aplicación se levantará en un puerto disponible (por defecto `http://localhost:5173` o `http://localhost:5175`).*
-
-3. **Verificación de tipos y Compilación para Producción:**
-   ```bash
-   npm run build
-   ```
-   *Valida el 100% de tipos TypeScript (0 errores) y genera el paquete optimizado en `dist/`.*
-
-4. **Previsualizar el paquete de Producción localmente:**
-   ```bash
-   npm run preview
-   ```
-
----
-
-## 🔒 6. Integración con la API y Seguridad
-
-### Interceptor de Solicitudes HTTP (Axios)
-La capa HTTP centralizada en [`src/services/api.ts`](file:///d:/Bautaco/Documents/Universidad/Ingenieria%20y%20calidad%20de%20software/Proyecto%203/GYM/GYM_FRONT/src/services/api.ts) intercepta automáticamente cada petición saliente para adjuntar el token JWT:
-
-```typescript
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('gym_auth_token');
-  if (token && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-```
-
-En caso de recibir una respuesta con código de estado `401 Unauthorized`, el interceptor descarta el token almacenado y restablece el estado para redirigir al usuario al login de forma limpia.
-
----
-
-## 🎨 7. Sistema de Diseño y Tokens CSS
-
-La interfaz utiliza variables semánticas en [`src/index.css`](file:///d:/Bautaco/Documents/Universidad/Ingenieria%20y%20calidad%20de%20software/Proyecto%203/GYM/GYM_FRONT/src/index.css), lo que garantiza consistencia visual y soporte multi-tema fluido:
-
-```css
-:root {
-  --font-heading: 'Outfit', sans-serif;
-  --font-body: 'Plus Jakarta Sans', sans-serif;
-  --color-principal: #10b981;
-  --color-principal-al-pasar: #059669;
-  --color-acento: #6366f1;
-}
-
-[data-theme='dark'] {
-  --bg-main: #0b0f19;
-  --color-fondo-tarjeta: #111827;
-  --text-main: #f9fafb;
-  --text-muted: #9ca3af;
-  --border-subtle: #1f2937;
-}
-
-[data-theme='light'] {
-  --bg-main: #f8fafc;
-  --color-fondo-tarjeta: #ffffff;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --border-subtle: #e2e8f0;
-}
+# 5. Previsualizar el paquete de producción localmente
+npm run preview
 ```
 
 ---
 
-## 🔑 8. Credenciales Demo para Pruebas Rápidas
+## 🧪 4. Testing y Calidad de Código (QA)
 
-Para facilitar las pruebas de auditoría y evaluación del sistema, la pantalla de inicio de sesión incorpora botones de **acceso rápido con 1 solo clic** para los siguientes usuarios demo pre-cargados:
+El frontend cuenta con suite de pruebas automatizadas ejecutadas con **Vitest**, **Testing Library React** y **JSDOM**, logrando **100% de tests exitosos**:
 
-| Rol | Correo Electrónico | Contraseña | Vistas y Capacidades |
+```bash
+npm run test
+```
+
+### Suites Implementadas
+- **`VideoPlayerModal.test.tsx` (5 tests)**:
+  - Renderizado del reproductor `iframe` embebido para enlaces de YouTube válidos.
+  - Verificación del mensaje amigable *"Demostración en video no disponible"* cuando `videoUrl` es `null` o string vacío `""`.
+  - Comportamiento de cierre mediante botones y tecla Escape.
+  - Integración de zonas anatómicas trabajadas y grupo muscular.
+- **`analyticsService.test.ts` (4 tests)**:
+  - Petición al endpoint ejecutivo `/api/v1/analytics/admin/overview` con parámetros de filtro (`period`, `trainerId`, `adherenceRange`).
+  - Consultas de curvas de fuerza por ejercicio y reportes de adherencia.
+- **`trainingService.test.ts` (3 tests)**:
+  - Verificación de que `updateExercise` envíe explícitamente `videoUrl: null` al eliminar un video.
+  - Operaciones de creación y eliminación en el catálogo.
+
+---
+
+## 🔑 5. Credenciales Demo para Pruebas Rápidas
+
+La pantalla de login incluye accesos directos con 1 solo clic:
+
+| Rol | Correo Electrónico | Contraseña | Vistas Accesibles |
 | :--- | :--- | :--- | :--- |
-| **ADMIN** | `admin@gym.com` | `admin123` | Control total de usuarios (`/admin/users`), creación y eliminación de cuentas de entrenadores y atletas |
-| **ENTRENADOR** | `entrenador@gym.com` | `admin123` | Asignar planes a atletas (`/trainer/assign-plan`), plantillas de rutinas, historial cronológico de planes por alumno, validación de superposición de fechas, CRUD de catálogo, auditar analíticas de alumnos |
-| **ATLETA 1** | `atleta@gym.com` | `atleta123` | Rutina activa asignada de 2 días (frecuencia: 3 días/semana, 1 sesión/día), registro interactivo de series, pesaje antropométrico y gráficos de fuerza/adherencia |
-| **ATLETA 2** | `marcos@gym.com` | `atleta123` | Alumno registrado disponible en el selector del entrenador para asignación de nuevos microciclos |
+| **ADMIN** | `admin@gym.com` | `admin123` | Gestión de Usuarios (`/admin/users`) y **Dashboard Ejecutivo CAR** (`/progress`) |
+| **ENTRENADOR** | `entrenador@gym.com` | `admin123` | Asignar Planes e Historial (`/trainer/assign-plan`), Catálogo Biomecánico (`/exercises`) y Analítica de Alumnos |
+| **ATLETA 1** | `atleta@gym.com` | `atleta123` | Rutina activa diaria (`/`), registro interactivo de series/RPE, pesajes y gráficos personales |
+| **ATLETA 2** | `marcos@gym.com` | `atleta123` | Atleta disponible para asignación de nuevos microciclos |

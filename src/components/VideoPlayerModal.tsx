@@ -77,7 +77,7 @@ export const ExerciseDetailModal: React.FC<ExerciseDetailModalProps> = ({
           <div className="modal-header-actions">
             {hasValidVideo && (
               <a
-                href={exercise.videoUrl}
+                href={exercise.videoUrl ?? ''}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-open-external"
@@ -119,7 +119,7 @@ export const ExerciseDetailModal: React.FC<ExerciseDetailModalProps> = ({
                   playsInline
                   preload="metadata"
                   className="in-app-video-element"
-                  src={exercise.videoUrl}
+                  src={exercise.videoUrl ?? ''}
                 >
                   Tu navegador no soporta la reproducción de video HTML5.
                 </video>

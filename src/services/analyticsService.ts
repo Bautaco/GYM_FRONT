@@ -1,7 +1,22 @@
 import { api } from './api.js';
-import { StrengthProgress, AdherenceReport } from '../types/index.js';
+import {
+  StrengthProgress,
+  AdherenceReport,
+  AdminExecutiveOverview,
+  AdminOverviewFilters,
+} from '../types/index.js';
 
 export const analyticsService = {
+  async getAdminOverview(
+    filters?: AdminOverviewFilters,
+  ): Promise<AdminExecutiveOverview> {
+    const response = await api.get<AdminExecutiveOverview>(
+      `/api/v1/analytics/admin/overview`,
+      { params: filters },
+    );
+    return response.data;
+  },
+
   async getStrengthProgress(
     athleteId: string,
     exerciseId: string,
