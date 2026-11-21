@@ -844,7 +844,7 @@ export const TrainerPlanBuilder: React.FC = () => {
                   onChange={(e) => setSelectedAthleteId(e.target.value)}
                 >
                   {athletes.length === 0 ? (
-                    <option value="">No hay atletas registrados</option>
+                    <option value="">No tienes atletas asignados</option>
                   ) : (
                     athletes.map((ath) => (
                       <option key={ath.id} value={ath.id}>
