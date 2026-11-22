@@ -39,16 +39,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = async (email: string, pass: string) => {
-    setIsLoading(true);
-    try {
-      const response = await authService.login(email, pass);
-      setToken(response.accessToken);
-      setUser(response.user);
-      localStorage.setItem('gym_auth_token', response.accessToken);
-      localStorage.setItem('gym_auth_user', JSON.stringify(response.user));
-    } finally {
-      setIsLoading(false);
-    }
+    const response = await authService.login(email, pass);
+    setToken(response.accessToken);
+    setUser(response.user);
+    localStorage.setItem('gym_auth_token', response.accessToken);
+    localStorage.setItem('gym_auth_user', JSON.stringify(response.user));
   };
 
   const logout = () => {
