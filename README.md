@@ -59,39 +59,77 @@ Diseñado específicamente para directores deportivos y administradores de centr
 ```
 GYM_FRONT/
 ├── src/
-│   ├── components/                   # Componentes reutilizables
-│   │   ├── AnatomicalBodyFigure.tsx  # Muñeco anatómico vectorial interactivo
-│   │   ├── ExerciseDetailModal.tsx   # Modal de ficha técnica, video y mapa muscular
-│   │   ├── VideoPlayerModal.tsx      # Lógica de reproducción in-app y fallback "sin video"
-│   │   ├── Navbar.tsx                # Barra de navegación con perfil y selector de tema
-│   │   ├── ProfileModal.tsx          # Autogestión de perfil, avatares y clave
-│   │   ├── BodyWeightModal.tsx       # Registro rápido de pesajes
-│   │   ├── RestTimerWidget.tsx       # Widget flotante con presets de descanso
-│   │   └── PrCelebrationModal.tsx    # Modal de celebración de PRs con confeti
+│   ├── app/                          # Conecta router, providers y rutas
+│   │   ├── App.tsx
+│   │   ├── AppRoutes.tsx             # Rutas y permisos por rol (RBAC)
+│   │   └── providers/AppProviders.tsx
 │   │
-│   ├── features/                     # Módulos por contexto de negocio
-│   │   ├── admin/                    # Panel administrativo de usuarios (alta y baja)
-│   │   ├── auth/                     # Contexto de autenticación JWT y pantalla de login
-│   │   ├── exercises/                # Catálogo de ejercicios y formulario modal
-│   │   ├── progress/                 # Dashboard Ejecutivo CAR y gráficos de fuerza
-│   │   ├── theme/                    # Contexto y tokens de modo Claro/Oscuro
-│   │   └── training/                 # Asignador de planes y mesa de ejecución del atleta
+│   ├── modules/                      # Funcionalidades separadas por dominio
+│   │   ├── auth/                     # Inicio de sesión
+│   │   │   ├── pages/LoginPage.tsx
+│   │   │   └── auth.css
+│   │   ├── exercises/                # Catálogo y administración de ejercicios
+│   │   │   ├── components/           # Lista, filtros, modales y mapa anatómico
+│   │   │   ├── hooks/useExerciseCatalog.ts
+│   │   │   ├── pages/ExerciseCatalogPage.tsx
+│   │   │   ├── exercises.service.ts  # Endpoints de ejercicios
+│   │   │   ├── exercises.types.ts    # Tipos del dominio
+│   │   │   ├── exercises.schema.ts   # Validaciones del formulario
+│   │   │   ├── exercises.routes.ts
+│   │   │   └── exercises.css
+│   │   ├── training/                 # Planes, plantillas y ejecución de rutina
+│   │   │   ├── components/PrCelebrationModal.tsx
+│   │   │   ├── pages/                # Dashboard del atleta y constructor
+│   │   │   ├── training.service.ts
+│   │   │   ├── training.types.ts
+│   │   │   ├── training.routes.ts
+│   │   │   └── training.css
+│   │   ├── progress/                 # Métricas, gráficos y peso corporal
+│   │   │   ├── components/BodyWeightModal.tsx
+│   │   │   ├── pages/ProgressPage.tsx
+│   │   │   ├── progress.service.ts
+│   │   │   ├── progress.types.ts
+│   │   │   ├── progress.routes.ts
+│   │   │   └── progress.css
+│   │   └── admin/                    # Gestión de usuarios y roles
+│   │       ├── pages/AdminUserManagementPage.tsx
+│   │       ├── admin.service.ts
+│   │       ├── admin.types.ts
+│   │       ├── admin.routes.ts
+│   │       └── admin.css
 │   │
-│   ├── services/                     # Capa de comunicación con Axios
-│   │   ├── api.ts                    # Cliente base con interceptores Bearer y 401
-│   │   ├── analyticsService.ts       # Consultas de métricas ejecutivas CAR y adherencia
-│   │   ├── authService.ts            # Servicios de autenticación y usuarios
-│   │   └── trainingService.ts        # Catálogo, planes, plantillas y sesiones
+│   ├── shared/                       # Código transversal reutilizable
+│   │   ├── api/api.ts                # Axios, token y errores comunes
+│   │   ├── auth/                     # Contexto y servicio de autenticación
+│   │   ├── theme/ThemeContext.tsx
+│   │   ├── ui/                       # Navbar, perfil, temporizador y CSS compartido
+│   │   └── utils/profilePhoto.ts
 │   │
-│   ├── routes/                       # Enrutamiento protegido por RBAC (AppRoutes.tsx)
-│   ├── types/                        # Tipado estricto TypeScript
-│   ├── index.css                     # Sistema de diseño, tokens y variables semánticas
-│   ├── setupTests.ts                 # Configuración de matchers Jest-DOM para Vitest
-│   └── App.tsx                       # Shell con proveedores globales
+│   ├── types/index.ts                # Tipos compartidos temporalmente
+│   ├── assets/                       # Recursos estáticos
+│   ├── index.css                     # Variables, estilos globales e históricos
+│   ├── main.tsx                      # Entrada de React
+│   └── setupTests.ts                 # Configuración de pruebas
 ├── vite.config.ts                    # Configuración de compilación Vite
-├── vitest.config.ts                  # Configuración de pruebas Vitest + JSDOM
-└── tsconfig.app.json                 # Configuración de tipos TypeScript
+├── vitest.config.ts                  # Configuración de Vitest + JSDOM
+└── tsconfig.app.json                 # Configuración de TypeScript
 ```
+
+### ¿Cómo se organiza esta arquitectura?
+
+La aplicación se organiza **por módulos de negocio**. Cada carpeta dentro de
+`modules` reúne el código de una funcionalidad concreta: sus pantallas
+(`pages`), piezas visuales (`components`), pedidos al backend (`*.service.ts`),
+tipos (`*.types.ts`), rutas, estilos y, cuando existen, pruebas. Por ejemplo,
+todo lo necesario para el catálogo está en `modules/exercises`.
+
+La carpeta `shared` contiene lo **transversal**: código que reutilizan dos o
+más módulos y que no pertenece exclusivamente a uno de ellos. Allí viven
+Axios, la sesión, el tema, la barra de navegación y utilidades comunes.
+
+`app` conecta las partes: registra las rutas, aplica los providers globales y
+define qué pantalla se muestra. Las páginas no escriben URLs del backend; usan
+el servicio de su módulo, y este utiliza `shared/api/api.ts`.
 
 ---
 

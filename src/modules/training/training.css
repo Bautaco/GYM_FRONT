@@ -1,0 +1,11 @@
+/* Estilos exclusivos de los flujos de planes, sesión y récords. */
+.trainer-builder-layout, .dashboard-content-layout { display: flex; flex-direction: column; gap: 24px; }
+.plan-hero-banner, .routine-execution-card, .routine-builder-card { color: var(--text-main); background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); }
+.routine-builder-card, .routine-execution-card { padding: 20px; }
+.routine-card-top, .exercise-item-header, .finish-action-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.routine-exercises-sublist { overflow-x: auto; }
+.exercise-workout-item { padding: 16px; border: 1px solid var(--border-subtle); border-radius: 12px; }
+.sets-table { width: 100%; border-collapse: collapse; }
+.sets-table th, .sets-table td { padding: 10px; border: 1px solid var(--border-subtle); }
+.pr-celebration-card { max-width: 520px; color: var(--text-main); text-align: center; background: var(--bg-card); border: 1px solid var(--border-subtle); }
+@media (max-width: 768px) { .routine-card-top, .exercise-item-header { align-items: flex-start; flex-direction: column; } .routine-execution-card { padding: 18px 14px; } }

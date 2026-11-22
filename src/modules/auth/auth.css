@@ -1,0 +1,25 @@
+/* Estilos exclusivos de la pantalla de inicio de sesión. Las variables y los controles genéricos continúan en index.css porque son compartidos. */
+.login-page-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+.login-card-container { width: 100%; max-width: 520px; padding: 36px 32px; color: var(--text-main); background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); }
+.brand-badge-large { display: inline-flex; align-items: center; justify-content: center; width: 68px; height: 68px; margin-bottom: 16px; color: var(--brand-burgundy); background: var(--brand-beige); border: 1px solid var(--border-subtle); border-radius: 18px; }
+@media (max-width: 600px) { .login-card-container { padding: 28px 20px; } }
+
+/* Detalles propios de las credenciales de demostración del login. */
+/* "Gym" es un título, no una tarjeta: sin fondo ni borde propio. */
+.login-title { margin: 0 0 6px; padding: 0; color: var(--text-main); font-size: 1.7rem; font-weight: 500; background: transparent; border: 0; border-radius: 0; box-shadow: none; }
+.login-subtitle { margin-bottom: 18px; color: var(--text-muted); font-size: .87rem; }
+.demo-credentials-box { padding: 12px; margin-bottom: 16px; background: var(--bg-card); border: 1px dashed var(--border-subtle); border-radius: var(--radius-md); }
+.demo-box-label { display: block; margin-bottom: 10px; color: var(--text-dim); font-size: .8rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.demo-buttons-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.btn-demo-card { display: flex; align-items: center; gap: 8px; min-width: 0; min-height: 76px; padding: 8px 10px; color: var(--brand-burgundy); text-align: left; background: var(--brand-beige); border: 1px solid var(--brand-petrol); border-radius: 16px; transition: all .2s; }
+.btn-demo-card:hover { color: var(--brand-burgundy); background: var(--brand-white); border-color: var(--brand-petrol); }
+.btn-demo-card.trainer, .btn-demo-card.athlete { border-left: 3px solid var(--border-subtle); }
+.demo-icon { flex-shrink: 0; color: var(--brand-burgundy); }
+.demo-text { display: flex; flex-direction: column; }
+.demo-role { color: var(--brand-burgundy); font-size: .72rem; font-weight: 700; text-transform: uppercase; }
+.demo-name { font-size: .82rem; font-weight: 600; }
+.divider-line { position: relative; margin: 20px 0; text-align: center; }
+.divider-line::before { position: absolute; top: 50%; right: 0; left: 0; height: 1px; content: ''; background: var(--bg-card); }
+.divider-line span { position: relative; padding: 0 12px; color: var(--text-dim); font-size: .78rem; background: var(--bg-card); }
+.login-footer-info { display: flex; justify-content: center; flex-wrap: wrap; gap: 16px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-subtle); }
+.feature-pill { display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: .78rem; }

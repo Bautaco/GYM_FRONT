@@ -22,14 +22,9 @@ export interface LoginResponse {
   user: User;
 }
 
-export interface Exercise {
-  id: string;
-  nombre: string;
-  grupoMuscularPrincipal: string;
-  zonasTrabajadas: string[];
-  descripcion: string;
-  videoUrl?: string | null;
-}
+// Reexportación temporal: las pantallas que todavía no fueron migradas pueden
+// seguir importando Exercise desde este archivo sin duplicar la definición.
+export type { Exercise } from '../modules/exercises/exercises.types.js';
 
 export interface ExerciseItem {
   id?: string;
