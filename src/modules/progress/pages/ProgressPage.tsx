@@ -1389,11 +1389,15 @@ export const ProgressPage: React.FC = () => {
                   value={selectedAthleteId}
                   onChange={(e) => handleAthleteChange(e.target.value)}
                 >
-                  {athletes.map((a) => (
-                    <option key={a.id} value={a.id}>
-                      Atleta: {a.fullName}
-                    </option>
-                  ))}
+                  {athletes.length === 0 ? (
+                    <option value="">Sin atletas asignados</option>
+                  ) : (
+                    athletes.map((a) => (
+                      <option key={a.id} value={a.id}>
+                        Atleta: {a.fullName}
+                      </option>
+                    ))
+                  )}
                 </select>
                 {selectedAthlete && (
                   <img

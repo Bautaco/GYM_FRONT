@@ -273,7 +273,15 @@ export const TrainerPlanBuilder: React.FC = () => {
     return dateB - dateA;
   });
 
+  const expectedRoutinesCount = (Number(frequencyPerWeek) || 3) * (Number(sessionsPerDay) || 1);
+
   const handleAddRoutine = () => {
+    if (routines.length >= expectedRoutinesCount) {
+      showPlanError(
+        `Ya has configurado el total de ${expectedRoutinesCount} ${expectedRoutinesCount === 1 ? 'rutina' : 'rutinas'} requeridas para ${frequencyPerWeek} día(s)/sem y ${sessionsPerDay} turno(s)/día. Aumenta los días o turnos en la sección superior si deseas añadir más.`,
+      );
+      return;
+    }
     const nextDay = (routines.length * 2 + 1) % 7 || 5;
     setRoutines([
       ...routines,
@@ -519,6 +527,16 @@ export const TrainerPlanBuilder: React.FC = () => {
 
     if (routines.length === 0) {
       showPlanError('Debes añadir al menos un día o rutina al plan.');
+      return;
+    }
+
+    // Validación estricta: Días / frecuencia semanal y sesiones por día vs rutinas cargadas
+    if (routines.length !== expectedRoutinesCount) {
+      const diasLabel = frequencyPerWeek === 1 ? '1 día por semana' : `${frequencyPerWeek} días por semana`;
+      const turnosLabel = sessionsPerDay === 1 ? '1 turno/sesión por día' : `${sessionsPerDay} turnos/sesiones por día`;
+      showPlanError(
+        `Has seleccionado ${diasLabel} con ${turnosLabel} (se requieren exactamente ${expectedRoutinesCount} ${expectedRoutinesCount === 1 ? 'rutina' : 'rutinas'}), pero has configurado ${routines.length}. Por favor ajusta la cantidad de rutinas o los parámetros de frecuencia antes de continuar.`,
+      );
       return;
     }
 
@@ -828,7 +846,7 @@ export const TrainerPlanBuilder: React.FC = () => {
                   }}
                 >
                   {athletes.length === 0 ? (
-                    <option value="">No hay atletas registrados</option>
+                    <option value="">No tienes atletas asignados</option>
                   ) : (
                     athletes.map((ath) => (
                       <option key={ath.id} value={ath.id}>
@@ -942,7 +960,9 @@ export const TrainerPlanBuilder: React.FC = () => {
             <div>
               <h2 className="section-title">
                 <Dumbbell size={18} />
-                <span>2. Rutinas y Ejercicios Prescritos ({routines.length} Rutinas)</span>
+                <span>
+                  2. Rutinas y Ejercicios Prescritos ({routines.length} de {expectedRoutinesCount} Rutinas)
+                </span>
               </h2>
               <p className="section-desc">
                 Define los ejercicios, descansos y tempos para cada sesión. Puedes reutilizar plantillas prediseñadas.
@@ -952,11 +972,26 @@ export const TrainerPlanBuilder: React.FC = () => {
               type="button"
               onClick={handleAddRoutine}
               className="btn btn-secondary btn-with-icon"
+              disabled={routines.length >= expectedRoutinesCount}
+              title={
+                routines.length >= expectedRoutinesCount
+                  ? `Límite de ${expectedRoutinesCount} rutinas alcanzado para la frecuencia configurada.`
+                  : 'Añadir nueva sesión'
+              }
             >
               <Plus size={16} />
               <span>Añadir Día / Rutina</span>
             </button>
           </div>
+
+          {routines.length !== expectedRoutinesCount && (
+            <div className="alert-box alert-warning mt-2 mb-3">
+              <AlertTriangle size={16} />
+              <span>
+                Frecuencia seleccionada: <strong>{frequencyPerWeek} día(s)/sem × {sessionsPerDay} turno(s)/día</strong>. Debes cargar exactamente <strong>{expectedRoutinesCount} {expectedRoutinesCount === 1 ? 'rutina' : 'rutinas'}</strong> (actualmente tienes {routines.length}).
+              </span>
+            </div>
+          )}
 
           {routines.length === 0 ? (
             <div className="empty-routines-placeholder">

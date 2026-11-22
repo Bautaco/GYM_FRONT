@@ -27,6 +27,7 @@ import type {
   EditableSetState,
   Routine,
   TrainingPlan,
+  WorkoutSession,
 } from '../training.types.js';
 import { VideoPlayerModal } from '../../exercises/components/ExerciseDetailModal.js';
 import { PrCelebrationModal } from '../components/PrCelebrationModal.js';
@@ -35,8 +36,10 @@ export const AthleteDashboard: React.FC = () => {
   // Usuario autenticado: se usa para cargar su plan y sus sesiones.
   const { user } = useAuth();
   const [activePlan, setActivePlan] = useState<TrainingPlan | null>(null);
+  const [allPlans, setAllPlans] = useState<TrainingPlan[]>([]);
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [exercisesCatalog, setExercisesCatalog] = useState<Exercise[]>([]);
-  const [pastSessions, setPastSessions] = useState<any[]>([]);
+  const [pastSessions, setPastSessions] = useState<WorkoutSession[]>([]);
   const [selectedRoutineIndex, setSelectedRoutineIndex] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -67,12 +70,15 @@ export const AthleteDashboard: React.FC = () => {
     setIsLoading(true);
     setError('');
     try {
-      const [planData, catalog, sessions] = await Promise.all([
+      const [planData, allPlansData, catalog, sessions] = await Promise.all([
         trainingService.getActivePlan(user.id),
+        trainingService.getAllPlansByAthlete(user.id),
+        // El catálogo pertenece al módulo exercises, no a trainingService.
         exercisesService.getExercises(),
         trainingService.getAthleteSessions(user.id),
       ]);
       setActivePlan(planData);
+      setAllPlans(allPlansData || []);
       setExercisesCatalog(catalog);
 
       /*
@@ -83,22 +89,37 @@ export const AthleteDashboard: React.FC = () => {
       */
       const sessionsForActivePlan = planData
         ? (sessions || []).filter(
-            (session) => session.trainingPlanId === planData.id,
+            (session: WorkoutSession) => session.trainingPlanId === planData.id,
           )
         : [];
       setPastSessions(sessionsForActivePlan);
 
-      // Al ingresar, busca la primera rutina pendiente desde hoy hasta el domingo.
-      // Una sesión se identifica por su fecha: el lunes vuelve a estar disponible
-      // cuando llega el lunes de una semana nueva.
-      if (planData && planData.routines.length > 0) {
-        selectNextPendingRoutine(planData.routines, sessionsForActivePlan);
+      const planToDisplay =
+        planData ||
+        (allPlansData && allPlansData.length > 0 ? allPlansData[0] : null);
+
+      if (planToDisplay) {
+        setSelectedPlanId(planToDisplay.id);
+        if (planToDisplay.routines && planToDisplay.routines.length > 0) {
+          selectNextPendingRoutine(planToDisplay.routines, sessions || [], planToDisplay.id);
+        }
       }
     } catch (err: any) {
       setError('Error al cargar la información del plan de entrenamiento.');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const formatDisplayDate = (dateVal: string | Date | undefined) => {
+    if (!dateVal) return '';
+    const dateStr = dateVal instanceof Date ? dateVal.toISOString() : String(dateVal);
+    const raw = dateStr.slice(0, 10);
+    const parts = raw.split('-');
+    if (parts.length === 3) {
+      return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+    return raw;
   };
 
   const getLocalDateKey = (date: Date) => {
@@ -108,7 +129,7 @@ export const AthleteDashboard: React.FC = () => {
     return `${year}-${month}-${day}`;
   };
 
-  const getSessionDateKey = (session: any) => {
+  const getSessionDateKey = (session: WorkoutSession) => {
     const rawDate = String(session.date || '');
     return /^\d{4}-\d{2}-\d{2}/.test(rawDate)
       ? rawDate.slice(0, 10)
@@ -124,72 +145,109 @@ export const AthleteDashboard: React.FC = () => {
     return `Día ${index + 1}: ${nameWithoutDayPrefix}`;
   };
 
-  const selectNextPendingRoutine = (routines: Routine[], sessions: any[]) => {
-    const today = new Date();
-    const currentDay = today.getDay() || 7; // Domingo es 7 en el plan.
+  const displayedPlan =
+    (selectedPlanId && allPlans.find((p) => p.id === selectedPlanId)) ||
+    activePlan ||
+    (allPlans.length > 0 ? allPlans[0] : null);
 
-    for (let offset = 0; offset <= 7 - currentDay; offset += 1) {
-      const plannedDate = new Date(today);
-      plannedDate.setDate(today.getDate() + offset);
-      const plannedDay = plannedDate.getDay() || 7;
-      const plannedDateKey = getLocalDateKey(plannedDate);
-      const nextIndex = routines.findIndex((routine) =>
-        routine.dayOfWeek === plannedDay &&
-        !sessions.some((session) =>
-          session.completed &&
-          session.routineId === routine.id &&
-          getSessionDateKey(session) === plannedDateKey,
-        ),
+  const todayStr = getLocalDateKey(new Date());
+  const planStartStr = displayedPlan ? String(displayedPlan.startDate).slice(0, 10) : '';
+  const planEndStr = displayedPlan ? String(displayedPlan.endDate).slice(0, 10) : '';
+  const isCurrentDateWithinPlan = Boolean(
+    displayedPlan && planStartStr <= todayStr && todayStr <= planEndStr,
+  );
+  const isUpcomingPlan = Boolean(displayedPlan && planStartStr > todayStr);
+  const isExpiredPlan = Boolean(displayedPlan && planEndStr < todayStr);
+
+  const upcomingPlan = allPlans.find((p) => {
+    const s = String(p.startDate).slice(0, 10);
+    return s > todayStr;
+  });
+
+  const isRoutineCompletedToday = (routineId?: string, planId?: string) => {
+    if (!routineId) return false;
+    const currentPlanId = planId || displayedPlan?.id;
+    return pastSessions.some((s) => {
+      const sessionDateStr = getSessionDateKey(s);
+      const matchesPlan = !s.trainingPlanId || !currentPlanId || s.trainingPlanId === currentPlanId;
+      return (
+        Boolean(s.completed) &&
+        s.routineId === routineId &&
+        sessionDateStr === todayStr &&
+        matchesPlan
       );
+    });
+  };
 
-      if (nextIndex !== -1) {
-        setWeeklyScheduleNotice('');
-        setSelectedRoutineIndex(nextIndex);
-        loadRoutineSessionState(routines[nextIndex], sessions);
-        return;
-      }
-    }
+  const selectNextPendingRoutine = (
+    routines: Routine[],
+    sessions: WorkoutSession[],
+    planId?: string,
+  ) => {
+    if (!routines || routines.length === 0) return;
 
-    /*
-      Un plan puede comenzar cualquier día. Si hoy no coincide con los días
-      configurados (por ejemplo, el plan empieza un domingo y las rutinas son
-      lunes a jueves), no significa que el atleta ya completó todo. Habilitamos
-      la primera rutina sin sesión registrada para que el plan nuevo sea usable.
-    */
-    const firstPendingIndex = routines.findIndex(
-      (routine) => !sessions.some(
-        (session) => session.completed && session.routineId === routine.id,
-      ),
+    const today = new Date();
+    const currentDay = today.getDay() || 7; // 1 = Lunes, ..., 7 = Domingo
+    const todayKey = getLocalDateKey(today);
+
+    const isSessionDoneToday = (routineId?: string) => {
+      if (!routineId) return false;
+      return sessions.some((s: WorkoutSession) => {
+        const sessionDateStr = getSessionDateKey(s);
+        const matchesPlan = !s.trainingPlanId || !planId || s.trainingPlanId === planId;
+        return (
+          Boolean(s.completed) &&
+          s.routineId === routineId &&
+          sessionDateStr === todayKey &&
+          matchesPlan
+        );
+      });
+    };
+
+    // 1. Intentar seleccionar la rutina programada para el día de la semana de hoy si no se ha completado
+    let targetIndex = routines.findIndex(
+      (r) => r.dayOfWeek === currentDay && !isSessionDoneToday(r.id),
     );
 
-    if (firstPendingIndex !== -1) {
+    // 2. Si hoy no hay rutina o ya se completó, seleccionar la primera rutina del plan que esté pendiente hoy
+    if (targetIndex === -1) {
+      targetIndex = routines.findIndex((r) => !isSessionDoneToday(r.id));
+    }
+
+    // 3. Si todas las rutinas del plan ya fueron completadas hoy, dejar seleccionada la primera
+    if (targetIndex === -1) {
+      targetIndex = 0;
+      setWeeklyScheduleNotice(
+        '✓ Has completado las sesiones de entrenamiento de hoy. Tus marcas están guardadas.',
+      );
+    } else {
       setWeeklyScheduleNotice('');
-      setSelectedRoutineIndex(firstPendingIndex);
-      loadRoutineSessionState(routines[firstPendingIndex], sessions);
-      return;
     }
 
-    setSessionSets([]);
-    setSessionNotes('');
-    setIsSessionFinished(false);
-    setSessionSuccessMessage('');
-    setWeeklyScheduleNotice(
-      'Completaste todas las jornadas programadas para esta semana. Tu próxima rutina se habilitará al comenzar la próxima semana.',
-    );
+    setSelectedRoutineIndex(targetIndex);
+    loadRoutineSessionState(routines[targetIndex], sessions, planId);
   };
 
   const loadRoutineSessionState = (
     routine: Routine,
-    sessions: any[],
+    sessions: WorkoutSession[],
+    planId?: string,
   ) => {
     if (!routine || !routine.exerciseItems) return;
     setSessionSuccessMessage('');
     setError('');
 
-    const todayStr = getLocalDateKey(new Date());
-    const existingSession = sessions.find((s) => {
+    const currentPlanId = planId || displayedPlan?.id;
+    const currentTodayStr = getLocalDateKey(new Date());
+    const existingSession = sessions.find((s: WorkoutSession) => {
       const sessionDateStr = getSessionDateKey(s);
-      return sessionDateStr === todayStr && s.routineId === routine.id;
+      const matchesPlan = !s.trainingPlanId || !currentPlanId || s.trainingPlanId === currentPlanId;
+      return (
+        Boolean(s.completed) &&
+        s.routineId === routine.id &&
+        sessionDateStr === currentTodayStr &&
+        matchesPlan
+      );
     });
 
     if (existingSession && existingSession.sets && existingSession.sets.length > 0) {
@@ -214,6 +272,7 @@ export const AthleteDashboard: React.FC = () => {
         '✓ Ya has registrado esta sesión el día de hoy. Las marcas están en modo solo lectura.',
       );
     } else {
+      // Rutina aún no registrada hoy -> inicializar series y habilitar edición
       initSessionSets(routine);
       setSessionNotes('');
       setIsSessionFinished(false);
@@ -243,10 +302,19 @@ export const AthleteDashboard: React.FC = () => {
     setSessionSuccessMessage('');
   };
 
+  const handlePlanSelect = (planId: string) => {
+    setSelectedPlanId(planId);
+    setWeeklyScheduleNotice('');
+    const target = allPlans.find((p) => p.id === planId);
+    if (target && target.routines.length > 0) {
+      selectNextPendingRoutine(target.routines, pastSessions, planId);
+    }
+  };
+
   const handleRoutineSelect = (index: number) => {
-    if (!activePlan || weeklyScheduleNotice) return;
+    if (!displayedPlan) return;
     setSelectedRoutineIndex(index);
-    loadRoutineSessionState(activePlan.routines[index], pastSessions);
+    loadRoutineSessionState(displayedPlan.routines[index], pastSessions, displayedPlan.id);
   };
 
   const handleSetChange = (
@@ -255,7 +323,7 @@ export const AthleteDashboard: React.FC = () => {
     field: 'actualWeightKg' | 'actualReps' | 'isCompleted',
     val: any,
   ) => {
-    if (isSessionFinished) return;
+    if (isSessionFinished || isUpcomingPlan) return;
     setSessionSets((prev) =>
       prev.map((s) => {
         if (s.exerciseId === exerciseId && s.setNumber === setNumber) {
@@ -276,7 +344,7 @@ export const AthleteDashboard: React.FC = () => {
 
   // Validación previa antes de abrir modal de confirmación
   const handleRequestFinishSession = () => {
-    if (!user || !activePlan || isSessionFinished) return;
+    if (!user || !displayedPlan || isSessionFinished || isUpcomingPlan) return;
     setError('');
 
     const completedCount = sessionSets.filter((s) => s.isCompleted).length;
@@ -316,15 +384,15 @@ export const AthleteDashboard: React.FC = () => {
   // Guardado real de la sesión tras confirmación del atleta
   const handleConfirmAndSaveSession = async () => {
     setIsConfirmFinishModalOpen(false);
-    if (!user || !activePlan || isSessionFinished) return;
+    if (!user || !displayedPlan || isSessionFinished || isUpcomingPlan) return;
 
-    const currentRoutine = activePlan.routines[selectedRoutineIndex];
+    const currentRoutine = displayedPlan.routines[selectedRoutineIndex];
 
     setIsSavingSession(true);
     try {
       const result = await trainingService.logWorkoutSession({
         athleteId: user.id,
-        trainingPlanId: activePlan.id,
+        trainingPlanId: displayedPlan.id,
         routineId: currentRoutine?.id || 'routine-1',
         routineName: currentRoutine?.name || 'Rutina Diaria',
         date: getLocalDateKey(new Date()),
@@ -370,7 +438,7 @@ export const AthleteDashboard: React.FC = () => {
       setIsSessionFinished(true);
       // Busca la próxima jornada pendiente de esta semana. Si no existe,
       // muestra un aviso para no repetir una rutina ya finalizada.
-      selectNextPendingRoutine(activePlan.routines, updatedSessions);
+      selectNextPendingRoutine(displayedPlan.routines, updatedSessions);
     } catch (err: any) {
       setError(
         err.response?.data?.message || 'Error al persistir la sesión en el servidor',
@@ -389,18 +457,18 @@ export const AthleteDashboard: React.FC = () => {
     );
   }
 
-  // Manejo claro si no tiene plan activo
-  if (!activePlan) {
+  // Manejo claro si no tiene planes asignados
+  if (!displayedPlan) {
     return (
       <div className="empty-plan-hero">
         <div className="empty-plan-card">
           <div className="empty-icon-circle">
             <Calendar size={48} className="text-muted" />
           </div>
-          <h2 className="empty-title">Sin planes vigentes asignados</h2>
+          <h2 className="empty-title">Sin planes asignados</h2>
           <p className="empty-description">
             Hola <strong>{user?.fullName}</strong>. En este momento no posees ninguna
-            rutina activa configurada por tu entrenador.
+            rutina activa ni programada configurada por tu entrenador.
           </p>
           <div className="empty-instructions-box">
             <Info size={18} />
@@ -413,30 +481,113 @@ export const AthleteDashboard: React.FC = () => {
     );
   }
 
-  const currentRoutine = activePlan.routines[selectedRoutineIndex];
+  const currentRoutine = displayedPlan.routines[selectedRoutineIndex];
 
   return (
     <div className="dashboard-content-layout">
-      {/* Banner del Plan Activo */}
-      <div className="plan-hero-banner">
-        <div className="hero-badge-wrap">
-          <span className="badge badge-success">Plan Activo</span>
-          <span className="hero-coach-tag">
-            Prescrito por: {activePlan.trainerName || 'Entrenador'}
+      {/* Alerta si el atleta está viendo su plan activo pero ya tiene un próximo plan programado */}
+      {upcomingPlan && displayedPlan.id !== upcomingPlan.id && (
+        <div
+          className="alert-box alert-info mb-3"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            padding: '12px 16px',
+            borderRadius: '10px',
+          }}
+        >
+          <Calendar size={20} />
+          <span>
+            Tienes un nuevo plan programado: <strong>"{upcomingPlan.name}"</strong> a partir del{' '}
+            <strong>{formatDisplayDate(upcomingPlan.startDate)}</strong>.
           </span>
+          <button
+            type="button"
+            className="btn btn-secondary btn-sm"
+            style={{ marginLeft: 'auto', padding: '6px 14px', fontSize: '0.85rem' }}
+            onClick={() => handlePlanSelect(upcomingPlan.id)}
+          >
+            Previsualizar Rutinas
+          </button>
         </div>
-        <h1 className="hero-plan-title">{activePlan.name}</h1>
+      )}
+
+      {/* Banner del Plan */}
+      <div className="plan-hero-banner">
+        <div className="hero-badge-wrap" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+          {isCurrentDateWithinPlan ? (
+            <span className="badge badge-success">Plan Activo</span>
+          ) : isUpcomingPlan ? (
+            <span
+              className="badge"
+              style={{
+                backgroundColor: '#1d4ed8',
+                color: '#ffffff',
+                padding: '4px 10px',
+                borderRadius: '999px',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+              }}
+            >
+              Plan Programado
+            </span>
+          ) : (
+            <span
+              className="badge"
+              style={{
+                backgroundColor: '#64748b',
+                color: '#ffffff',
+                padding: '4px 10px',
+                borderRadius: '999px',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+              }}
+            >
+              Plan Finalizado
+            </span>
+          )}
+          <span className="hero-coach-tag">
+            Prescrito por: {displayedPlan.trainerName || 'Entrenador'}
+          </span>
+
+          {allPlans.length > 1 && (
+            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '0.85rem', opacity: 0.85 }}>Ver Plan:</span>
+              <select
+                className="form-input form-select"
+                style={{ padding: '4px 10px', fontSize: '0.85rem', minWidth: '190px' }}
+                value={displayedPlan.id}
+                onChange={(e) => handlePlanSelect(e.target.value)}
+              >
+                {allPlans.map((p) => {
+                  const s = String(p.startDate).slice(0, 10);
+                  const e = String(p.endDate).slice(0, 10);
+                  const isCurrent = s <= todayStr && todayStr <= e;
+                  const isUpcoming = s > todayStr;
+                  const tag = isCurrent ? ' (Activo)' : isUpcoming ? ' (Programado)' : ' (Finalizado)';
+                  return (
+                    <option key={p.id} value={p.id}>
+                      {p.name}{tag}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+          )}
+        </div>
+        <h1 className="hero-plan-title">{displayedPlan.name}</h1>
         <div className="hero-meta-row">
           <div className="meta-item">
             <Clock size={16} />
             <span>
-              Desde {new Date(activePlan.startDate).toLocaleDateString()} hasta{' '}
-              {new Date(activePlan.endDate).toLocaleDateString()}
+              Desde {formatDisplayDate(displayedPlan.startDate)} hasta{' '}
+              {formatDisplayDate(displayedPlan.endDate)}
             </span>
           </div>
           <div className="meta-item">
             <Flame size={16} className="text-accent" />
-            <span>{activePlan.routines.length} sesiones por semana</span>
+            <span>{displayedPlan.routines.length} sesiones por semana</span>
           </div>
         </div>
       </div>
@@ -445,20 +596,31 @@ export const AthleteDashboard: React.FC = () => {
       <div className="routines-selector-bar">
         <span className="selector-title">Selecciona tu jornada de entrenamiento:</span>
         <div className="routine-pills-row">
-          {activePlan.routines.map((routine, idx) => {
+          {displayedPlan.routines.map((routine, idx) => {
             const isSelected = idx === selectedRoutineIndex;
+            const isDoneToday = isRoutineCompletedToday(routine.id, displayedPlan.id);
             return (
               <button
                 key={idx}
+                type="button"
                 onClick={() => handleRoutineSelect(idx)}
-                className={`routine-pill-btn ${isSelected ? 'active' : ''}`}
-                disabled={Boolean(weeklyScheduleNotice)}
+                className={`routine-pill-btn ${isSelected ? 'active' : ''} ${isDoneToday ? 'completed' : ''}`}
+                style={
+                  isDoneToday && !isSelected
+                    ? { borderColor: 'rgba(16, 185, 129, 0.4)', background: 'rgba(16, 185, 129, 0.08)' }
+                    : undefined
+                }
               >
-                <div className="pill-dot"></div>
+                <div
+                  className="pill-dot"
+                  style={isDoneToday ? { backgroundColor: '#10b981' } : undefined}
+                ></div>
                 <div className="pill-text-col">
-                  <span className="pill-routine-name">{getRoutineDisplayName(routine, idx)}</span>
+                  <span className="pill-routine-name">
+                    {getRoutineDisplayName(routine, idx)} {isDoneToday ? '✓' : ''}
+                  </span>
                   <span className="pill-exercise-count">
-                    {routine.exerciseItems?.length || 0} Ejercicios
+                    {routine.exerciseItems?.length || 0} Ejercicios {isDoneToday ? '· Completado hoy' : ''}
                   </span>
                 </div>
               </button>
@@ -490,7 +652,6 @@ export const AthleteDashboard: React.FC = () => {
       )}
 
       {/* Lista de Ejercicios y Carga de Marcas Reales (HU-02 & HU-03) */}
-      {!weeklyScheduleNotice && (
       <div className="routine-execution-card">
         <div className="routine-header-bar">
           <div>
@@ -593,7 +754,7 @@ export const AthleteDashboard: React.FC = () => {
                               type="number"
                               step="0.5"
                               min="0"
-                              disabled={isSessionFinished}
+                              disabled={isSessionFinished || isUpcomingPlan}
                               value={set.actualWeightKg}
                               onChange={(e) =>
                                 handleSetChange(
@@ -611,7 +772,7 @@ export const AthleteDashboard: React.FC = () => {
                             <input
                               type="number"
                               min="0"
-                              disabled={isSessionFinished}
+                              disabled={isSessionFinished || isUpcomingPlan}
                               value={set.actualReps}
                               onChange={(e) =>
                                 handleSetChange(
@@ -627,11 +788,11 @@ export const AthleteDashboard: React.FC = () => {
                           </td>
                           <td className="checkbox-cell">
                             <label
-                              className={`checkbox-container ${isSessionFinished ? 'is-disabled' : ''}`}
+                              className={`checkbox-container ${isSessionFinished || isUpcomingPlan ? 'is-disabled' : ''}`}
                             >
                               <input
                                 type="checkbox"
-                                disabled={isSessionFinished}
+                                disabled={isSessionFinished || isUpcomingPlan}
                                 checked={set.isCompleted}
                                 onChange={(e) =>
                                   handleSetChange(
@@ -661,16 +822,37 @@ export const AthleteDashboard: React.FC = () => {
             <label className="form-label">Comentarios o Sensaciones de la Sesión:</label>
             <textarea
               rows={2}
-              disabled={isSessionFinished}
+              disabled={isSessionFinished || isUpcomingPlan}
               className="form-input textarea-notes"
-              placeholder="Ej. Sentí buena potencia en la sentadilla, descansos de 2 minutos..."
+              placeholder={
+                isUpcomingPlan
+                  ? 'Podrás agregar observaciones cuando inicie la fecha del plan...'
+                  : 'Ej. Sentí buena potencia en la sentadilla, descansos de 2 minutos...'
+              }
               value={sessionNotes}
               onChange={(e) => setSessionNotes(e.target.value)}
             />
           </div>
 
           <div className="finish-action-row">
-            {isSessionFinished ? (
+            {isUpcomingPlan ? (
+              <div
+                className="alert-box alert-info"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '10px 16px',
+                  borderRadius: '8px',
+                }}
+              >
+                <Calendar size={18} />
+                <span>
+                  Este plan está programado para comenzar el{' '}
+                  <strong>{formatDisplayDate(displayedPlan.startDate)}</strong>. Podrás registrar tus series cuando llegue esa fecha.
+                </span>
+              </div>
+            ) : isSessionFinished ? (
               <div className="session-completed-banner">
                 <CheckCircle size={20} className="text-success" />
                 <span>Sesión Registrada y Finalizada (Solo lectura)</span>
@@ -688,7 +870,6 @@ export const AthleteDashboard: React.FC = () => {
           </div>
         </div>
       </div>
-      )}
 
 
 

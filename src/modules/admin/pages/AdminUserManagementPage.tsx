@@ -23,6 +23,13 @@ import { User, UserRole } from '../../../types/index.js';
 import { useAuth } from '../../../shared/auth/AuthContext.js';
 import { prepareProfilePhoto } from '../../../shared/utils/profilePhoto.js';
 
+/** Construye la URL de WhatsApp (https://wa.me/<numero>) limpiando signos, espacios y guiones. */
+const buildWhatsAppUrl = (phone?: string): string | null => {
+  if (!phone) return null;
+  const digits = phone.replace(/\D/g, '');
+  return digits ? `https://wa.me/${digits}` : null;
+};
+
 export const AdminUserManagementPage: React.FC = () => {
   const { user: currentUser } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
@@ -305,6 +312,7 @@ export const AdminUserManagementPage: React.FC = () => {
               <tbody>
                 {filteredUsers.map((u) => {
                   const isCurrent = u.id === currentUser?.id;
+                  const whatsappUrl = buildWhatsAppUrl(u.phone);
                   return (
                     <tr key={u.id} className={isCurrent ? 'current-user-row' : ''}>
                       <td>
@@ -361,10 +369,23 @@ export const AdminUserManagementPage: React.FC = () => {
 
                       <td>
                         {u.phone ? (
-                          <div className="user-cell-phone">
-                            <Phone size={13} />
-                            <span>{u.phone}</span>
-                          </div>
+                          whatsappUrl ? (
+                            <a
+                              href={whatsappUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="user-cell-phone user-cell-whatsapp-link"
+                              title={`Abrir chat de WhatsApp con ${u.fullName}`}
+                            >
+                              <Phone size={13} />
+                              <span>{u.phone}</span>
+                            </a>
+                          ) : (
+                            <div className="user-cell-phone">
+                              <Phone size={13} />
+                              <span>{u.phone}</span>
+                            </div>
+                          )
                         ) : (
                           <span className="unassigned-text">Sin teléfono</span>
                         )}
