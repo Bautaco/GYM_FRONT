@@ -1,0 +1,39 @@
+/* Estilos propios de gestión de usuarios. */
+.admin-page-container { padding: 32px; }
+.admin-header-banner, .admin-toolbar, .admin-filter-group { display: flex; gap: 16px; }
+.admin-header-banner { align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.admin-kpi-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
+.admin-toolbar { align-items: center; justify-content: space-between; padding: 16px; margin-bottom: 20px; }
+.admin-search-box { position: relative; flex: 1; max-width: 420px; }
+.admin-search-input { width: 100%; padding: 10px 12px 10px 40px; }
+.admin-table-container { overflow: hidden; }
+.admin-users-table { width: 100%; border-collapse: collapse; }
+.admin-users-table th, .admin-users-table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-subtle); }
+.user-cell-meta { display: flex; align-items: center; gap: 10px; }
+.user-cell-avatar { width: 36px; height: 36px; object-fit: cover; border-radius: 50%; }
+
+/* Acciones de cada atleta: lápiz y tacho comparten tamaño y estética. */
+.admin-users-table .btn-table-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 8px;
+}
+
+.admin-users-table .btn-table-action.edit {
+  color: var(--brand-burgundy);
+  background: var(--brand-beige);
+  border: 1px solid var(--brand-petrol);
+  cursor: pointer;
+}
+
+.admin-users-table .btn-table-action.edit:hover {
+  color: var(--brand-white);
+  background: var(--brand-petrol);
+}
+
+.admin-users-table .btn-table-action + .btn-table-action { margin-left: 8px; }
+@media (max-width: 768px) { .admin-page-container { padding: 16px; } .admin-kpi-grid { grid-template-columns: 1fr; } .admin-header-banner, .admin-toolbar { flex-wrap: wrap; } }

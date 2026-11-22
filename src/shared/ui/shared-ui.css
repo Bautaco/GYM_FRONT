@@ -1,0 +1,10 @@
+/* Piezas visuales transversales: navegación, perfil y temporizador. */
+.app-navbar { position: sticky; top: 0; z-index: 20; }
+.profile-modal-card { max-width: 680px; }
+.avatar-selection-box, .theme-toggle-row { display: flex; align-items: center; gap: 16px; }
+.profile-avatar-preview { width: 72px; height: 72px; object-fit: cover; border-radius: 50%; }
+.avatar-presets-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.rest-timer-floating-root { position: fixed; right: 20px; bottom: 20px; z-index: 30; }
+.rest-timer-card { width: min(360px, calc(100vw - 32px)); padding: 18px; }
+.rest-timer-header, .rest-timer-controls, .rest-timer-presets { display: flex; align-items: center; gap: 10px; }
+.rest-timer-controls { justify-content: center; }

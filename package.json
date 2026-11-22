@@ -13,6 +13,7 @@
   "dependencies": {
     "@types/canvas-confetti": "^1.9.0",
     "axios": "^1.20.0",
+    "better-sqlite3": "^12.11.1",
     "canvas-confetti": "^1.9.4",
     "lucide-react": "^1.56.0",
     "react": "^19.2.8",

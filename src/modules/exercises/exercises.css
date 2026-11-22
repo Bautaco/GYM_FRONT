@@ -1,0 +1,109 @@
+/*
+  ESTILOS DEL MÓDULO DE EJERCICIOS
+
+  Este archivo reúne únicamente las reglas visuales que pertenecen al catálogo
+  y al detalle de ejercicios. Sigue usando las variables declaradas en
+  src/index.css (por ejemplo, --bg-card y --text-main), porque esas variables
+  son compartidas por toda la aplicación.
+
+  No se colocan aquí las reglas genéricas de botones, inputs o modales: también
+  las usan autenticación, entrenamiento, progreso y administración.
+*/
+
+/* Catálogo: encabezado, buscador, filtros y tarjetas. */
+.catalog-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.filter-search-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.search-input-box { position: relative; max-width: 500px; }
+.search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--input-text); }
+.search-input {
+  width: 100%; padding: 12px 16px 12px 42px; font: inherit; font-size: .95rem;
+  color: var(--input-text); background: var(--input-bg); border: 1px solid var(--border-subtle);
+  border-radius: 999px; color-scheme: light;
+}
+.search-input:focus { outline: 2px solid var(--brand-petrol); outline-offset: 2px; border-color: var(--primary); }
+
+.muscle-filter-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.filter-pill-btn {
+  padding: 6px 16px; font-size: .82rem; font-weight: 700; color: var(--text-main);
+  background: transparent; border: 1px solid var(--border-subtle); border-radius: 999px; transition: all .2s;
+}
+.filter-pill-btn.active { color: var(--brand-white); background: var(--brand-petrol); border-color: var(--brand-petrol); }
+
+.exercises-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 22px; }
+.exercise-card {
+  display: flex; flex-direction: column; gap: 12px; padding: 20px; color: var(--text-main);
+  background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+}
+.exercise-card-header { display: flex; align-items: center; justify-content: space-between; }
+.card-exercise-name { font-size: 1.25rem; }
+.card-exercise-desc {
+  display: -webkit-box; overflow: hidden; color: var(--text-muted); font-size: .88rem; line-height: 1.5;
+  -webkit-box-orient: vertical; -webkit-line-clamp: 3;
+}
+.card-zones-box { display: flex; flex-direction: column; gap: 6px; margin-top: auto; }
+.zones-label { color: var(--text-dim); font-size: .75rem; font-weight: 700; text-transform: uppercase; }
+.card-action-footer { margin-top: 10px; }
+
+/* Acciones que solo existen en las tarjetas del catálogo. */
+.card-trainer-actions { display: flex; gap: 8px; margin-top: 8px; }
+.btn-card-action {
+  display: flex; flex: 1; align-items: center; justify-content: center; gap: 6px; padding: 7px 12px;
+  font-size: .8rem; font-weight: 600; cursor: pointer; border: 1px solid transparent; border-radius: 8px; transition: all .2s;
+}
+.btn-card-action.edit { color: var(--brand-burgundy); background: var(--brand-beige); border-color: var(--brand-petrol); border-radius: 999px; }
+.btn-card-action.edit:hover { color: var(--brand-burgundy); background: var(--brand-white); }
+.btn-card-action.delete { color: var(--brand-burgundy); background: var(--brand-beige); border-color: var(--brand-burgundy); }
+.btn-card-action.delete:hover { color: var(--brand-white); background: var(--brand-burgundy); border-color: var(--brand-beige); }
+
+/* Detalle y video de un ejercicio. */
+.video-player-wrapper { width: 100%; flex-shrink: 0; }
+.video-responsive-box { display: flex; align-items: center; justify-content: center; width: 100%; max-height: 400px; background: #000; }
+.in-app-video-element { display: block; width: 100%; max-height: 400px; }
+.in-app-video-iframe { height: 380px; border: 0; aspect-ratio: 16 / 9; }
+.no-video-placeholder { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px 24px; text-align: center; background: var(--bg-card); }
+.placeholder-icon-circle { display: flex; align-items: center; justify-content: center; width: 64px; height: 64px; color: var(--brand-burgundy); background: var(--brand-beige); border-radius: 50%; }
+.placeholder-title { font-size: 1.1rem; }
+.placeholder-text { max-width: 440px; color: var(--text-muted); font-size: .9rem; }
+.detail-section { display: flex; flex-direction: column; gap: 8px; }
+.section-label { display: flex; align-items: center; gap: 6px; color: var(--text-dim); font-size: .85rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.exercise-description-text { color: var(--text-main); font-size: .95rem; line-height: 1.6; }
+
+/* Mapa anatómico que acompaña al detalle. */
+.zones-section-with-figure { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); }
+.zones-left-column { flex: 1 1 240px; min-width: 0; }
+.zones-right-column { flex: 0 0 auto; }
+.anatomic-card-preview { padding: 12px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 14px; }
+.anatomic-card-header { display: flex; justify-content: center; width: 100%; }
+.anatomic-tag-badge { display: inline-block; padding: 3px 8px; color: var(--brand-burgundy); font-size: .7rem; font-weight: 700; background: var(--brand-beige); border-radius: 999px; }
+.anatomic-figure-container { display: flex; flex-direction: column; align-items: center; }
+.anatomic-views-wrapper { display: flex; justify-content: center; gap: 12px; }
+.anatomic-single-view { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.anatomic-svg { width: 58px; height: 110px; }
+.anatomic-view-label, .muscle-focus-hint { color: var(--text-muted); font-size: .78rem; }
+.highlight-text { color: var(--brand-beige); font-weight: 700; }
+.anatomic-svg [fill="#182030"] { fill: var(--brand-burgundy); }
+
+@media (max-width: 600px) {
+  .zones-section-with-figure { flex-direction: column; align-items: stretch; }
+  .zones-right-column { display: flex; justify-content: center; }
+}
+
+@media (max-width: 768px) {
+  .in-app-video-iframe { height: 220px; }
+  .video-responsive-box { max-height: 230px; }
+  .catalog-page-layout { padding: 16px 14px; }
+  .catalog-header-row { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .exercises-grid { grid-template-columns: 1fr; }
+}
