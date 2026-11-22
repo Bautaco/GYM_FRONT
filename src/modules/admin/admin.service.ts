@@ -14,8 +14,8 @@ export const adminService = {
     return response.data;
   },
 
-  /** Asigna, cambia o elimina el entrenador responsable de un atleta. */
-  async assignTrainer(athleteId: string, trainerId: string | null): Promise<User> {
+  /** Asigna o cambia el entrenador responsable obligatorio de un atleta. */
+  async assignTrainer(athleteId: string, trainerId: string): Promise<User> {
     const response = await api.patch<User>(
       `/api/v1/users/admin/${athleteId}/trainer`,
       { trainerId },

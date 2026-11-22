@@ -128,6 +128,11 @@ export const AdminUserManagementPage: React.FC = () => {
       return;
     }
 
+    if (role === UserRole.ATLETA && !trainerId) {
+      setFormError('Todo atleta debe tener un entrenador asignado.');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       await adminService.createUser({
@@ -177,12 +182,16 @@ export const AdminUserManagementPage: React.FC = () => {
 
   const handleSaveTrainerAssignment = async () => {
     if (!trainerAssignmentCandidate) return;
+    if (!assignedTrainerId) {
+      setFormError('Todo atleta debe tener un entrenador asignado.');
+      return;
+    }
     setIsSubmitting(true);
     setFormError('');
     try {
       await adminService.assignTrainer(
         trainerAssignmentCandidate.id,
-        assignedTrainerId || null,
+        assignedTrainerId,
       );
       setTrainerAssignmentCandidate(null);
       await loadData();
@@ -484,21 +493,34 @@ export const AdminUserManagementPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Si es atleta, desplegable de entrenador asignado */}
+                {/* Si es atleta, desplegable obligatorio de entrenador asignado */}
                 {role === UserRole.ATLETA && (
                   <div className="form-group">
-                    <label className="form-label">Entrenador Asignado</label>
+                    <label className="form-label">Entrenador Asignado *</label>
                     <select
+                      required
                       value={trainerId}
                       onChange={(e) => setTrainerId(e.target.value)}
                       className="form-input form-select"
                     >
-                      <option value="">-- Sin entrenador asignado --</option>
-                      {trainers.map((t) => (
-                        <option key={t.id} value={t.id}>
-                          {t.fullName} ({t.email})
+                      {trainers.length === 0 ? (
+                        <option value="" disabled>
+                          No hay entrenadores registrados (crea uno primero)
                         </option>
-                      ))}
+                      ) : (
+                        <>
+                          {!trainerId && (
+                            <option value="" disabled>
+                              Selecciona un entrenador
+                            </option>
+                          )}
+                          {trainers.map((t) => (
+                            <option key={t.id} value={t.id}>
+                              {t.fullName} ({t.email})
+                            </option>
+                          ))}
+                        </>
+                      )}
                     </select>
                   </div>
                 )}
@@ -671,21 +693,38 @@ export const AdminUserManagementPage: React.FC = () => {
               </p>
               {formError && <div className="alert-box alert-error"><AlertCircle size={18} /><span>{formError}</span></div>}
               <div className="form-group">
-                <label className="form-label" htmlFor="assigned-trainer">Entrenador</label>
+                <label className="form-label" htmlFor="assigned-trainer">Entrenador *</label>
                 <select
                   id="assigned-trainer"
+                  required
                   value={assignedTrainerId}
                   onChange={(e) => setAssignedTrainerId(e.target.value)}
                   className="form-input form-select"
                 >
-                  <option value="">-- Sin entrenador asignado --</option>
-                  {trainers.map((trainer) => <option key={trainer.id} value={trainer.id}>{trainer.fullName}</option>)}
+                  {trainers.length === 0 ? (
+                    <option value="" disabled>
+                      No hay entrenadores disponibles
+                    </option>
+                  ) : (
+                    <>
+                      {!assignedTrainerId && (
+                        <option value="" disabled>
+                          Selecciona un entrenador
+                        </option>
+                      )}
+                      {trainers.map((trainer) => (
+                        <option key={trainer.id} value={trainer.id}>
+                          {trainer.fullName}
+                        </option>
+                      ))}
+                    </>
+                  )}
                 </select>
               </div>
             </div>
             <div className="modal-footer">
               <button onClick={() => setTrainerAssignmentCandidate(null)} className="btn-secondary" disabled={isSubmitting}>Cancelar</button>
-              <button onClick={handleSaveTrainerAssignment} className="btn-primary" disabled={isSubmitting}>{isSubmitting ? 'Guardando...' : 'Guardar asignación'}</button>
+              <button onClick={handleSaveTrainerAssignment} className="btn-primary" disabled={isSubmitting || !assignedTrainerId}>{isSubmitting ? 'Guardando...' : 'Guardar asignación'}</button>
             </div>
           </div>
         </div>
