@@ -170,24 +170,69 @@ npm run preview
 
 ## 🧪 4. Testing y Calidad de Código (QA)
 
-El frontend cuenta con suite de pruebas automatizadas ejecutadas con **Vitest**, **Testing Library React** y **JSDOM**, logrando **100% de tests exitosos**:
+El frontend cuenta con una suite integral de **116 tests automatizados (30 unitarios y de componentes + 86 tests End-to-End en navegador real)** con **100% de tests exitosos (0 fallos)** utilizando **Vitest**, **Testing Library React**, **JSDOM** y **Playwright**.
+
+### 🚀 Ejecución de Pruebas
 
 ```bash
-npm run test
+# 1. Ejecutar solo tests unitarios y de componentes (30 tests)
+npm test
+
+# 2. Ejecutar tests End-to-End (E2E) con Playwright en Chromium (86 tests)
+npm run test:e2e
+
+# 3. Listar todos los tests E2E reconocidos
+npx playwright test --list
+
+# 4. Modo interactivo visual de Playwright (UI Mode)
+npx playwright test --ui
 ```
 
-### Suites Implementadas
-- **`VideoPlayerModal.test.tsx` (5 tests)**:
-  - Renderizado del reproductor `iframe` embebido para enlaces de YouTube válidos.
-  - Verificación del mensaje amigable *"Demostración en video no disponible"* cuando `videoUrl` es `null` o string vacío `""`.
-  - Comportamiento de cierre mediante botones y tecla Escape.
-  - Integración de zonas anatómicas trabajadas y grupo muscular.
-- **`analyticsService.test.ts` (4 tests)**:
-  - Petición al endpoint ejecutivo `/api/v1/analytics/admin/overview` con parámetros de filtro (`period`, `trainerId`, `adherenceRange`).
-  - Consultas de curvas de fuerza por ejercicio y reportes de adherencia.
-- **`trainingService.test.ts` (3 tests)**:
-  - Verificación de que `updateExercise` envíe explícitamente `videoUrl: null` al eliminar un video.
-  - Operaciones de creación y eliminación en el catálogo.
+### ⚡ Ejecución Unificada de Todo el Sistema (Front + Back + E2E)
+Desde la **carpeta raíz del proyecto (`GYM`)**:
+
+```bash
+# Ejecutar los 256 tests de la plataforma completa en una sola corrida
+npm run test:all
+
+# O usando el script con salida formateada a color en PowerShell:
+.\test-all.ps1
+
+# O desde la consola clásica de Windows (CMD):
+test-all.bat
+```
+
+> **Nota:** La configuración de Playwright en `playwright.config.ts` levanta automáticamente el backend (puerto 3000) y el servidor de desarrollo Vite (puerto 5173) en caso de que no se encuentren ya iniciados.
+
+---
+
+### Cobertura de las Suites del Frontend
+
+#### 1. Tests Unitarios y de Componentes (`src/**/*.test.{ts,tsx}` — 30 tests)
+- **`ExerciseDetailModal.test.tsx` (5 tests)**:
+  - Renderizado de reproductor `iframe` embebido para videos de YouTube válidos.
+  - Mensaje amigable y badge visual de *"Sin video asignado"* cuando `videoUrl` es `null` o vacío `""`.
+  - Comportamiento de cierre con botón de cruz y tecla `Escape`.
+  - Integración del muñeco anatómico interactivo con iluminación biomecánica de grupos musculares.
+- **`auth.service.test.ts` (6 tests)**:
+  - Almacenamiento y recuperación de token JWT en `localStorage`.
+  - Manejo de roles, usuario activo y limpieza segura en logout.
+- **`training.service.test.ts` (6 tests)**:
+  - Peticiones REST a planes de entrenamiento, sesiones, rutinas y plantillas (`/api/v1/templates`).
+- **`admin.service.test.ts` (5 tests)**:
+  - Consulta de usuarios por administrador, alta con rol y baja definitiva.
+- **`progress.service.test.ts` (5 tests)**:
+  - Petición al endpoint ejecutivo `/api/v1/analytics/admin/overview` con parámetros de filtro (`period`, `trainerId`, `adherenceRange`), curvas de fuerza y reportes de adherencia.
+- **`exercises.service.test.ts` (3 tests)**:
+  - Búsqueda, taxonomía muscular y envío explícito de `videoUrl: null` al eliminar un video.
+
+#### 2. Tests End-to-End (E2E) con Playwright (`e2e/*.spec.ts` — 86 tests)
+- **`01-auth-session.spec.ts` (12 tests)**: Renderizado de login, botones de acceso rápido 1-Click (Admin, Entrenador, Atleta), inicio de sesión manual, validación de contraseñas incorrectas y correos inexistentes, cierre de sesión, redirección basada en roles y persistencia de sesión tras recarga (F5).
+- **`02-admin-users.spec.ts` (12 tests)**: Navegación al panel administrativo, tabla de usuarios, filtros y búsqueda en vivo, modal de alta, registro de Entrenador y Atleta, validación de correo duplicado, modal de confirmación de baja definitiva y cancelación.
+- **`03-trainer-catalog-multimedia.spec.ts` (20 tests)**: Tarjetas del catálogo de ejercicios, filtros por grupo muscular, buscador reactivo, modal de creación de ejercicio, inserción de chips musculares con `Enter` y `,`, URLs de YouTube estándar, Shorts y MP4, badge «Sin video», modal biomecánico con figura anatómica y cierre con `Escape`.
+- **`04-trainer-plans-overlap.spec.ts` (16 tests)**: Diseñador de microciclos `/trainer/assign-plan`, selector de alumnos con avatar, fechas de inicio y fin, configuración de frecuencia y turnos, acordeón colapsable de historial, badges de estado (`En Curso`, `Programado`, `Finalizado`), detección visual de superposición de fechas (`"rango de fechas"`), carga de planes históricos en modo edición y biblioteca de plantillas.
+- **`05-athlete-workout-execution.spec.ts` (14 tests)**: Dashboard del atleta `/`, banner de microciclo activo, selector de jornadas diarias, lista de ejercicios con cadencia/tempo y notas, tabla de series interactivas, edición de pesos y repeticiones reales, casillas de serie completada (`row-completed`), temporizador flotante de descansos (Rest Timer), presets de tiempo y estructura de celebración de Récord Personal (PR).
+- **`06-progress-executive-theme.spec.ts` (12 tests)**: Toggle de modo oscuro/claro en Navbar, alternancia de `data-theme="light"` / `"dark"`, persistencia tras navegación, modal de pesaje corporal con validación de peso positivo, gráficos de evolución de fuerza del atleta, Dashboard Ejecutivo CAR del administrador con bloques KPI, filtros temporales (`30d`, `90d`), filtro por semáforo de adherencia (verde/amarillo/rojo) y buscador de alumnos.
 
 ---
 
